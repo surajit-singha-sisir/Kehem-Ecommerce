@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastors Ecommerce</title>
+    <!-- <meta name="csrf-token" content="{{ csrf_token }}"> -->
+
+    <link rel="stylesheet" href="../styles.css">
+    <!-- K2D -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=K2D:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Noto+Emoji:wght@300..700&display=swap"
+        rel="stylesheet">
+
+    <!-- MASTORSCDN -->
+    <link rel="stylesheet" href="https://surajit-singha-sisir.github.io/mastorsCDN/mastors.css">
+    <link rel="stylesheet" href="https://surajit-singha-sisir.github.io/mastorsCDN/mastorsIcons/mastorsIcons.css">
+    <script type="module" src="https://surajit-singha-sisir.github.io/mastorsCDN/mastors.js"></script>
+    <script src="../scripts/fixedbar/navbar.js"></script>
+    <script type="module" src="../scripts/addproducts/addproduct.js"></script>
+
+
+    <!-- MULTI COMBOBOX -->
+    <script type="module" src="../scripts/addproducts/multicombo.js"></script>
+
+
+    <!-- SUMMERNOTE -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js"></script>
+</head>
+
+<body class="bg">
+    <!-- TOP BAR -->
+    <aside class="w-100 h--55 fixed pos-top-center bg z-5 b-b-e bg-top">
+        <div class="f f-just-between w-95 pad--10 m-auto">
+            <a href="#" class="d-block w--70">
+                <img class="img-w-res" src="../resources/icons/mastors-logo.svg" alt="">
+            </a>
+            <div class="f f-just-center f-align-items-center g-10">
+                <div class="f f-col f-align-items-end">
+                    <p>Surajit Singha Sisir</p>
+                    <span class="f b-e bg-admin pad-lr--08 pad-tb--01 White text-center b-rad--05 w-min">
+                        <p>Admin</p>
+                    </span>
+                </div>
+                <div class="d-block w--30 c-pointer relative" onclick="userProfile(this)">
+                    <img class="img-w-res" src="../resources/icons/user-icon.svg" alt="">
+                    <div class="profile-det hide" id="profile-det">
+                        <span class="f f-col">
+                            <a href="#">My Profile</a>
+                            <a href="#">Logout</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- TOP BAR END -->
+
+    <!-- NAVBAR -->
+    <nav class="fixed pos-t--55 pos-top-left bg leftnav h-100 bg z-5" id="enavigator">
+        <!-- COMPANY LOGO -->
+        <div class="relative">
+            <!-- COMPANY NAME -->
+            <a href="#" class="f gap-05 h--30 bg-hov-e b-b-e f-just-center f-align-items-center pad--05 ov-hidden"
+                id="companylogo">
+                <span class="h--15"><img class="img-h-res" src="../resources/icons/camerasales.svg" alt=""></span>
+                <span id="companyname" class="f b text-center text--l pad-lr--08 pad-tb--01">Camerasales</span>
+            </a>
+            <!-- ARROW -->
+            <div class="arrowpos" title="Click to Expand or Zip the Menubar" onclick="arrowpos(this)">
+                <img class="w--08" src="../resources/icons/right-arrow.svg" alt="">
+            </div>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="searchcat">
+            <input type="text" placeholder="Search" title="Click 'Esc' to clean search">
+        </div>
+
+        <!-- MENU ITEMS -->
+        <section class="ecom-navs" id="ecom-navs">
+            <!-- DASHBOARD -->
+            <ul class="nosubcat">
+                <li><a href="#">
+                        <span class="ecat">
+                            <div class="nosubcaticon w--12">
+                                <img class="img-w-res" src="../resources/icons/home.svg" alt="">
+                            </div>
+                            <p>Dashboard</p>
+                        </span>
+                    </a></li>
+            </ul>
+            <!-- Orders -->
+            <div class="esubcats">
+                <span class="ecatnoclick">
+                    <div class="maincatname">
+                        <div class="w--12">
+                            <img class="img-w-res" src="../resources/icons/order.svg" alt="">
+                        </div>
+                        <p>Orders</p>
+                    </div>
+                    <div class="icon w--10 m-r--10 chevron">
+                        <img class="img-w-res" src="../resources/icons/chevron.svg" alt="">
+                    </div>
+                </span>
+                <!-- SUB CATS -->
+                <ul class="ulsubcates">
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Manage Order</p>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Create Order</p>
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Order Reports</p>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Sales -->
+            <div class="esubcats">
+                <span class="ecatnoclick">
+                    <div class="maincatname">
+                        <div class="w--12">
+                            <img class="img-w-res" src="../resources/icons/sales.svg" alt="">
+                        </div>
+                        <p>Sales</p>
+                    </div>
+                    <div class="icon w--10 m-r--10 chevron">
+                        <img class="img-w-res" src="../resources/icons/chevron.svg" alt="">
+                    </div>
+                </span>
+                <!-- SUB CATS -->
+                <ul class="ulsubcates">
+                    <!-- Manage Sales -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Manage Sales</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Office Sales -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Office Sales</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Personal Sales -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Personal Sales</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Dummy Sales -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Dummy Sales</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Wholesales -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Wholesales</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Sales Reports -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Sales Reports</p>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Products -->
+            <div class="esubcats">
+                <span class="ecatnoclick">
+                    <div class="maincatname">
+                        <div class="w--12">
+                            <img class="img-w-res" src="../resources/icons/products.svg" alt="">
+                        </div>
+                        <p>Products</p>
+                    </div>
+                    <div class="icon w--10 m-r--10 chevron">
+                        <img class="img-w-res" src="../resources/icons/chevron.svg" alt="">
+                    </div>
+                </span>
+                <!-- SUB CATS -->
+                <ul class="ulsubcates">
+                    <!-- Manage Products -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Manage Products</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Add Products -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Add Product</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Product Reviews -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Product Reviews</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Product Reports -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Products Reports</p>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Product Suppliers -->
+            <div class="esubcats">
+                <span class="ecatnoclick">
+                    <div class="maincatname">
+                        <div class="w--12">
+                            <img class="img-w-res" src="../resources/icons/products.svg" alt="">
+                        </div>
+                        <p>Product Suppliers</p>
+                    </div>
+                    <div class="icon w--10 m-r--10 chevron">
+                        <img class="img-w-res" src="../resources/icons/chevron.svg" alt="">
+                    </div>
+                </span>
+                <!-- SUB CATS -->
+                <ul class="ulsubcates">
+                    <!-- Product Suppliers -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Product Suppliers</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Add Supplier -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Add Supplier</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Supplier Reports -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Supplier Reports</p>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Category -->
+            <div class="esubcats">
+                <span class="ecatnoclick">
+                    <div class="maincatname">
+                        <div class="w--12">
+                            <img class="img-w-res" src="../resources/icons/products.svg" alt="">
+                        </div>
+                        <p>Category</p>
+                    </div>
+                    <div class="icon w--10 m-r--10 chevron">
+                        <img class="img-w-res" src="../resources/icons/chevron.svg" alt="">
+                    </div>
+                </span>
+                <!-- SUB CATS -->
+                <ul class="ulsubcates">
+                    <!-- Manage Category -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Manage Category</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Add Sub Cateogry -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Add Sub Cateogry</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Add Sub Sub Category -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Add Sub Sub Category</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Category Reports -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Category Reports</p>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Brands -->
+            <div class="esubcats">
+                <span class="ecatnoclick">
+                    <div class="maincatname">
+                        <div class="w--12">
+                            <img class="img-w-res" src="../resources/icons/brands.svg" alt="">
+                        </div>
+                        <p>Brands</p>
+                    </div>
+                    <div class="icon w--10 m-r--10 chevron">
+                        <img class="img-w-res" src="../resources/icons/chevron.svg" alt="">
+                    </div>
+                </span>
+                <!-- SUB CATS -->
+                <ul class="ulsubcates">
+                    <!-- Manage Brand -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Manage Brand</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Add Brand -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Add Brand</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Brand Reports -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Brand Reports</p>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Accounts -->
+            <div class="esubcats">
+                <span class="ecatnoclick">
+                    <div class="maincatname">
+                        <div class="w--12">
+                            <img class="img-w-res" src="../resources/icons/accounts.svg" alt="">
+                        </div>
+                        <p>Accounts</p>
+                    </div>
+                    <div class="icon w--10 m-r--10 chevron">
+                        <img class="img-w-res" src="../resources/icons/chevron.svg" alt="">
+                    </div>
+                </span>
+                <!-- SUB CATS -->
+                <ul class="ulsubcates">
+                    <!-- Manage Accounts -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Manage Accounts</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Add Account -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Add Account</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Account Reports -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Account Reports</p>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Website Settings -->
+            <div class="esubcats">
+                <span class="ecatnoclick">
+                    <div class="maincatname">
+                        <div class="w--12">
+                            <img class="img-w-res" src="../resources/icons/website-settings.svg" alt="">
+                        </div>
+                        <p>Website Settings</p>
+                    </div>
+                    <div class="icon w--10 m-r--10 chevron">
+                        <img class="img-w-res" src="../resources/icons/chevron.svg" alt="">
+                    </div>
+                </span>
+                <!-- SUB CATS -->
+                <ul class="ulsubcates">
+                    <!-- Header -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Header</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Slider -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Slider</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Footer -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Footer</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Appearance -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Appearance</p>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Pages -->
+            <div class="esubcats">
+                <span class="ecatnoclick">
+                    <div class="maincatname">
+                        <div class="w--12">
+                            <img class="img-w-res" src="../resources/icons/pages.svg" alt="">
+                        </div>
+                        <p>Pages</p>
+                    </div>
+                    <div class="icon w--10 m-r--10 chevron">
+                        <img class="img-w-res" src="../resources/icons/chevron.svg" alt="">
+                    </div>
+                </span>
+                <!-- SUB CATS -->
+                <ul class="ulsubcates">
+                    <!-- Page Manager -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Page Manager</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Add Page -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Add Page</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Landing Page Manager -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Landing Page Manager</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Add Landing Page -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Add Landing Page</p>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Configurations -->
+            <div class="esubcats">
+                <span class="ecatnoclick">
+                    <div class="maincatname">
+                        <div class="w--12">
+                            <img class="img-w-res" src="../resources/icons/settings.svg" alt="">
+                        </div>
+                        <p>Configurations</p>
+                    </div>
+                    <div class="icon w--10 m-r--10 chevron">
+                        <img class="img-w-res" src="../resources/icons/chevron.svg" alt="">
+                    </div>
+                </span>
+                <!-- SUB CATS -->
+                <ul class="ulsubcates">
+                    <!-- Facebook Setup -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Facebook Setup</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Google Setup -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Google Setup</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- SMS API Setup -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>SMS API Setup</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Invoice Setup -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Invoice Setup</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Social Credential -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Social Credential</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Payment Setup -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Payment Setup</p>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Delivery & Courier -->
+            <div class="esubcats">
+                <span class="ecatnoclick">
+                    <div class="maincatname">
+                        <div class="w--12">
+                            <img class="img-w-res" src="../resources/icons/delivery.svg" alt="">
+                        </div>
+                        <p>Delivery & Courier</p>
+                    </div>
+                    <div class="icon w--10 m-r--10 chevron">
+                        <img class="img-w-res" src="../resources/icons/chevron.svg" alt="">
+                    </div>
+                </span>
+                <!-- SUB CATS -->
+                <ul class="ulsubcates">
+                    <!-- Courier Manager -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Courier Manager</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Add Courier -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Add Courier</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Courier API Setup -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Courier API Setup</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Delivery Charge Setup -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Delivery Charge Setup</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Delivery City Setup -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Delivery City Setup</p>
+                            </span>
+                        </a>
+                    </li>
+                    <!-- Delivery Sub City Setup -->
+                    <li>
+                        <a href="#">
+                            <span class="ecat">
+                                <div class="icon w--08">
+                                    <img class="img-w-res" src="../resources/icons/arrow.svg" alt="">
+                                </div>
+                                <p>Delivery Sub City Setup</p>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </section>
+    </nav>
+    <!-- NAVBAR END -->
+
+    <!-- MAIN START -->
+    <main class="main bg" id="main">
+        <!-- ADD PRODUCT START -->
+        <form id="addProductForm" class="product add-product g-res-3-col-container gap-10"
+            enctype="multipart/form-data">
+
+
+            <!-- LEFT COLUMN -->
+            <aside class="relative">
+
+                <!-- PRODUCT TITLE -->
+                <section class="relative f-res f-col gap-10 v-space">
+                    <label for="" class="star">Product Title</label>
+                    <input type="text" name="productTitle" id="" placeholder="Type the title of the product">
+                </section>
+
+                <!-- CATEGORY -->
+                <fieldset class="b-e bg-3 f-res gap-10 w-100 pad--10 m-b--10">
+                    <legend class="thislegend star">Category</legend>
+
+                    <!-- CATEGORY -->
+                    <div class="combo-box w-100">
+                        <div class="Combo-inputbox">
+                            <input type="text" name="category" id="category" class="combo-input b-Blue b-1 b-rad--05"
+                                placeholder="-- Category --" data-combo-id="combo1" autocomplete="off">
+                        </div>
+                        <ul class="combo-options" id="categoryOptions">
+                            <li class="no-data" style="display: none;">No data found!</li>
+                        </ul>
+                    </div>
+                    <!-- SUB-CATEGORY -->
+                    <div class="option">
+                        <select name="subCategory" id="subCategory">
+                            <option value="false">-- Sub Cat --</option>
+                        </select>
+                    </div>
+                    <!-- SUB-SUB-CATEGORY -->
+                    <div class="option">
+                        <select name="subSubCategory" id="subSubCategory">
+                            <option value="false">-- Sub Sub --</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <!-- PRICE -->
+                <fieldset class="b-e bg-3 f-res gap-10 w-100 pad--10 m-b--10" id="productPrices">
+                    <legend class="thislegend star">Product Pricing</legend>
+
+                    <!-- Buy Price -->
+                    <div class="text-input" id="text-input">
+                        <label for="productBuyPrice">Buy Price</label>
+                        <input type="number" class="inputbox" name="buyPrice" placeholder="" id="productBuyPrice">
+                    </div>
+
+                    <!-- Selling Price -->
+                    <div class="text-input" id="text-input">
+                        <label for="productSellingPrice">Selling Price</label>
+                        <input type="number" name="sellingPrice" class="inputbox" id="productSellingPrice">
+                    </div>
+
+                    <!-- Discount Price -->
+                    <div class="text-input" id="text-input">
+                        <label for="productDiscountPrice">Discount Price</label>
+                        <input type="number" name="discountPrice" class="inputbox" id="productDiscountPrice">
+                    </div>
+
+                    <!-- UNIT -->
+                    <div class="option">
+                        <select class="bg-Currency currency" id="productPricingCurrency" name="priceUnit">
+                            <option value="taka" target-currency="৳">৳ Taka</option>
+                            <option value="dollar" target-currency="$">$ Dollar</option>
+                            <option value="rupee" target-currency="₹">₹ Rupee</option>
+                            <option value="euro" target-currency="€">€ Euro</option>
+                            <option value="pound" target-currency="£">£ Pound</option>
+                            <option value="yuan" target-currency="¥">¥ Yuan</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <!-- STOCK -->
+                <section class="w-100 f f-just-center b-e pad--10 bg-3" id="productStock">
+                    <div class="f-res f-align-items-center f-just-center gap-10 w-80">
+                        <span class="f-0 text--m star">Stock</span>
+                        <div class="select-option-1">
+                            <input class="min-w--20" name="stock" type="number" id="addProductTotalStock"
+                                placeholder="Total Quantity">
+                            <div class="option">
+                                <select name="stockUnit" id="addProductStockUnit">
+                                    <option value="Piece">Piece</option>
+                                    <option value="Packet">Packet</option>
+                                    <option value="Box">Box</option>
+                                    <option value="Carton">Carton</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ATTRIBUTES -->
+                <fieldset class="attributes w-100 f f-col f-just-center b-e pad--10 bg-3 m-tb--10">
+                    <legend>Atributes</legend>
+
+                    <!-- SELECT ATTRIBUTE -->
+                    <div class="pad--10 b-b-e m-b--10">
+                        <div class="combo-box">
+                            <div class="Combo-inputbox">
+                                <input type="text" data-target="" name="attribute" id="attrInp" class="combo-input"
+                                    placeholder="-- Select Atributes --" data-combo-id="combo1" autocomplete="off">
+                                <ul class="combo-options attributeSelect" id="attributeSelect" style="display: none;">
+                                    <li class="no-data" style="display: none;">No data found!</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- ATTRIBUTE VALUES -->
+                        <div class="b-e pad--10 f f-just-between f-align-items-center gap-10">
+                            <section class="f f-wrap gap-10" id="attributeValues">
+
+                            </section>
+                            <div class="relative w-100">
+                                <button id="addAttributeBtn" type="menu"
+                                    class="pad-tb--03 pad-lr--08 plus b-none bg-hov-Purple cur-pointer text--m">+</button>
+
+                                <!-- ADD VALUE -->
+                                <div id="newValueAssigning"
+                                    class="absolute hide b-e bg-2 f f-col gap-10 w--150 pad--10">
+                                    <!-- COMBOBOX -->
+                                    <div class="combo-box">
+                                        <div class="Combo-inputbox">
+                                            <input type="text" id="newValueAssigningInput" class="combo-input"
+                                                data-target="" placeholder="-- Atributes --" data-combo-id="combo3">
+                                            <ul class="combo-options" id="newValueAssigningOptions"
+                                                style="display: none;">
+                                                <li class="no-data" style="display: none;">No data found!</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <!-- INPUT VALUE -->
+                                    <div class="text-input">
+                                        <input type="text" id="attributeValueOption" placeholder="Variable Name">
+                                    </div>
+                                    <!-- SUBMIT BUTTON -->
+                                    <button id="addNewAttributeValue">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ATTRIBUTE VALUES DETAILS -->
+                        <section class="b-e pad--10 m-t--10 hide" id="attributeSection">
+                            <table class="attributeTable">
+                                <thead>
+                                    <tr>
+                                        <th id="attributeCat">Size</th>
+                                        <th>Stock(Qty)</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </section>
+
+                    </div>
+                </fieldset>
+
+                <!-- TEXT EDITOR -->
+                <section class="summernote">
+                    <span class="text--m star">Description</span><br><br>
+                    <textarea class="summernote" name="summerNote" id="summernote"></textarea>
+                    <script>
+                        $('#summernote').summernote({
+                            placeholder: '1. Introduction <br><br> 2. Describe your product<br><br> <i>Add your product Images and Text Sizes to get Notice</i>',
+                            tabsize: 2,
+                            height: 200,
+                            toolbar: [
+                                ['style', ['style']],
+                                ['font', ['bold', 'underline', 'clear']],
+                                // ['color', ['color']],
+                                ['para', ['ul', 'ol', 'paragraph']],
+                                ['table', ['table']],
+                                ['insert', ['link', 'picture', 'video']],
+                                ['view', ['codeview']]
+                            ]
+                        });
+                    </script>
+                </section>
+
+                <!-- TAGS -->
+                <section class="e-tags" id="e-tags">
+                    <span class="text--m star">Tags</span>
+                    <ul class="e-tag-list">
+                        <!-- DYNAMICLLY ADD DATA -->
+                        <!-- <li>
+                            <p>Bottle</p>
+                            <i class="m-m-cross"></i>
+                        </li> -->
+                    </ul>
+                    <!-- INPUT BOX -->
+                    <input type="text" class="e-addTagInput" placeholder="Add a new tag">
+                </section>
+
+                <!-- FAQ -->
+                <section class="e-faqs" id="faqContainer">
+                    <span class="text--m star">Frequently Ask Questions (FAQ)</span>
+                    <div class="e-faqInputs" id="e-faqInputs">
+                        <!-- INPUT BOXS -->
+                        <input type="text" class="e-questionInput" id="e-questionInput" placeholder="Question">
+                        <textarea name="" id="e-answerInput" class="e-answerInput" placeholder="Answer"></textarea>
+                        <!-- ADD BUTTON -->
+                        <button class="btn btn-primary w--100 m-auto" id="faqAddBtn">Add</button>
+                    </div>
+                    <div class="e-faq-preview hide" id="e-faq-preview">
+                        <!-- PREVIEW -->
+                        <span class="text--m b darkBlue">FAQ Preview</span>
+                        <div class="e-faq-preview-box">
+                            <!-- DYNAMICLLY ADD DATA -->
+                        </div>
+                    </div>
+                </section>
+
+            </aside>
+
+            <!-- RIGHT COLUMN -->
+            <aside class="addProductRightColumn">
+
+                <!-- PRODUCT IMAGES -->
+                <section class="e-productImage">
+                    <span class="text--m productImagesTitle">Product Images <span class=" star">(0/5)</span></span>
+
+                    <div class="pad--20 m-tb--10 fileInputBox">
+                        <input type="file" name="" id="dragAndDropFile" accept=".jpg, .jpeg" multiple>
+                        <p class="uploadOrDragImage">Upload or Drag Image</p>
+                    </div>
+
+
+                    <!-- PREVIEW IMAGES -->
+                    <div class="dragable-image-container gap-10 hide">
+                        <span class="preview-img-container">
+                        </span>
+                        <span class="preview-img-container">
+                        </span>
+                        <span class="preview-img-container">
+                        </span>
+                        <span class="preview-img-container">
+                        </span>
+                        <span class="preview-img-container">
+                        </span>
+                    </div>
+                </section>
+            </aside>
+            <!-- SUBMIT FORM -->
+            <section class="submitForm">
+                <input type="submit" value="Submit" class="btn btn-primary w--200">
+            </section>
+        </form>
+        <!-- ADD PRODUCT END -->
+    </main>
+    <!-- MAIN END -->
+</body>
+</html>

@@ -1,0 +1,63 @@
+$bg: #e8ebed;
+$bg2: #f3f5f6;
+$bg3: #f0f7fa;
+$text: #1c2439;
+$subtext: #272f43;
+$litetext: #888c97;
+$border: #d4d8dc;
+$topbarbg: #d9d9d9;
+$admin: #de4927;
+$profilebg: #f3f5f6;
+$currency: #0942ff;
+$legend: #f79999;
+$plus: #06be1e;
+$btnColor: #2041fa;
+$input: #F3F5F6;
+
+.b-e {
+  border: 1px solid $border;
+}
+.b-b-e {
+  border-bottom: 1px solid $border;
+}
+.bg-admin {
+  background-color: $admin;
+}
+a {
+  color: $text;
+  text-decoration: none;
+}
+.bg-hov-e:hover {
+  background-color: $bg2;
+}
+.bg-top {
+  background-color: $topbarbg;
+}
+.bg-main {
+  background-color: $bg;
+}
+.bg-2 {
+  background-color: $bg2;
+}
+
+.bg-3 {
+  background-color: $bg3;
+}
+
+.bg-transparent {
+  background-color: transparent !important;
+}
+.bg-Currency {
+  width: 100% !important;
+  background-color: $currency !important;
+}
+.f-0 {
+  flex: 0 !important;
+}
+.currency {
+  color: white !important;
+}
+.plus {
+  color: #fff;
+  background-color: $plus;
+}

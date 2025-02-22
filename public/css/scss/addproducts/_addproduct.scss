@@ -1,0 +1,386 @@
+@use "sass:color";
+@use "../variables" as *;
+
+$color: #0a6e50;
+
+@media screen and (max-width: 1620px) {
+  .g-res-3-col-container {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.submitForm {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.attributes {
+  position: relative;
+
+  & legend {
+    padding: 0 1rem;
+    border: 1px solid #ccc;
+    background-color: $bg3;
+    font-size: 1.3rem;
+    margin: auto;
+  }
+}
+
+button[type="submit"] {
+  padding: 0.5rem 1rem;
+  background-color: $btnColor;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: lighten($btnColor, 9%);
+    transition: background-color 0.3s ease;
+  }
+}
+.hide {
+  display: none !important;
+}
+
+.attributeTable {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 5px;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+
+  & thead {
+    background-color: $input;
+    border: 1px solid #ccc;
+  }
+  & tbody {
+    background-color: $bg;
+  }
+  & tr {
+    border: 1px solid #ccc;
+    transition: background-color 0.3s ease;
+
+    & th {
+      padding: 0.5rem;
+      border: none;
+      text-align: center;
+    }
+
+    & td {
+      padding: 0.5rem;
+      border: none;
+      text-align: center;
+
+      & input {
+        margin: auto;
+        width: 5rem;
+        height: 2rem;
+        padding: 0.2rem !important;
+        text-align: center;
+
+        &::placeholder {
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+.attrDeleteBtn {
+  height: 2.5rem;
+
+  & img {
+    cursor: pointer;
+  }
+}
+
+.btn1 {
+  background-color: $litetext;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+  cursor: not-allowed;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($litetext, 20%);
+    transition: background-color 0.3s ease;
+  }
+}
+
+// TAGS
+.e-tags {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 0;
+
+  & .e-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    & li {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.3rem;
+      color: #fff;
+      text-align: center;
+      background-color: $color;
+      border-radius: 1rem;
+      padding: 0.3rem;
+
+      & p {
+        padding: 0 0.5rem;
+        font-size: 1rem;
+      }
+
+      & i {
+        position: relative;
+        font-size: 0.5rem;
+        margin-top: 0.1rem;
+        padding: 0.5rem;
+        cursor: pointer;
+        border-radius: 50%;
+        background-color: color.adjust($color, $lightness: 5%);
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: color.adjust($color, $lightness: -5%);
+
+          &::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid color.adjust($color, $lightness: 15%);
+            width: 1.4rem;
+            aspect-ratio: 1;
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+  }
+}
+
+// FAQs
+.e-faqs {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: $bg;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  border: 1px solid $border;
+  transition: all 0.3s ease;
+
+  & .e-faqInputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    & textarea {
+      padding: 0.5rem;
+      border: 1px solid $border;
+      border-radius: 5px;
+      resize: vertical;
+      padding: 10px 1.5rem;
+      font-family: "Arial", sans-serif;
+      min-height: 5rem;
+      max-height: 10rem;
+
+      &::placeholder {
+        font-size: 0.9rem;
+        color: #929292;
+      }
+
+      &:focus {
+        box-shadow: #d2e2fb 0px 0px 0px 2px;
+        border: 1px solid #ccc;
+        outline: none;
+      }
+    }
+  }
+
+  & .e-faq-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: $bg3;
+    border-radius: 0.5rem;
+    border: 1px solid $border;
+    height: auto;
+    padding: 1rem;
+    transition: all 0.3s ease;
+
+    & .e-faq-preview-box {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      & .added-faq {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        gap: 1rem;
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+        border: 1px solid $border;
+        background-color: #fff;
+        transition: all 0.3s ease;
+
+        & .e-faq-counter {
+          position: absolute;
+          top: 0;
+          right: 1.5rem;
+          font-style: italic;
+          color: #8b8b8b;
+          margin-top: -0.5rem;
+          z-index: 5;
+          transition: all 0.3s ease;
+
+          &::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -47%);
+            width: 2.2rem;
+            aspect-ratio: 1;
+            border: 1px solid $border;
+            border-radius: 50%;
+            z-index: -1;
+          }
+
+          &::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -46%);
+            width: 1.8rem;
+            aspect-ratio: 1;
+            background-color: $bg;
+            border-radius: 50%;
+            z-index: -1;
+          }
+
+          &:hover {
+            font-style: normal;
+            color: #3b3b3b;
+            transition: all 0.3s ease;
+            &::before {
+              border: 1px solid color.adjust($border, $lightness: -10%);
+            }
+            &::after {
+              background-color: color.adjust($bg, $lightness: -5%);
+            }
+          }
+        }
+
+        & .e-faq-content {
+          font-size: 1.1rem;
+          padding: 0.5rem 1rem;
+          width: 100%;
+          transition: all 0.3s ease;
+        }
+
+        & .added-question {
+          font-size: 1.2rem;
+          padding: 0.5rem 0;
+          border-bottom: 1px solid $border;
+          transition: all 0.3s ease;
+        }
+
+        & .added-answer {
+          padding: 0.5rem 0;
+          transition: all 0.3s ease;
+        }
+
+        & .m-compose,
+        .m-bin {
+          color: $color;
+          cursor: pointer;
+          font-size: 1.3rem;
+
+          &:hover {
+            color: color.adjust($color, $hue: 60%);
+            transition: all 0.3s ease;
+          }
+        }
+      }
+    }
+  }
+}
+
+.addProductRightColumn {
+  position: relative;
+  width: 100%;
+}
+// PRODUCT IMAGES
+.e-productImage {
+  position: relative;
+  padding: 1rem 0;
+  width: inherit;
+  overflow: hidden;
+
+  & .dragable-image-container {
+    padding: 1rem 0;
+  }
+  & .preview-img-container {
+    background-color: color.adjust($bg, $lightness: -2%);
+    max-width: 500px;
+    width: 100%;
+  }
+
+  & .fileInputBox {
+    position: relative;
+    width: 100%;
+    height: 5rem;
+    border: 1px dashed $border;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $bg3;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+
+    & #dragAndDropFile {
+      opacity: 0;
+      width: inherit;
+      height: inherit;
+    }
+
+    & .uploadOrDragImage {
+      position: absolute;
+      font-size: 1rem;
+      color: color.adjust($color, $whiteness: 90%);
+      cursor: pointer;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    &:hover {
+      border: 1px dashed $color;
+      transition: all 0.3s ease;
+
+      & .uploadOrDragImage {
+        color: color.adjust($color, $whiteness: 30%);
+        transition: all 0.3s ease;
+      }
+    }
+  }
+}

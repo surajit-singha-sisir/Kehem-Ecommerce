@@ -1,0 +1,66 @@
+@use "../variables/vars" as *;
+/* MAIN CONTAINER */
+.main {
+  position: absolute;
+  display: flex;
+  top: 6rem;
+  left: 21.5%; /*NAV */
+  width: calc(100% - 25.5%);
+  height: max-content;
+  z-index: 3;
+  background-color: $bg2;
+  border: 1px solid $border;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+// JSU
+// .mainexp {
+//   left: 5rem;
+//   width: calc(96% - 5rem);
+//   transition: all 0.3s ease;
+// }
+
+// JSU
+.mainexp {
+  left: 5rem !important;
+  width: calc(100% - 6rem);
+  transition: all 0.3s ease;
+}
+
+@media screen and (max-width: 768px) {
+  .main {
+    left: 11rem;
+    width: calc(100% - 12rem);
+    transition: all 0.3s ease;
+  }
+
+  .mainexp {
+    width: calc(100% - 6rem);
+  }
+}
+
+.thislegend {
+  font-size: 1.2rem;
+  padding: 0.2rem 1rem;
+  // border: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  background-color: $bg3;
+}
+
+.f-res2 {
+  display: flex;
+  
+  & > div,
+  & > section,
+  & > span {
+    flex: 1;
+  }
+}
+@media screen and (max-width: 1080px) {
+  .f-res2 {
+    flex-wrap: wrap;
+  }
+}

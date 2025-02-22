@@ -1,5 +1,10 @@
 <template>
     <section>
-        <h1>Page Index</h1>
+        <NavBar />
     </section>
 </template>
+
+<script setup>
+</script>
+
+<style lang="scss"></style>
