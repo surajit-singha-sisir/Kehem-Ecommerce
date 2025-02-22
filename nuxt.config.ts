@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
 
   app: {
+    // pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       // META
       meta: [
@@ -53,8 +54,11 @@ export default defineNuxtConfig({
       ],
     }
   },
+
   devServer: {
     host: '0.0.0.0',
     port: 3000
   },
+
+  modules: ['@nuxt/image'],
 })
