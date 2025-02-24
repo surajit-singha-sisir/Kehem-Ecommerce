@@ -60,5 +60,5 @@ export default defineNuxtConfig({
     port: 3000
   },
 
-  modules: ['@nuxt/image'],
+  modules: ['@nuxt/image', 'nuxt-auth-utils', '@pinia/nuxt'],
 })

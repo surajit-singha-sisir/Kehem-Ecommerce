@@ -20,7 +20,7 @@
                         <div class="profile-det" id="profile-det" v-if="isUserMenu">
                             <span class="f f-col">
                                 <NuxtLink to="/">My Profile</NuxtLink>
-                                <NuxtLink to="/">Logout</NuxtLink>
+                                <NuxtLink to="/" @click="logout">Logout</NuxtLink>
                             </span>
                         </div>
                     </div>
@@ -791,6 +791,16 @@ const handleDocumentClick = (event: MouseEvent) => {
     }
 };
 
+definePageMeta({
+    middleware: ['authenticated'],
+})
+
+const { user, clear: clearSession } = useUserSession()
+
+async function logout() {
+    await clearSession()
+    await navigateTo('/login')
+}
 onMounted(() => {
     document.addEventListener('click', handleDocumentClick);
 });
