@@ -1,14 +1,19 @@
 <script setup>
 import { ref, watchEffect } from 'vue';
-import { useRouter } from 'vue-router';
+// import { useRouter } from 'vue-router';
 import { useAuthStore } from '~/stores/auth';
+
+// import { useAuthStore } from '~/stores/auth';
+import { useRouter } from '#app';
+
+const auth = useAuthStore();
+const router = useRouter();
 
 
 
 // const id = router.param.id;
 
-const router = useRouter();
-const authStore = useAuthStore();
+// const authStore = useAuthStore();
 
 const credentials = ref({
     username: '',
@@ -32,11 +37,11 @@ const login = async () => {
         }
 
         // Save token in Pinia store
-        authStore.setToken(data.access);
-        console.log(authStore.token);
-
+        // authStore.setToken(data.access);
+        // console.log(authStore.token);
+        auth.setToken(data.access);
         // Redirect to home page
-        if (authStore.token === data.access) {
+        if (auth.token === data.access) {
             
             router.push('/');
         }
@@ -44,7 +49,6 @@ const login = async () => {
         errorMessage.value = error.message;
     }
 };
-
 
 </script>
 

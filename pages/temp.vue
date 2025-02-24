@@ -9,6 +9,11 @@
 <script lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
+
+definePageMeta({
+  middleware: 'authenticated'
+});
+
 export default {
   setup() {
     const myDiv = ref<HTMLElement | null>(null);
@@ -26,7 +31,7 @@ export default {
       return false;
     };
 
-    // Set up and tear down event listeners
+
     onMounted(() => {
       document.addEventListener('click', handleDocumentClick);
     });

@@ -774,7 +774,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useAuthStore } from '~/stores/auth';
+import { useRouter } from '#app';
 
+const auth = useAuthStore();
+const router = useRouter();
+// Log out function
+const logout = () => {
+  auth.logout();  // This clears the token from the store and the cookie
+  router.push('/login');  // Redirect to login page
+};
 const isUserMenu = ref(false);
 const profileRef = ref<HTMLElement | null>(null);
 
@@ -791,16 +800,16 @@ const handleDocumentClick = (event: MouseEvent) => {
     }
 };
 
-definePageMeta({
-    middleware: ['authenticated'],
-})
+// definePageMeta({
+//     middleware: ['authenticated'],
+// })
 
 const { user, clear: clearSession } = useUserSession()
 
-async function logout() {
-    await clearSession()
-    await navigateTo('/login')
-}
+//async function logout() {
+//    await clearSession()
+//    await navigateTo('/login')
+//}
 onMounted(() => {
     document.addEventListener('click', handleDocumentClick);
 });
