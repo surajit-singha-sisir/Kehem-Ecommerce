@@ -1,33 +1,37 @@
-<script setup>
-import { useAuthStore } from '~/stores/auth';
-import { useRouter } from '#app';
+<script setup lang="ts">
+definePageMeta({
+  middleware: 'authenticated'
+});
 
-const auth = useAuthStore();
-const router = useRouter();
+import { useCookie } from 'nuxt/app'
 
-if (!auth.isAuthenticated) {
-  router.push('/login');  // Redirect to login if the user is not authenticated
-}
+const accessToken = useCookie<string | null>('access');
+
+const products = await $fetch<{ message: string }>('http://192.168.0.111:3000/api/home', {
+  method: 'GET',
+  headers: {
+    Authorization: `Bearer ${accessToken.value ?? ''}`
+  }
+});
+
+
 
 </script>
 
 
-<template>
-    <section>
-        <NavBar />
-        <!-- MAIN STARTED -->
-        <main class="main bg" id="main">
 
-            <Main1 />
-        </main>
-    </section>
+<template>
+  <section>
+    <NavBar />
+    <!-- MAIN STARTED -->
+    <main class="main bg" id="main">
+
+      <Main1 />
+      {{ products.message }}
+    </main>
+  </section>
 </template>
 
-<!-- <script setup>
-definePageMeta({
-  middleware: 'authenticated'
-});
-</script> -->
 
 
 <style lang="scss"></style>

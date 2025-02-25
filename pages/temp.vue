@@ -10,9 +10,9 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 
-definePageMeta({
-  middleware: 'authenticated'
-});
+// definePageMeta({
+//   middleware: 'authenticated'
+// });
 
 export default {
   setup() {

@@ -1,65 +1,49 @@
-<script setup>
-import { ref, watchEffect } from 'vue';
-// import { useRouter } from 'vue-router';
-import { useAuthStore } from '~/stores/auth';
+<script setup lang="ts">
+import { useFetch } from '#app'
+import { useCookie } from 'nuxt/app'
+import { reactive } from 'vue'
 
-// import { useAuthStore } from '~/stores/auth';
-import { useRouter } from '#app';
+interface Credentials {
+    username: string
+    password: string
+}
 
-const auth = useAuthStore();
-const router = useRouter();
-
-
-
-// const id = router.param.id;
-
-// const authStore = useAuthStore();
-
-const credentials = ref({
+const credentials = reactive<Credentials>({
     username: '',
     password: ''
-});
-
-const errorMessage = ref('');
+})
 
 const login = async () => {
     try {
-        const response = await fetch('http://192.168.0.111:3000/api/token/', {
+        const response = await $fetch<{ access: string; refresh: string }>('http://192.168.0.111:3000/api/token/', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(credentials.value),
-        });
+            body: credentials
+        })
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.detail || 'Login failed');
+        if (!response) {
+            throw new Error('Invalid response from server')
         }
 
-        // Save token in Pinia store
-        // authStore.setToken(data.access);
-        // console.log(authStore.token);
-        auth.setToken(data.access);
-        // Redirect to home page
-        if (auth.token === data.access) {
-            
-            router.push('/');
-        }
+        const accessToken = useCookie<string>('access', { path: '/', secure: true, sameSite: 'strict' })
+        const refreshToken = useCookie<string>('refresh', { path: '/', secure: true, sameSite: 'strict' })
+
+        accessToken.value = response.access
+        refreshToken.value = response.refresh
+
+        await navigateTo('/')
     } catch (error) {
-        errorMessage.value = error.message;
+        alert('Login failed. Please check your credentials.')
     }
-};
-
+}
 </script>
 
 <template>
     <section class="w-100 h-vh-100 f-centered f-col gap-10">
         <h1>LOGIN</h1>
         <form @submit.prevent="login" class="f-centered f-wrap gap-10 w--200">
-            <input v-model="credentials.username" type="text" placeholder="Username" required>
-            <input v-model="credentials.password" type="password" placeholder="Password" required>
-            <button type="submit" class="btn btn-primary">Submit</button>
-            <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
+            <input v-model="credentials.username" type="text" placeholder="Username" required />
+            <input v-model="credentials.password" type="password" placeholder="Password" required />
+            <button type="submit" class="btn btn-primary">Login</button>
         </form>
     </section>
 </template>
