@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { useFetch } from '#app'
-import { useCookie } from 'nuxt/app'
-import { reactive } from 'vue'
 
 interface Credentials {
     username: string
@@ -12,16 +9,16 @@ const credentials = reactive<Credentials>({
     username: '',
     password: ''
 })
-
+const errorMessage = ref<string | null>(null);
 const login = async () => {
     try {
+        errorMessage.value = null
         const response = await $fetch<{ access: string; refresh: string }>('http://192.168.0.111:3000/api/token/', {
             method: 'POST',
             body: credentials
         })
-
-        if (!response) {
-            throw new Error('Invalid response from server')
+        if (!response || !response.access || !response.refresh) {
+            throw new Error('Error Response')
         }
 
         const accessToken = useCookie<string>('access', { path: '/', secure: true, sameSite: 'strict' })
@@ -32,7 +29,7 @@ const login = async () => {
 
         await navigateTo('/')
     } catch (error) {
-        alert('Login failed. Please check your credentials.')
+        errorMessage.value = 'Invalid username or password. Please try again.'
     }
 }
 </script>
@@ -40,6 +37,7 @@ const login = async () => {
 <template>
     <section class="w-100 h-vh-100 f-centered f-col gap-10">
         <h1>LOGIN</h1>
+        <p v-if="errorMessage" class="Red"> {{ errorMessage }}</p>
         <form @submit.prevent="login" class="f-centered f-wrap gap-10 w--200">
             <input v-model="credentials.username" type="text" placeholder="Username" required />
             <input v-model="credentials.password" type="password" placeholder="Password" required />
