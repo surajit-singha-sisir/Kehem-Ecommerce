@@ -1,0 +1,29 @@
+{
+  "cat": "Organic Products",
+  "subcats": [
+    {
+      "subcat": "Organic Fruits",
+      "subsubcats": [
+        "Apple Organic Lution",
+        "Organic Bananas",
+        "Organic Strawberries"
+      ]
+    },
+    {
+      "subcat": "Organic Vegetables",
+      "subsubcats": [
+        "Organic Carrots",
+        "Organic Spinach",
+        "Organic Tomatoes"
+      ]
+    },
+    {
+      "subcat": "Organic Grains",
+      "subsubcats": [
+        "Organic Quinoa",
+        "Organic Oats",
+        "Organic Brown Rice"
+      ]
+    }
+  ]
+}

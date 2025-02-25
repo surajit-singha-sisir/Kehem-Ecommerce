@@ -1,8 +1,12 @@
 <script setup lang="ts">
-// FONTEND
-// import { useCookie } from 'nuxt/app'
+// definePageMeta({
+//   middleware: 'authenticated',
+// });
 
-// const accessToken = useCookie<string | null>('access');
+
+import { useCookie } from 'nuxt/app'
+
+const accessToken = useCookie<string | null>('access');
 
 // const products = await $fetch<{ message: string }>('http://192.168.0.111:3000/api/home', {
 //   method: 'GET',
@@ -11,15 +15,14 @@
 //   }
 // });
 
-
-
 </script>
 
 
 
 <template>
-  <!-- MAIN STARTED -->
-  <h1>for frontend</h1>
+    <section>
+        <NuxtLink to="/k-admin/add-product/" class="btn btn-primary">Add Product</NuxtLink>
+    </section>
 </template>
 
 

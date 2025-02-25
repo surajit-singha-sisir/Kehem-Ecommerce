@@ -27,7 +27,7 @@ const login = async () => {
         accessToken.value = response.access
         refreshToken.value = response.refresh
 
-        await navigateTo('/')
+        await navigateTo('/k-admin/')
     } catch (error) {
         errorMessage.value = 'Invalid username or password. Please try again.'
     }
@@ -35,6 +35,7 @@ const login = async () => {
 </script>
 
 <template>
+    <NuxtLoadingIndicator />
     <section class="w-100 h-vh-100 f-centered f-col gap-10">
         <h1>LOGIN</h1>
         <p v-if="errorMessage" class="Red"> {{ errorMessage }}</p>

@@ -1,7 +1,6 @@
 <template>
-    <header>
-        <!-- TOP BAR -->
-        <aside class="w-100 h--55 fixed pos-top-center bg z-5 b-b-e bg-top">
+    <div>
+        <header class="w-100 h--55 fixed pos-top-center bg z-5 b-b-e bg-top">
             <div class="f f-just-between w-95 pad--10 m-auto">
                 <NuxtLink to="/" class="text--15 b f-center btn-nav-primary pad-lr--10">
                     KEHEM IT
@@ -13,7 +12,7 @@
                             <p>Admin</p>
                         </span>
                     </div>
-                    <div class="d-block w--30 c-pointer relative" onclick="userProfile(this)" ref="profileRef">
+                    <div class="d-block w--30 c-pointer relative" ref="profileRef">
                         <span class="b-1 b-Gray bg-hov-Silver h--25 w--25 b-rad-50 f-center" @click="userMenu">
                             <i class="m-user3"></i>
                         </span>
@@ -26,7 +25,7 @@
                     </div>
                 </div>
             </div>
-        </aside>
+        </header>
 
         <!-- NAVBAR -->
         <nav class="fixed pos-t--55 pos-top-left bg leftnav h-100 bg z-5" id="enavigator">
@@ -40,9 +39,10 @@
                     <span id="companyname" class="f b text-center text--m pad-lr--08 pad-tb--01">Abraham Organic</span>
                 </NuxtLink>
                 <!-- ARROW -->
-                <div class="arrowpos" title="Click to Expand or Zip the Menubar" onclick="arrowpos(this)">
-                    <i class="m-chevron-right"></i>
+                <div class="arrowpos" title="Click to Expand or Zip the Menubar" @click="arrowpos">
+                    <i :class="{ 'm-chevron-left': isChevron, 'm-chevron-right': isChevron == false }"></i>
                 </div>
+
             </div>
 
             <!-- SEARCH -->
@@ -764,18 +764,24 @@
                         </li>
                     </ul>
                 </div>
-
             </section>
         </nav>
-        <!-- NAVBAR END -->
-    </header>
+        <main class="main bg" id="main">
+            <slot />
+        </main>
+        <footer class="d-fixed">
+            <p>KEHEM IT</p>
+        </footer>
+    </div>
 </template>
 
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { useRouter } from '#app';
 
+// definePageMeta({
+//     middleware: 'authenticated'
+// });
 
 
 
@@ -784,7 +790,6 @@ const profileRef = ref<HTMLElement | null>(null);
 
 const userMenu = (event: MouseEvent) => {
     event.stopPropagation();
-    console.log("Clicked inside the div");
     isUserMenu.value = !isUserMenu.value;
 };
 
@@ -795,7 +800,6 @@ const handleDocumentClick = (event: MouseEvent) => {
     }
 };
 
-const { user, clear: clearSession } = useUserSession()
 
 async function logout() {
     const accessToken = useCookie('access', { path: '/' });
@@ -805,12 +809,208 @@ async function logout() {
     accessToken.value = null;
     refreshToken.value = null;
 
-    await clearSession();
-    await navigateTo('wp/login');
+    // await clearSession();
+    await navigateTo('/k-admin/login');
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const isChevron = ref(false);
+
+const arrowpos = (event: MouseEvent) => {
+    const x = event.currentTarget as HTMLElement;
+
+    isChevron.value = !isChevron.value;
+
+    const icon = x.querySelector("i");
+
+    if (icon) {
+        icon.classList.add('m-chevron-right')
+        icon.classList.toggle('m-chevron-left')
+    }
+
+    const zipunzip = () => {
+        const navwidth = document.getElementById("enavigator");
+        if (navwidth) {
+            navwidth.classList.toggle("navwidth");
+        }
+
+        const hideMenuText = () => {
+            const logo = document.getElementById("companylogo");
+            if (logo) {
+                const companyName = logo.querySelector("#companyname");
+                companyName?.classList.toggle("hideImp");
+            }
+
+            const nosubcat = document.querySelectorAll(".nosubcat p");
+            nosubcat.forEach((p) => p.classList.toggle("hide"));
+
+            const nosubcaticon = document.querySelectorAll(".nosubcat .ecat");
+            nosubcaticon.forEach((m) => m.classList.toggle("nosubcaticon"));
+
+            const menu = document.querySelectorAll(".maincatname p");
+            menu.forEach((p) => p.classList.toggle("hide"));
+
+            const chevron = document.querySelectorAll(".ecatnoclick .chevron");
+            chevron.forEach((c) => c.classList.toggle("hide"));
+
+            const mecatnoclick = document.querySelectorAll(".esubcats .ecatnoclick .maincatname");
+            mecatnoclick.forEach((m) => m.classList.toggle("mecatnoclick"));
+
+            const catIconInc = document.querySelectorAll(".esubcats .ecatnoclick .maincatname div:nth-child(1)");
+            catIconInc.forEach((m) => m.classList.toggle("caticonInc"));
+
+            const subcats = document.querySelectorAll(".esubcats ul");
+            subcats.forEach((subcats) => subcats.classList.toggle("hide"));
+        };
+
+        hideMenuText();
+    };
+
+    zipunzip();
+
+    const main = () => {
+        const main = document.getElementById("main");
+        if (main) {
+            main.classList.toggle("mainexp");
+        }
+    };
+
+    main();
+};
+
+
+
+
+
+
+
+
+
+
+
 
 onMounted(() => {
     document.addEventListener('click', handleDocumentClick);
+
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+        if (e.key === "F1") {
+            e.preventDefault();
+            const arrowElement = document.querySelector(".arrowpos") as HTMLElement;
+
+            if (arrowElement) {
+                arrowElement.click();
+            }
+        }
+    });
+
+
+
+    const searchInput = document.querySelector(".searchcat input") as HTMLInputElement;
+    const navItems = document.querySelectorAll("#ecom-navs li");
+    const subCategories = document.querySelectorAll("#ecom-navs .esubcats");
+
+    searchInput.addEventListener("input", () => {
+        const searchTerm = searchInput.value.toLowerCase();
+
+        navItems.forEach((item) => {
+            const text = item.textContent!.toLowerCase();
+            const parent = item.closest(".esubcats");
+
+            if (item instanceof HTMLElement) {
+                if (text.includes(searchTerm)) {
+                    item.style.display = "";
+                    if (parent && parent instanceof HTMLElement) {
+                        parent.style.display = "";
+                    }
+                } else {
+                    item.style.display = "none";
+                }
+            }
+        });
+
+        subCategories.forEach((subCat) => {
+            if (subCat instanceof HTMLElement) {
+                const visibleItems = subCat.querySelectorAll('li:not([style*="display: none"])');
+                subCat.style.display = visibleItems.length > 0 ? "" : "none";
+            }
+        });
+
+    });
+
+    searchInput.addEventListener("keydown", (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+            searchInput.value = "";
+            navItems.forEach((item) => {
+                if (item instanceof HTMLElement) {
+                    item.style.display = ""
+                }
+            });
+            subCategories.forEach((subCat) => {
+                if (subCat instanceof HTMLElement) {
+                    subCat.style.display = ""
+                }
+            });
+        }
+    });
+
+
+    const toggleButtons = document.querySelectorAll(".ecatnoclick");
+    const allSubmenus = document.querySelectorAll(".ulsubcates");
+    const chevronIcons = document.querySelectorAll(".chevron");
+
+    toggleButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const submenu = button.nextElementSibling as HTMLElement;
+            const chevron = button.querySelector(".chevron") as HTMLElement;
+            const isExpanded =
+                submenu.style.maxHeight && submenu.style.maxHeight !== "0px";
+
+            allSubmenus.forEach((menu) => {
+                if (menu instanceof HTMLElement) {
+                    menu.style.transition = "max-height 0.3s ease";
+                    menu.style.maxHeight = "0";
+                }
+            });
+            chevronIcons.forEach((icon) => {
+                icon.classList.remove("chevronrotate");
+            });
+
+            if (!isExpanded) {
+                submenu.style.transition = "max-height 0.3s ease";
+                submenu.style.maxHeight = submenu.scrollHeight + "px";
+                chevron.classList.add("chevronrotate");
+            }
+        });
+    });
+
+    allSubmenus.forEach((submenu) => {
+        if (submenu instanceof HTMLElement) {
+            submenu.style.maxHeight = "0";
+            submenu.style.overflow = "hidden";
+            submenu.style.transition = "max-height 0.3s ease"; /* Added */
+        }
+    });
+    chevronIcons.forEach((icon) => {
+        icon.classList.add("chevron");
+    });
 });
 
 onBeforeUnmount(() => {
