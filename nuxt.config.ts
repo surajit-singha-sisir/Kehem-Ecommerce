@@ -46,7 +46,7 @@ export default defineNuxtConfig({
       ],
 
       script: [
-        { type: 'module', src: 'https://surajit-singha-sisir.github.io/mastorsCDN/mastors.js' },
+        // { type: 'module', src: 'https://surajit-singha-sisir.github.io/mastorsCDN/mastors.js', defer: true },
         { type: 'module', src: '/js/kehem-e-dashboard.js' },
       ],
       noscript: [
@@ -54,6 +54,10 @@ export default defineNuxtConfig({
       ],
     }
   },
+  plugins: [
+    '~/plugins/vue-toastification.client.ts',
+    '~/plugins/mastorsForm.ts',
+  ],
 
   devServer: {
     host: '0.0.0.0',
@@ -61,4 +65,5 @@ export default defineNuxtConfig({
   },
 
   modules: ['@nuxt/image', 'nuxt-auth-utils', '@pinia/nuxt'],
+
 })

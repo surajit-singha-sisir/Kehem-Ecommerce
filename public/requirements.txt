@@ -1,0 +1,17 @@
+rmdir /s /q .nuxt
+rmdir /s /q node_modules\.cache
+del package-lock.json
+rmdir /s /q dist
+npm cache clean --force
+
+rm -rf node_modules
+rm -rf .nuxt node_modules/.cache dist
+npm install
+npm run dev
+
+npm prune
+npm list --json
+
+npm install -g depcheck
+depcheck
+npm uninstall lodash

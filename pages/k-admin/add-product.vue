@@ -38,7 +38,8 @@
                 <!-- PRODUCT TITLE -->
                 <section class="relative f-res f-col gap-10 v-space">
                     <label for="product-title" class="star" id="product-title">Product Title</label>
-                    <input type="text" name="product-title" id="product-title" placeholder="Type the title of the product">
+                    <input type="text" name="product-title" id="product-title"
+                        placeholder="Type the title of the product">
                 </section>
 
                 <!-- CATEGORY -->
@@ -51,23 +52,33 @@
                             <input type="text" name="category" id="category" class="combo-input b-Blue b-1 b-rad--05"
                                 placeholder="-- Category --" data-combo-id="combo1" autocomplete="off">
                         </div>
-                        <ul class="combo-options" id="categoryOptions">
+                        <ul class="combo-options" id="categoryOptions" >
+                            <li class="btn btn-primary w-100" @click="isAddCatClicked = !isAddCatClicked">
+                                <i class="m-plus2"></i> New
+                            </li>
                             <li class="no-data" style="display: none;">No data found!</li>
                         </ul>
+
+                        <!-- ADD CATEGORY -->
+                        <aside :class="{ 'hide': !isAddCatClicked }"
+                            class="absolute lb-0 bg-White b-1 border-all f-centered f-col gap-10 z-10">
+                            <input type="text" v-model="newCatName" id="newCatName" placeholder="Category Name">
+                            <button type="button" @click="newCatNameBtn" class="btn btn-primary">Add Category</button>
+                        </aside>
                     </div>
-                    
+
                     <!-- SUB-CATEGORY -->
-                    <!-- <div class="option">
+                    <div class="option">
                         <select name="sub-category" id="sub-category">
                             <option value="false">-- Sub Cat --</option>
                         </select>
-                    </div> -->
+                    </div>
                     <!-- SUB-SUB-CATEGORY -->
-                    <!-- <div class="option">
+                    <div class="option">
                         <select name="sub-sub-category" id="sub-sub-category">
                             <option value="false">-- Sub Sub --</option>
                         </select>
-                    </div> -->
+                    </div>
                 </fieldset>
 
                 <!-- PRICE -->
@@ -286,5 +297,57 @@
 </template>
 
 <script setup lang="ts">
+import { useToast } from "vue-toastification";
+const toast = useToast();
+const accessToken = useCookie<string | null>('access');
+
+const categoryOptions = <HTMLElement | null>(null);
+const addProduct = () => {
+
+}
+
+// ADD CATEGORY
+const isAddCatClicked = ref(false);
+
+const newCatName = ref('');
+const newCatNameBtn = async () => {
+
+    if (!newCatName.value.trim()) {
+        toast('Please enter a category name')
+        return
+    }
+
+
+    try {
+        await $fetch<{ message: string }>('http://192.168.0.111:3000/api/add_category', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken.value ?? ''}`
+            },
+            body: {
+                "name": newCatName.value ?? '',
+            }
+        });
+
+        toast.success(`You have added  "${newCatName.value}"`)
+    } catch {
+        toast('Your Category Name is duplicate or Error on Server')
+    }
+}
+
+async function getCat() {
+    try {
+        const data = await $fetch<{ message: string }>('http://192.168.0.111:3000/api/categories', {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${accessToken.value ?? ''}`
+            }
+        });
+        console.log(data);
+    } catch {
+        toast('Your Category Name is duplicate or Error on Server')
+    }
+}
+getCat()
 
 </script>

@@ -1,53 +1,13 @@
-<template>
-  <div ref="myDiv" @click="handleDivClick">
-    MY DIV CXONTENT
-    <!-- Your content -->
-    <span class="hide">Hidden content</span>
-  </div>
-</template>
+<script setup lang="ts">
+import { useToast } from 'vue-toastification'
 
-<script lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+const toast = useToast()
 
-
-// definePageMeta({
-//   middleware: 'authenticated'
-// });
-
-export default {
-  setup() {
-    const myDiv = ref<HTMLElement | null>(null);
-
-    const handleDivClick = (event: MouseEvent) => {
-      event.stopPropagation();
-      console.log("Clicked inside the div");
-    };
-
-    const handleDocumentClick = (event: MouseEvent) => {
-      if (myDiv.value && !myDiv.value.contains(event.target as Node)) {
-        console.log("Clicked outside the div");
-        return true;
-      }
-      return false;
-    };
-
-
-    onMounted(() => {
-      document.addEventListener('click', handleDocumentClick);
-    });
-
-    onBeforeUnmount(() => {
-      document.removeEventListener('click', handleDocumentClick);
-    });
-
-    return {
-      myDiv,
-      handleDivClick
-    };
-  }
-};
+const showToast = () => {
+  toast.success('Category added successfully!')
+}
 </script>
 
-<style scoped>
-/* Your styles */
-</style>
+<template>
+  <button @click="showToast">Show Toast</button>
+</template>
