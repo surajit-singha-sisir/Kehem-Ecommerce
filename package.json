@@ -7,9 +7,13 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "sassbuild": "sass public/css/kehem-e-dashboard.scss public/css/kehem-e-dashboard.css",
+    "sass": "sass --watch public/css/kehem-e-dashboard.scss public/css/kehem-e-dashboard.css"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.23",
+    "@heroicons/vue": "^2.2.0",
     "@nuxt/image": "^1.9.0",
     "@pinia/nuxt": "^0.10.1",
     "mastorscdn": "^1.1.0",
@@ -17,6 +21,10 @@
     "nuxt-auth-utils": "^0.5.16",
     "vue": "latest",
     "vue-router": "latest",
-    "vue-toastification": "^2.0.0-rc.5"
+    "vue-toastification": "^2.0.0-rc.5",
+    "vuedraggable": "^2.24.3"
+  },
+  "devDependencies": {
+    "sass": "^1.85.1"
   }
 }

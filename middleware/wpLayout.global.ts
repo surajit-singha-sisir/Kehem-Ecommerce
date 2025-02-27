@@ -13,4 +13,5 @@ export default defineNuxtRouteMiddleware((to) => {
   if (to.path.startsWith('/k-admin/') && to.path !== '/k-admin/login') {
     to.meta.layout = 'wp';
   }
+
 });

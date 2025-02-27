@@ -1,0 +1,68 @@
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  .input-group-prepend {
+    position: relative;
+    display: flex;
+    width: auto;
+    align-items: center;
+    padding: 12px 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+
+    .input-group-text {
+      position: relative;
+      width: 100%;
+      text-wrap: nowrap;
+      font-size: 16px;
+      color: #333;
+    }
+  }
+
+  .input-field {
+    flex: 1;
+    padding: 12px 20px;
+    font-size: 16px;
+    color: #333;
+    width: 100%;
+    border: none;
+    outline: none;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border: none;
+      box-shadow: none;
+      transition: all 0.3s ease;
+    }
+
+    &:hover {
+      border: none;
+      outline: none;
+    }
+  }
+
+  &:focus-within .input-group-prepend {
+    // position: absolute;
+    transform: translateX(-100%);
+    width: 0px !important;
+    overflow: hidden;
+    background-color: #e0e0e0;
+    height: 100%;
+    transition: all 0.3s ease;
+  }
+
+  .hide-prepend {
+    position: absolute;
+    transform: translateX(-100%);
+    width: 0px !important;
+    overflow: hidden;
+  }
+}

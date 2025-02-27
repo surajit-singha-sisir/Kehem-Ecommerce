@@ -426,6 +426,67 @@ li {
     flex-wrap: wrap;
   }
 }
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.input-group .input-group-prepend {
+  position: relative;
+  display: flex;
+  width: auto;
+  align-items: center;
+  padding: 12px 20px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.input-group .input-group-prepend .input-group-text {
+  position: relative;
+  width: 100%;
+  text-wrap: nowrap;
+  font-size: 16px;
+  color: #333;
+}
+.input-group .input-field {
+  flex: 1;
+  padding: 12px 20px;
+  font-size: 16px;
+  color: #333;
+  width: 100%;
+  border: none;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.input-group .input-field:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+  transition: all 0.3s ease;
+}
+.input-group .input-field:hover {
+  border: none;
+  outline: none;
+}
+.input-group:focus-within .input-group-prepend {
+  transform: translateX(-100%);
+  width: 0px !important;
+  overflow: hidden;
+  background-color: #e0e0e0;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+.input-group .hide-prepend {
+  position: absolute;
+  transform: translateX(-100%);
+  width: 0px !important;
+  overflow: hidden;
+}
+
 body {
   font-family: "K2D", "Baloo Da 2", serif;
   font-optical-sizing: auto;
@@ -436,8 +497,62 @@ Nuxtlink,
 input::placeholder,
 textarea,
 input:placeholder-shown,
-ul {
+ul,
+select,
+option,
+optgroup {
   font-family: "K2D", "Baloo Da 2", serif;
+}
+
+.combo-box .new-combo-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-height: 10rem;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  list-style-type: none;
+  scrollbar-width: thin;
+  scrollbar-color: #c7c7c7 #f1f1f1;
+  transition: all 0.3s ease;
+}
+.combo-box .new-combo-options .combo-option {
+  padding-left: 1rem;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.combo-box .new-combo-options .combo-option:hover {
+  background-color: #ececec;
+}
+.combo-box .Combo-inputbox::before {
+  content: "\f030";
+  color: #8e8e8e;
+  font-family: "mastorsIcons" !important;
+  position: absolute;
+  right: 0.5rem;
+  font-size: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+.combo-box .Combo-inputbox.clicked::before {
+  content: "\f032";
+  transition: all 0.3s ease;
+}
+.combo-box .Combo-inputbox::after {
+  display: none;
+  background-image: none;
+}
+.combo-box .combo-input::placeholder {
+  font-size: 1rem;
 }
 
 @media screen and (max-width: 1620px) {

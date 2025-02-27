@@ -1,32 +1,7 @@
 <template>
     <section class="w-100">
-        <NuxtLink to="/k-admin/" class="btn btn-primary">Back</NuxtLink><br>
-
-        <!-- key = HashidsField(real_field_name="id")
-    name = models.CharField(max_length=100)
-    price = models.IntegerField()
-    discount = models.IntegerField()
-    stock = models.IntegerField()
-    image = models.ImageField(upload_to='product/images')
-    image2 = models.ImageField(upload_to='product/images')
-    image3 = models.ImageField(upload_to='product/images')
-    image4 = models.ImageField(upload_to='product/images')
-    image5 = models.ImageField(upload_to='product/images')
-    video = models.FileField(upload_to='product/videos')
-    short_description = models.CharField(max_length=1000)
-    full_description = models.TextField()
-   
-    # product banner
-    banner = models.ImageField(upload_to='product/images')
-    banner_title = models.CharField(max_length=100)
-    banner_sub_title = models.CharField(max_length=100)
-    banner_product_title_image = models.ImageField(upload_to='product/images')
-    # dosage
-    dosage = models.TextField()
-    date = models.DateTimeField(auto_now_add=True,auto_created=True)
-    def __str__(self):
-        return self.name -->
-
+        <button class="btn btn-warning m--10" @click="goBack">Go Back</button>
+        <button class="btn btn-happy m--10" @click="goForward">Go Forward</button> <br>
         <!-- ADD PRODUCT START -->
         <form @submit.prevent="addProduct" id="addProductForm" class="product add-product gap-10"
             enctype="multipart/form-data">
@@ -42,43 +17,51 @@
                         placeholder="Type the title of the product">
                 </section>
 
-                <!-- CATEGORY -->
+                <!-- CATEGORY CHOICE-->
                 <fieldset class="b-e bg-3 f-res gap-10 w-100 pad--10 m-b--10">
                     <legend class="thislegend star">Category</legend>
 
-                    <!-- CATEGORY -->
-                    <div class="combo-box w-100">
-                        <div class="Combo-inputbox">
-                            <input type="text" name="category" id="category" class="combo-input b-Blue b-1 b-rad--05"
-                                placeholder="-- Category --" data-combo-id="combo1" autocomplete="off">
+                    <!-- CATEGORY VIEW -->
+                    <div class="combo-box" ref="comboBoxContainer">
+                        <div class="Combo-inputbox" :class="{ 'clicked': showDropdown }">
+                            <input v-model="inputValue" type="text" class="combo-input"
+                                placeholder="Search or select..." @click="showDropdown = true"
+                                @keydown="handleKeydown" />
                         </div>
-                        <ul class="combo-options" id="categoryOptions" >
-                            <li class="btn btn-primary w-100" @click="isAddCatClicked = !isAddCatClicked">
-                                <i class="m-plus2"></i> New
+
+                        <ul v-if="showDropdown" class="new-combo-options">
+                            <li v-for="option in filteredOptions" :key="option" class="combo-option"
+                                @click="selectOption(option)">
+                                {{ option }}
                             </li>
-                            <li class="no-data" style="display: none;">No data found!</li>
+                            <li class="btn btn-primary w-100" @click="isAddCatClicked = !isAddCatClicked">
+                                <i class="m-plus2">New</i>
+                            </li>
                         </ul>
 
                         <!-- ADD CATEGORY -->
                         <aside :class="{ 'hide': !isAddCatClicked }"
                             class="absolute lb-0 bg-White b-1 border-all f-centered f-col gap-10 z-10">
-                            <input type="text" v-model="newCatName" id="newCatName" placeholder="Category Name">
+                            <i @click="isAddCatClicked = !isAddCatClicked"
+                                class="absolute tr-02 btn btn-fire btn-sm z-1 m-x1 btn-rounded"></i>
+                            <input type="text" class="m-t--15" v-model="newCatName" id="newCatName"
+                                placeholder="Category Name">
                             <button type="button" @click="newCatNameBtn" class="btn btn-primary">Add Category</button>
                         </aside>
                     </div>
 
                     <!-- SUB-CATEGORY -->
-                    <div class="option">
+                    <!-- <div class="option">
                         <select name="sub-category" id="sub-category">
                             <option value="false">-- Sub Cat --</option>
                         </select>
-                    </div>
+                    </div> -->
                     <!-- SUB-SUB-CATEGORY -->
-                    <div class="option">
+                    <!-- <div class="option">
                         <select name="sub-sub-category" id="sub-sub-category">
                             <option value="false">-- Sub Sub --</option>
                         </select>
-                    </div>
+                    </div> -->
                 </fieldset>
 
                 <!-- PRICE -->
@@ -87,25 +70,23 @@
 
                     <!-- Buy Price -->
                     <div class="text-input" id="text-input">
-                        <label for="productBuyPrice">Buy Price</label>
-                        <input type="number" class="inputbox" name="buyPrice" placeholder="" id="productBuyPrice">
+                        <input type="number" class="inputbox" name="buyPrice" placeholder="Buy Price"
+                            v-model="productBuyPrice">
                     </div>
-
-                    <!-- Selling Price -->
+                    <!-- Sell Price -->
                     <div class="text-input" id="text-input">
-                        <label for="productSellingPrice">Selling Price</label>
-                        <input type="number" name="sellingPrice" class="inputbox" id="productSellingPrice">
+                        <input type="number" class="inputbox" name="sellPrice" placeholder="Sell Price"
+                            v-model="productSellPrice">
                     </div>
-
                     <!-- Discount Price -->
                     <div class="text-input" id="text-input">
-                        <label for="productDiscountPrice">Discount Price</label>
-                        <input type="number" name="discountPrice" class="inputbox" id="productDiscountPrice">
+                        <input type="number" class="inputbox" name="discountPrice" placeholder="Discount Price"
+                            v-model="productDiscountPrice">
                     </div>
 
                     <!-- UNIT -->
                     <div class="option">
-                        <select class="bg-Currency currency" id="productPricingCurrency" name="priceUnit">
+                        <select class="bg-Currency currency" v-model="productPricingCurrency" name="priceUnit" disabled>
                             <option value="taka" target-currency="৳">৳ Taka</option>
                             <option value="dollar" target-currency="$">$ Dollar</option>
                             <option value="rupee" target-currency="₹">₹ Rupee</option>
@@ -124,7 +105,8 @@
                             <input class="min-w--20" name="stock" type="number" id="addProductTotalStock"
                                 placeholder="Total Quantity">
                             <div class="option">
-                                <select name="stockUnit" id="addProductStockUnit">
+                                <select name="stockUnit" id="addProductStockUnit" v-model="addProductStockUnit"
+                                    disabled>
                                     <option value="Piece">Piece</option>
                                     <option value="Packet">Packet</option>
                                     <option value="Box">Box</option>
@@ -141,14 +123,35 @@
 
                     <!-- SELECT ATTRIBUTE -->
                     <div class="pad--10 b-b-e m-b--10">
-                        <div class="combo-box">
-                            <div class="Combo-inputbox">
-                                <input type="text" data-target="" name="attribute" id="attrInp" class="combo-input"
-                                    placeholder="-- Select Atributes --" data-combo-id="combo1" autocomplete="off">
-                                <ul class="combo-options attributeSelect" id="attributeSelect" style="display: none;">
-                                    <li class="no-data" style="display: none;">No data found!</li>
-                                </ul>
+
+                        <!-- CATEGORY VIEW -->
+                        <div class="combo-box" ref="comboBoxContainer">
+                            <div class="Combo-inputbox" :class="{ 'clicked': showDropdown }">
+                                <input v-model="inputValue" type="text" class="combo-input"
+                                    placeholder="Search or select..." @click="showDropdown = true"
+                                    @keydown="handleKeydown" />
                             </div>
+
+                            <ul v-if="showDropdown" class="new-combo-options">
+                                <li v-for="option in filteredOptions" :key="option" class="combo-option"
+                                    @click="selectOption(option)">
+                                    {{ option }}
+                                </li>
+                                <li class="btn btn-primary w-100" @click="isAddCatClicked = !isAddCatClicked">
+                                    <i class="m-plus2">New</i>
+                                </li>
+                            </ul>
+
+                            <!-- ATTRIBUTES COMBOBOX -->
+                            <aside :class="{ 'hide': !isAddCatClicked }"
+                                class="absolute lb-0 bg-White b-1 border-all f-centered f-col gap-10 z-10">
+                                <i @click="isAddCatClicked = !isAddCatClicked"
+                                    class="absolute tr-02 btn btn-fire btn-sm z-1 m-x1 btn-rounded"></i>
+                                <input type="text" class="m-t--15" v-model="newCatName" id="newCatName"
+                                    placeholder="Category Name">
+                                <button type="button" @click="newCatNameBtn" class="btn btn-primary">Add
+                                    Category</button>
+                            </aside>
                         </div>
 
                         <!-- ATTRIBUTE VALUES -->
@@ -300,6 +303,7 @@
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const accessToken = useCookie<string | null>('access');
+const buyPriceInput = ref('');
 
 const categoryOptions = <HTMLElement | null>(null);
 const addProduct = () => {
@@ -335,19 +339,114 @@ const newCatNameBtn = async () => {
     }
 }
 
-async function getCat() {
+
+
+// BACK AND FORWARD
+const goBack = () => {
+    window.history.back();
+};
+
+const goForward = () => {
+    window.history.forward();
+};
+
+
+
+
+// GET CATEGORY
+interface Category {
+    name: string;
+}
+
+const options = ref<string[]>([]); // FOREIGN
+const getCats = async () => {
     try {
-        const data = await $fetch<{ message: string }>('http://192.168.0.111:3000/api/categories', {
+        const { data: categories, error } = await useFetch<Category[]>('http://192.168.0.111:3000/api/categories', {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${accessToken.value ?? ''}`
-            }
+                Authorization: `Bearer ${accessToken.value ?? ''}`,
+            },
         });
-        console.log(data);
-    } catch {
-        toast('Your Category Name is duplicate or Error on Server')
+
+        if (categories.value) {
+            options.value = categories.value.map((category) => category.name);
+        }
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        toast('Error fetching categories');
     }
-}
-getCat()
+};
+// COMPILE ON TIME
+getCats();
+
+onMounted(() => {
+
+    // COMPILE AFTER RELOAD
+    window.addEventListener('load', getCats);
+    return () => {
+        window.removeEventListener('load', getCats);
+    };
+})
+
+
+const inputValue = ref<string>('');
+const isInputClicked = ref<boolean>(false);
+const showDropdown = ref<boolean>(false);
+// OPTIONS VARIABLE INHERIT
+
+const comboBoxContainer = ref<HTMLElement | null>(null);
+
+const filteredOptions = computed(() => {
+    const query = inputValue.value.toLowerCase();
+    return options.value.filter(option =>
+        option.toLowerCase().includes(query)
+    );
+});
+
+const selectOption = (option: string): void => {
+    inputValue.value = option;
+    showDropdown.value = false;
+    isInputClicked.value = true;
+
+    console.log(inputValue.value);
+
+};
+
+const handleKeydown = (event: KeyboardEvent): void => {
+    if (event.key === 'Escape') {
+        inputValue.value = '';
+        showDropdown.value = false;
+    }
+};
+
+const closeDropdown = (event: MouseEvent): void => {
+    if (comboBoxContainer.value && !comboBoxContainer.value.contains(event.target as Node)) {
+        showDropdown.value = false;
+        isInputClicked.value = true;
+    }
+    if (isAddCatClicked.value) {
+        isAddCatClicked.value = true
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('click', closeDropdown);
+});
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', closeDropdown);
+});
+
+
+
+
+const productBuyPrice = ref('')
+const productSellPrice = ref('')
+const productDiscountPrice = ref('')
+const productPricingCurrency = ref('taka')
+const addProductStockUnit = ref('Piece')
+
+
+
 
 </script>
