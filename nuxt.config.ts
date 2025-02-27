@@ -57,7 +57,7 @@ export default defineNuxtConfig({
   plugins: [
     '~/plugins/vue-toastification.client.ts',
     '~/plugins/mastorsForm.ts',
-    '~/plugins/history.ts',
+    '~/plugins/vuedraggable.client.ts',
   ],
 
   devServer: {
