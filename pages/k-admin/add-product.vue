@@ -1,3 +1,95 @@
+<style>
+.e-tags .e-tag-list li {
+    animation: bounce 1s ease;
+}
+
+.e-tags .e-tag-list li p[contenteditable="true"]:focus-visible {
+    outline: none;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    color: #000;
+}
+
+
+
+
+.added-faq {
+    position: relative;
+    transition: all 0.3s ease-in-out;
+}
+
+.bounce-add {
+    animation: bounce 1s ease;
+}
+
+.bounce-delete {
+    animation: fade-out-bounce 0.5s ease-out forwards;
+}
+
+.bounce-edit {
+    animation: bounce-edit 0.5s ease-out;
+}
+
+@keyframes fade-out-bounce {
+    0% {
+        opacity: 1;
+    }
+
+    40% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+@keyframes bounce-edit {
+    0% {
+        background-color: transparent;
+        transform: scale(1);
+    }
+
+    50% {
+        background-color: #e6e6e6;
+        transform: scale(1.1);
+    }
+
+    100% {
+        background-color: transparent;
+        transform: scale(1);
+    }
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+
+    20% {
+        transform: translateY(-10px);
+    }
+
+    40% {
+        transform: translateY(0);
+    }
+
+    60% {
+        transform: translateY(-5px);
+    }
+
+    80% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+</style>
+
 <template>
     <section class="w-100">
         <button class="btn btn-warning m--10" @click="goBack">Go Back</button>
@@ -17,52 +109,7 @@
                         placeholder="Type the title of the product">
                 </section>
 
-                <!-- CATEGORY CHOICE-->
-                <fieldset class="b-e bg-3 f-res gap-10 w-100 pad--10 m-b--10">
-                    <legend class="thislegend star">Category</legend>
-
-                    <!-- CATEGORY VIEW -->
-                    <div class="combo-box" ref="comboBoxContainer">
-                        <div class="Combo-inputbox" :class="{ 'clicked': showDropdown }">
-                            <input v-model="inputValue" type="text" class="combo-input"
-                                placeholder="Search or select..." @click="showDropdown = true"
-                                @keydown="handleKeydown" />
-                        </div>
-
-                        <ul v-if="showDropdown" class="new-combo-options">
-                            <li v-for="option in filteredOptions" :key="option" class="combo-option"
-                                @click="selectOption(option)">
-                                {{ option }}
-                            </li>
-                            <li class="btn btn-primary w-100" @click="isAddCatClicked = !isAddCatClicked">
-                                <i class="m-plus2">New</i>
-                            </li>
-                        </ul>
-
-                        <!-- ADD CATEGORY -->
-                        <aside :class="{ 'hide': !isAddCatClicked }"
-                            class="absolute lb-0 bg-White b-1 border-all f-centered f-col gap-10 z-10">
-                            <i @click="isAddCatClicked = !isAddCatClicked"
-                                class="absolute tr-02 btn btn-fire btn-sm z-1 m-x1 btn-rounded"></i>
-                            <input type="text" class="m-t--15" v-model="newCatName" id="newCatName"
-                                placeholder="Category Name">
-                            <button type="button" @click="newCatNameBtn" class="btn btn-primary">Add Category</button>
-                        </aside>
-                    </div>
-
-                    <!-- SUB-CATEGORY -->
-                    <!-- <div class="option">
-                        <select name="sub-category" id="sub-category">
-                            <option value="false">-- Sub Cat --</option>
-                        </select>
-                    </div> -->
-                    <!-- SUB-SUB-CATEGORY -->
-                    <!-- <div class="option">
-                        <select name="sub-sub-category" id="sub-sub-category">
-                            <option value="false">-- Sub Sub --</option>
-                        </select>
-                    </div> -->
-                </fieldset>
+                <Category />
 
                 <!-- PRICE -->
                 <fieldset class="b-e bg-3 f-res gap-10 w-100 pad--10 m-b--10" id="productPrices">
@@ -120,145 +167,62 @@
                 <!-- ATTRIBUTES -->
                 <fieldset class="attributes w-100 f f-col f-just-center b-e pad--10 bg-3 m-tb--10">
                     <legend>Atributes</legend>
+                    <Attributes />
 
-                    <!-- SELECT ATTRIBUTE -->
-                    <div class="pad--10 b-b-e m-b--10">
-
-                        <!-- CATEGORY VIEW -->
-                        <div class="combo-box" ref="comboBoxContainer">
-                            <div class="Combo-inputbox" :class="{ 'clicked': showDropdown }">
-                                <input v-model="inputValue" type="text" class="combo-input"
-                                    placeholder="Search or select..." @click="showDropdown = true"
-                                    @keydown="handleKeydown" />
-                            </div>
-
-                            <ul v-if="showDropdown" class="new-combo-options">
-                                <li v-for="option in filteredOptions" :key="option" class="combo-option"
-                                    @click="selectOption(option)">
-                                    {{ option }}
-                                </li>
-                                <li class="btn btn-primary w-100" @click="isAddCatClicked = !isAddCatClicked">
-                                    <i class="m-plus2">New</i>
-                                </li>
-                            </ul>
-
-                            <!-- ATTRIBUTES COMBOBOX -->
-                            <aside :class="{ 'hide': !isAddCatClicked }"
-                                class="absolute lb-0 bg-White b-1 border-all f-centered f-col gap-10 z-10">
-                                <i @click="isAddCatClicked = !isAddCatClicked"
-                                    class="absolute tr-02 btn btn-fire btn-sm z-1 m-x1 btn-rounded"></i>
-                                <input type="text" class="m-t--15" v-model="newCatName" id="newCatName"
-                                    placeholder="Category Name">
-                                <button type="button" @click="newCatNameBtn" class="btn btn-primary">Add
-                                    Category</button>
-                            </aside>
-                        </div>
-
-                        <!-- ATTRIBUTE VALUES -->
-                        <div class="b-e pad--10 f f-just-between f-align-items-center gap-10">
-                            <section class="f f-wrap gap-10" id="attributeValues">
-
-                            </section>
-                            <div class="relative w-100">
-                                <button id="addAttributeBtn" type="button"
-                                    class="pad-tb--03 pad-lr--08 plus b-none bg-hov-Purple cur-pointer text--m">+</button>
-
-                                <!-- ADD VALUE -->
-                                <div id="newValueAssigning"
-                                    class="absolute hide b-e bg-2 f f-col gap-10 w--150 pad--10">
-                                    <!-- COMBOBOX -->
-                                    <div class="combo-box">
-                                        <div class="Combo-inputbox">
-                                            <input type="text" id="newValueAssigningInput" class="combo-input"
-                                                data-target="" placeholder="-- Atributes --" data-combo-id="combo3">
-                                            <ul class="combo-options" id="newValueAssigningOptions"
-                                                style="display: none;">
-                                                <li class="no-data" style="display: none;">No data found!</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <!-- INPUT VALUE -->
-                                    <div class="text-input">
-                                        <input type="text" id="attributeValueOption" placeholder="Variable Name">
-                                    </div>
-                                    <!-- SUBMIT BUTTON -->
-                                    <button id="addNewAttributeValue">Submit</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ATTRIBUTE VALUES DETAILS -->
-                        <section class="b-e pad--10 m-t--10 hide" id="attributeSection">
-                            <table class="attributeTable">
-                                <thead>
-                                    <tr>
-                                        <th id="attributeCat">Size</th>
-                                        <th>Stock(Qty)</th>
-                                        <th>Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                        </section>
-
-                    </div>
                 </fieldset>
 
                 <!-- TEXT EDITOR -->
-                <section class="summernote">
-                    <span class="text--m star">Description</span><br><br>
-                    <textarea class="summernote" name="summerNote" id="summernote"></textarea>
-                    <!-- <script>
-                        $('#summernote').summernote({
-                            placeholder: '1. Introduction <br><br> 2. Describe your product<br><br> <i>Add your product Images and Text Sizes to get Notice</i>',
-                            tabsize: 2,
-                            height: 200,
-                            toolbar: [
-                                ['style', ['style']],
-                                ['font', ['bold', 'underline', 'clear']],
-                                // ['color', ['color']],
-                                ['para', ['ul', 'ol', 'paragraph']],
-                                ['table', ['table']],
-                                ['insert', ['link', 'picture', 'video']],
-                                ['view', ['codeview']]
-                            ]
-                        });
-                    </script> -->
-                </section>
+                <SummerNote />
 
                 <!-- TAGS -->
-                <section class="e-tags" id="e-tags">
+                <section class="e-tags" ref="tagContainer">
                     <span class="text--m star">Tags</span>
-                    <ul class="e-tag-list">
-                        <!-- DYNAMICLLY ADD DATA -->
+                    <ul class="e-tag-list" ref="eTagList">
+                        <!--  ref="eTagList" => JSON  -->
+
                         <!-- <li>
                             <p>Bottle</p>
                             <i class="m-m-cross"></i>
                         </li> -->
                     </ul>
                     <!-- INPUT BOX -->
-                    <input type="text" class="e-addTagInput" placeholder="Add a new tag">
+                    <input type="text" v-model="inputBox" @keydown="inputKeyboardTrigger" class="e-addTagInput"
+                        placeholder="Add a new tag" />
                 </section>
 
                 <!-- FAQ -->
                 <section class="e-faqs" id="faqContainer">
                     <span class="text--m star">Frequently Ask Questions (FAQ)</span>
                     <div class="e-faqInputs" id="e-faqInputs">
-                        <!-- INPUT BOXS -->
-                        <input type="text" class="e-questionInput" id="e-questionInput" placeholder="Question">
-                        <textarea name="" id="e-answerInput" class="e-answerInput" placeholder="Answer"></textarea>
+                        <!-- INPUT BOXES -->
+                        <input type="text" v-model="faqInputTitle" class="e-questionInput" id="e-questionInput"
+                            placeholder="Question" />
+                        <textarea id="e-answerInput" class="e-answerInput" v-model="faqInputDescription"
+                            placeholder="Answer"></textarea>
                         <!-- ADD BUTTON -->
-                        <button class="btn btn-primary w--100 m-auto" id="faqAddBtn">Add</button>
+                        <button class="btn btn-primary w--100 m-auto" @click="faqAddBtn">Add</button>
                     </div>
-                    <div class="e-faq-preview hide" id="e-faq-preview">
+                    <div class="e-faq-preview" :class="{ 'hide': !isAddFaqClicked }">
                         <!-- PREVIEW -->
                         <span class="text--m b darkBlue">FAQ Preview</span>
                         <div class="e-faq-preview-box">
-                            <!-- DYNAMICLLY ADD DATA -->
+                            <!-- FAQ LIST -->
+                            <span v-for="(faq, index) in faqList" :key="index" class="added-faq"
+                                :class="faq.animationClass">
+                                <i class="e-faq-counter">{{ index + 1 }}</i>
+                                <div class="e-faq-content">
+                                    <h4 class="added-question">{{ faq.title }}</h4>
+                                    <p class="added-answer">{{ faq.description }}</p>
+                                </div>
+                                <i class="m-compose" title="Edit FAQ" @click="editFaq(index)"></i>
+                                <i class="m-bin" title="Delete FAQ" @click="deleteFaq(index)"></i>
+                            </span>
                         </div>
                     </div>
                 </section>
+
+
+
 
             </aside>
 
@@ -304,43 +268,6 @@ import { useToast } from "vue-toastification";
 const toast = useToast();
 const accessToken = useCookie<string | null>('access');
 const buyPriceInput = ref('');
-
-const categoryOptions = <HTMLElement | null>(null);
-const addProduct = () => {
-
-}
-
-// ADD CATEGORY
-const isAddCatClicked = ref(false);
-
-const newCatName = ref('');
-const newCatNameBtn = async () => {
-
-    if (!newCatName.value.trim()) {
-        toast('Please enter a category name')
-        return
-    }
-
-
-    try {
-        await $fetch<{ message: string }>('http://192.168.0.111:3000/api/add_category', {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${accessToken.value ?? ''}`
-            },
-            body: {
-                "name": newCatName.value ?? '',
-            }
-        });
-
-        toast.success(`You have added  "${newCatName.value}"`)
-    } catch {
-        toast('Your Category Name is duplicate or Error on Server')
-    }
-}
-
-
-
 // BACK AND FORWARD
 const goBack = () => {
     window.history.back();
@@ -349,97 +276,213 @@ const goBack = () => {
 const goForward = () => {
     window.history.forward();
 };
+const addProduct = () => { }
 
 
 
 
-// GET CATEGORY
-interface Category {
-    name: string;
-}
 
-const options = ref<string[]>([]); // FOREIGN
-const getCats = async () => {
-    try {
-        const { data: categories, error } = await useFetch<Category[]>('http://192.168.0.111:3000/api/categories', {
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer ${accessToken.value ?? ''}`,
-            },
-        });
 
-        if (categories.value) {
-            options.value = categories.value.map((category) => category.name);
+
+
+
+
+
+const inputBox = ref<string>('');
+const eTagList = ref<HTMLElement | null>(null);
+
+// TAG :: DUPLICATE CHECKER
+const tagChecker = (tag: string, list: HTMLElement | null): boolean => {
+    return list ? Array.from(list.children).some((li) => li.textContent === tag) : false;
+};
+
+// TAG :: NO SPECIAL CHARACTERS
+const specialChars = (tag: string): boolean => {
+    const regex = /[^a-zA-Z0-9 ]/;
+    return regex.test(tag);
+};
+
+// TAG :: KEYBOARD
+const inputKeyboardTrigger = (event: KeyboardEvent): void => {
+    if (event.key === 'Tab' || event.key === 'Enter' || event.key === ',') {
+        event.preventDefault();
+        const tagValue = inputBox.value?.trim() || '';
+
+        if (tagValue) {
+            // CHECK DUPLICATION
+            if (tagChecker(tagValue, eTagList.value)) {
+                toast.error('Tag already exists');
+                return;
+            }
+            // CHECK SPECIAL CHARACTERS
+            else if (specialChars(tagValue)) {
+                toast.error('Tag contains special characters');
+                return;
+            }
+            // CHECK MINIMUM 3 CHARACTER INPUTVALUE
+            else if (tagValue.length < 3) {
+                toast.error('Tag must be at least 3 characters long');
+                return;
+            }
+
+            // ADD LI
+            const li = document.createElement('li');
+            li.innerHTML = `<p>${tagValue}</p><i class="m-m-cross"></i>`;
+            if (eTagList.value) {
+                eTagList.value.appendChild(li);
+            }
+
+            // DELETE ACTION
+            const deleteButton = li.querySelector('i');
+            if (deleteButton) {
+                deleteButton.addEventListener('click', () => {
+                    if (eTagList.value) {
+                        eTagList.value.removeChild(li);
+                    }
+                });
+            }
+
+
+            // DOUBLECLICK TO EDIT CONTENT
+            li.addEventListener('dblclick', () => {
+                const tagText = li.querySelector('p');
+                if (tagText) {
+                    tagText.setAttribute('contenteditable', 'true');
+
+                    tagText.focus();
+                    tagText.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+
+                            tagText.removeAttribute('contenteditable');
+
+                            const newTag = tagText.textContent?.trim();
+                            if (newTag && newTag !== tagText.textContent) {
+                                tagText.textContent = newTag;
+                            }
+                        }
+                    });
+                    tagText.addEventListener('blur', () => {
+                        tagText.removeAttribute('contenteditable');
+
+                        const newTag = tagText.textContent?.trim();
+                        if (newTag && newTag !== tagText.textContent) {
+                            tagText.textContent = newTag;
+                        }
+                    });
+                }
+            });
+
+
+
+            // EMPTY INPUT BOX
+            if (inputBox.value) {
+                inputBox.value = '';
+            }
         }
-    } catch (error) {
-        console.error('Error fetching categories:', error);
-        toast('Error fetching categories');
-    }
-};
-// COMPILE ON TIME
-getCats();
-
-onMounted(() => {
-
-    // COMPILE AFTER RELOAD
-    window.addEventListener('load', getCats);
-    return () => {
-        window.removeEventListener('load', getCats);
-    };
-})
-
-
-const inputValue = ref<string>('');
-const isInputClicked = ref<boolean>(false);
-const showDropdown = ref<boolean>(false);
-// OPTIONS VARIABLE INHERIT
-
-const comboBoxContainer = ref<HTMLElement | null>(null);
-
-const filteredOptions = computed(() => {
-    const query = inputValue.value.toLowerCase();
-    return options.value.filter(option =>
-        option.toLowerCase().includes(query)
-    );
-});
-
-const selectOption = (option: string): void => {
-    inputValue.value = option;
-    showDropdown.value = false;
-    isInputClicked.value = true;
-
-    console.log(inputValue.value);
-
-};
-
-const handleKeydown = (event: KeyboardEvent): void => {
-    if (event.key === 'Escape') {
-        inputValue.value = '';
-        showDropdown.value = false;
     }
 };
 
-const closeDropdown = (event: MouseEvent): void => {
-    if (comboBoxContainer.value && !comboBoxContainer.value.contains(event.target as Node)) {
-        showDropdown.value = false;
-        isInputClicked.value = true;
+
+
+
+
+
+
+// FAQs
+const faqInputTitle = ref<string>('');
+const faqInputDescription = ref<string>('');
+const isAddFaqClicked = ref(false);
+const faqList = ref<Array<{ title: string, description: string, animationClass: string }>>([]);
+const currentEditIndex = ref<number | null>(null);
+
+const faqAddBtn = () => {
+    isAddFaqClicked.value = true;
+
+    if (!faqInputTitle.value || faqInputTitle.value.length < 10 || faqInputTitle.value.length > 100) {
+        toast.error('Question must be between 10 and 100 characters.');
+        return;
     }
-    if (isAddCatClicked.value) {
-        isAddCatClicked.value = true
+
+    if (!faqInputDescription.value || faqInputDescription.value.length < 20 || faqInputDescription.value.length > 200) {
+        toast.error('Answer must be between 20 and 200 characters.');
+        return;
+    }
+
+    const isDuplicate = faqList.value.some(faq => faq.title.toLowerCase() === faqInputTitle.value.toLowerCase());
+    if (isDuplicate) {
+        toast.error('This question already exists.');
+        return;
+    }
+
+    if (currentEditIndex.value !== null) {
+        faqList.value[currentEditIndex.value] = {
+            title: faqInputTitle.value,
+            description: faqInputDescription.value,
+            animationClass: 'bounce-edit',
+        };
+        currentEditIndex.value = null;
+    } else {
+        faqList.value.push({
+            title: faqInputTitle.value,
+            description: faqInputDescription.value,
+            animationClass: 'bounce-add',
+        });
+    }
+
+    faqInputTitle.value = '';
+    faqInputDescription.value = '';
+    toast.success(`You have added a new FAQ`)
+
+    if (faqList.value.length === 0) {
+        isAddFaqClicked.value = false;
     }
 };
 
-onMounted(() => {
-    document.addEventListener('click', closeDropdown);
-});
+const editFaq = (index: number) => {
+    const oldAnswer = faqList.value[index].description;
 
-onBeforeUnmount(() => {
-    document.removeEventListener('click', closeDropdown);
-});
+    faqInputTitle.value = faqList.value[index].title;
+    faqInputDescription.value = faqList.value[index].description;
+    currentEditIndex.value = index;
+
+    faqList.value[index].animationClass = 'bounce-edit';
+};
+
+const deleteFaq = (index: number) => {
+    faqList.value[index].animationClass = 'bounce-delete';
+
+    setTimeout(() => {
+        faqList.value.splice(index, 1);
+
+        if (faqList.value.length === 0) {
+            isAddFaqClicked.value = false;
+        }
+    }, 500);
+};
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// PRICING
 const productBuyPrice = ref('')
 const productSellPrice = ref('')
 const productDiscountPrice = ref('')
