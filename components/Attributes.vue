@@ -144,6 +144,18 @@
     background-color: #bfbfbf;
     transition: all 0.3s ease;
 }
+
+.border-rounded {
+    border-radius: 50%;
+    color: #fff;
+    background-color: #007bff;
+    font-size: 1.2rem;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ff1c73;
+    }
+}
 </style>
 
 <template>
@@ -263,9 +275,9 @@
                                 <span class="attribute-selected-item">
                                     <span>::</span>
                                     <div class="f-centered gap-03">
-                                        <span class="b Blue-900">{{ element.name }}</span>
+                                        <span class="attribute-name b Blue-900">{{ element.name }}</span>
                                         <i class="m-chevron-right"></i>
-                                        <span class="b Cyan-800">{{ element.value.join(", ") }}</span>
+                                        <span class="attribute-values b Cyan-800">{{ element.value.join(", ") }}</span>
                                     </div>
                                 </span>
                             </div>
@@ -281,48 +293,46 @@
                 <!-- MENDATORY ATTRIBUTE -->
                 <h4 class="m-tb--10">Your Mendatory Attribute List <span class="Red">(max: 2)</span></h4>
 
-                <draggable v-model="section2Items" :group="'items'" item-key="id" class="draggable-list"
-                    @start="onDragStart" @end="onDragEnd">
-                    <template #item="{ element }">
-                        <div ref="section2Container" class="draggable-item"
-                            :class="{ 'last-dragged': lastDraggedId === element.id }">
-
-                            <div class="f-center-start gap-10 w-100">
-                                <span class="attribute-selected-item">
-                                    <span>::</span>
-                                    <div class="f-centered gap-03">
-                                        <span class="b Blue-900">{{ element.name }}</span>
-                                        <i class="m-chevron-right"></i>
-                                        <span class="b Cyan-800">{{ element.value.join(", ") }}</span>
-                                    </div>
-                                </span>
+                    <draggable v-model="section2Items" :group="'items'" item-key="id" class="draggable-list"
+                        @start="onDragStart" @end="onDragEnd">
+                        <template #item="{ element }">
+                            <div ref="section2Container" class="draggable-item"
+                                :class="{ 'last-dragged': lastDraggedId === element.id }">
+                                <div class="f-center-start gap-10 w-100">
+                                    <span class="attribute-selected-item">
+                                        <span>::</span>
+                                        <div class="f-centered gap-03">
+                                            <span class="attribute-name b Blue-900">{{ element.name }}</span>
+                                            <i class="m-chevron-right"></i>
+                                            <span class="attribute-values b Cyan-800">{{ element.value.join(", ")
+                                            }}</span>
+                                        </div>
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    </template>
-                </draggable>
+                        </template>
+                    </draggable>
 
-
-
-
-                <table ref="section2Table" class="attributeTable" v-if="section2Items.length >= 1">
-                    <thead>
-                        <tr>
-                            <th id="attributeCat">Size</th>
-                            <th>Stock(Qty)</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr data-value="${valueText}">
-                            <td>${value}</td>
-                            <td><input type="number" class="tableQty" name="${valueText}" id="${valueText}" min="1"
-                                    placeholder="Qty">
-                            </td>
-                            <td><button class="btn1" targer-price="${newPrice}">${newPrice}
-                                    ${currencySelect.value}</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <!-- Table -->
+                    <table ref="section2Table" class="attributeTable" v-if="section2Items.length">
+                        <thead>
+                            <tr>
+                                <th colspan="3" class="text--12">{{ attributeName }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(value, index) in attributeValues" :key="index">
+                                <td>{{ value }}</td>
+                                <td>
+                                    <input type="number" v-model="tableQuantities[index]" class="tableQty"
+                                        name="attributeValue" min="1" placeholder="Stock">
+                                </td>
+                                <td>
+                                    <button class="btn1">{{ foreignKeys.sellPrice }} taka</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
 
 
 
@@ -344,16 +354,43 @@ import draggable from 'vuedraggable';
 
 
 
+interface Props {
+    buyPrice: number,
+    sellPrice: number,
+    discountPrice: number,
+    productCurrency: string,
+    stock: number,
+}
+const foreignKeys = defineProps<Props>();
+
+console.log(foreignKeys);
+
 
 // STOCK MAINTAINS
 const section2Container = ref<HTMLElement | null>(null);
 const section2Table = ref<HTMLElement | null>(null);
+const attributeName = ref<string>("");
+const attributeValues = ref<string[]>([]);
+const tableQuantities = ref<number[]>([]);
 
-watch(section2Container, (newValue) => {
-    if (newValue) {
-        console.log(newValue.innerHTML);
+watch([section2Container, section2Table], async ([newContainer, table]) => {
+    if (newContainer) {
+        await nextTick();
+
+        // Extract attribute name and values
+        attributeName.value = newContainer.querySelector(".attribute-name")?.textContent?.trim() || "";
+        attributeValues.value = newContainer.querySelector(".attribute-values")?.textContent?.trim()?.split(",") || [];
+
+        // Initialize tableQuantities with default stock value
+        tableQuantities.value = attributeValues.value.map(() => Math.floor(foreignKeys.stock / attributeValues.value.length));
     }
 });
+
+// Watch for changes in tableQuantities
+watch(tableQuantities, (newValues) => {
+    console.log("Updated Quantities:", newValues);
+});
+
 
 
 
@@ -424,6 +461,7 @@ const newAttrValClick = async (): Promise<void> => {
 
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useToast } from "vue-toastification";
+import { Value } from 'sass';
 const toast = useToast();
 const accessToken = useCookie<string | null>('access');
 
@@ -480,7 +518,7 @@ watch([selectedValues, currectAttr], ([newValue, currentName]) => {
     if (currentName) {
         arrayList[currentName] = [...newValue];
         section1Items.value = Object.keys(arrayList).map((key, index) => ({
-            id: index + 1, 
+            id: index + 1,
             name: key,
             value: arrayList[key],
         }));

@@ -620,7 +620,7 @@ button[type=submit]:hover {
 }
 .attributeTable tr td {
   padding: 0.5rem;
-  border: none;
+  border: 1px solid #ccc;
   text-align: center;
 }
 .attributeTable tr td input {

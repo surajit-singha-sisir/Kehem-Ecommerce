@@ -118,17 +118,17 @@
                     <!-- Buy Price -->
                     <div class="text-input" id="text-input">
                         <input type="number" class="inputbox" name="buyPrice" placeholder="Buy Price"
-                            v-model="productBuyPrice">
+                            v-model="buyPrice">
                     </div>
                     <!-- Sell Price -->
                     <div class="text-input" id="text-input">
                         <input type="number" class="inputbox" name="sellPrice" placeholder="Sell Price"
-                            v-model="productSellPrice">
+                            v-model="sellPrice">
                     </div>
                     <!-- Discount Price -->
                     <div class="text-input" id="text-input">
                         <input type="number" class="inputbox" name="discountPrice" placeholder="Discount Price"
-                            v-model="productDiscountPrice">
+                            v-model="discountPrice">
                     </div>
 
                     <!-- UNIT -->
@@ -149,8 +149,8 @@
                     <div class="f-res f-align-items-center f-just-center gap-10 w-80">
                         <span class="f-0 text--m star">Stock</span>
                         <div class="select-option-1">
-                            <input class="min-w--20" name="stock" type="number" id="addProductTotalStock"
-                                placeholder="Total Quantity">
+                            <input class="min-w--20" name="stock" v-model="totalStock" type="number"
+                                id="addProductTotalStock" placeholder="Total Quantity">
                             <div class="option">
                                 <select name="stockUnit" id="addProductStockUnit" v-model="addProductStockUnit"
                                     disabled>
@@ -167,7 +167,8 @@
                 <!-- ATTRIBUTES -->
                 <fieldset class="attributes w-100 f f-col f-just-center b-e pad--10 bg-3 m-tb--10">
                     <legend>Atributes</legend>
-                    <Attributes />
+                    <Attributes :stock="totalStock" :buyPrice="buyPrice" :sellPrice="sellPrice"
+                        :discountPrice="discountPrice" :productCurrency="productPricingCurrency" />
 
                 </fieldset>
 
@@ -281,6 +282,14 @@ const addProduct = () => { }
 
 
 
+const totalStock = ref<number>(0);
+const buyPrice = ref<number>(0);
+const sellPrice = ref<number>(0);
+const discountPrice = ref<number>(0);
+const productPricingCurrency = ref('taka')
+
+// PRICING
+const addProductStockUnit = ref('Piece')
 
 
 
@@ -478,14 +487,6 @@ const deleteFaq = (index: number) => {
 
 
 
-
-
-// PRICING
-const productBuyPrice = ref('')
-const productSellPrice = ref('')
-const productDiscountPrice = ref('')
-const productPricingCurrency = ref('taka')
-const addProductStockUnit = ref('Piece')
 
 
 
