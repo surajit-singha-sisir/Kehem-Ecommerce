@@ -440,8 +440,6 @@ const faqAddBtn = () => {
 };
 
 const editFaq = (index: number) => {
-    const oldAnswer = faqList.value[index].description;
-
     faqInputTitle.value = faqList.value[index].title;
     faqInputDescription.value = faqList.value[index].description;
     currentEditIndex.value = index;

@@ -27,6 +27,123 @@
     top: -1.6rem;
     right: 0;
 }
+
+.attribute-selected-item {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    width: 100%;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    i.m-cross1 {
+        position: relative;
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+        /* color: #fff; */
+        aspect-ratio: 1;
+        cursor: pointer;
+        z-index: 5;
+        transition: all 0.3s ease;
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid #ff1c73;
+            width: 1.5rem;
+            aspect-ratio: 1;
+            z-index: -1;
+            transition: all 0.3s ease;
+        }
+
+        &:hover::after {
+            background-color: #ff1c73;
+            transition: all 0.3s ease;
+        }
+
+        &:hover {
+            color: #fff;
+        }
+    }
+
+    .checkbox label {
+        padding: 0;
+    }
+
+    .checkbox input[type=checkbox]:checked+label::before,
+    .checkbox input[type=checkbox]:checked+label::after {
+        display: none;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.last-dragged {
+    background-color: #3cb5da;
+    animation: bounce 0.4s ease;
+    transition: background-color 1s ease;
+}
+
+
+
+
+.draggable-list {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.draggable-item {
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    cursor: grab;
+    transition: all 0.3s ease;
+}
+
+.drag-handle {
+    margin-right: 10px;
+    cursor: grab;
+    user-select: none;
+    transition: all 0.3s ease;
+}
+
+.drag-handle:hover {
+    color: #007bff;
+    transition: all 0.3s ease;
+}
+
+.ghost {
+    background-color: #007bff;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+
+.chosen {
+    background-color: #bfbfbf;
+    transition: all 0.3s ease;
+}
 </style>
 
 <template>
@@ -61,25 +178,22 @@
 
             <!-- ATTRIBUTE VALUES -->
             <div class="b-e pad--10 f f-just-between f-align-items-center gap-10">
-                <section class="f f-wrap gap-10" JSONref="attributeValues">
-
-
-                    <!-- LOOP CHECKBOXES -->
+                <section class="f f-wrap gap-10 f-flex-xxxl">
                     <div class="checkbox" v-for="item in attributeJSONValues" :key="item.name">
-                        <input type="checkbox" :id="item.name" :v-model="item.name">
+                        <input type="checkbox" :id="item.name" :value="item.name" v-model="selectedValues"
+                            :checked="selectedValues.includes(item.name)" />
                         <label :for="item.name">{{ item.name }}</label>
                     </div>
-
-
-
                 </section>
-                <div class="relative w-100">
+
+                <div class="relative">
                     <button id="addAttributeBtn" type="button"
                         class="pad-tb--03 pad-lr--08 plus b-none bg-hov-Purple cur-pointer text--m"
                         @click="isPlusClicked = !isPlusClicked">+</button>
 
                     <!-- ADD VALUE -->
-                    <div class="absolute b-e bg-2 f f-col gap-10 w--150 pad--10" v-if="isPlusClicked">
+                    <div class="absolute b-e bg-2 f f-col gap-10 w--150 pad--10 pos-right-center r--30"
+                        v-if="isPlusClicked">
                         <i @click="isPlusClicked = !isPlusClicked"
                             class="addAttrValCross btn btn-fire btn-sm z-1 m-x1"></i>
                         <!-- SELECT OPTION -->
@@ -103,8 +217,94 @@
             </div>
 
             <!-- ATTRIBUTE VALUES DETAILS -->
-            <aside class="b-e pad--10 m-t--10 hide" id="attributeSection">
-                <table class="attributeTable">
+            <aside class="b-e pad--10 m-t--10">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <!-- OPTIONAL ATTRIBUTE -->
+                <h4 class="m-b--10">Your Optional Attribute List</h4>
+
+                <draggable v-model="section1Items" :group="'items'" item-key="id" class="draggable-list"
+                    @start="onDragStart" @end="onDragEnd">
+                    <template #item="{ element, index }">
+                        <div v-if="element.value.length >= 1" class="draggable-item"
+                            :class="{ 'last-dragged': lastDraggedId === element.id }">
+                            <div class="f-center-start gap-10 w-100">
+                                <span class="attribute-selected-item">
+                                    <span>::</span>
+                                    <div class="f-centered gap-03">
+                                        <span class="b Blue-900">{{ element.name }}</span>
+                                        <i class="m-chevron-right"></i>
+                                        <span class="b Cyan-800">{{ element.value.join(", ") }}</span>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                    </template>
+                </draggable>
+
+
+
+
+
+
+                <!-- MENDATORY ATTRIBUTE -->
+                <h4 class="m-tb--10">Your Mendatory Attribute List <span class="Red">(max: 2)</span></h4>
+
+                <draggable v-model="section2Items" :group="'items'" item-key="id" class="draggable-list"
+                    @start="onDragStart" @end="onDragEnd">
+                    <template #item="{ element }">
+                        <div ref="section2Container" class="draggable-item"
+                            :class="{ 'last-dragged': lastDraggedId === element.id }">
+
+                            <div class="f-center-start gap-10 w-100">
+                                <span class="attribute-selected-item">
+                                    <span>::</span>
+                                    <div class="f-centered gap-03">
+                                        <span class="b Blue-900">{{ element.name }}</span>
+                                        <i class="m-chevron-right"></i>
+                                        <span class="b Cyan-800">{{ element.value.join(", ") }}</span>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                    </template>
+                </draggable>
+
+
+
+
+                <table ref="section2Table" class="attributeTable" v-if="section2Items.length >= 1">
                     <thead>
                         <tr>
                             <th id="attributeCat">Size</th>
@@ -113,8 +313,19 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr data-value="${valueText}">
+                            <td>${value}</td>
+                            <td><input type="number" class="tableQty" name="${valueText}" id="${valueText}" min="1"
+                                    placeholder="Qty">
+                            </td>
+                            <td><button class="btn1" targer-price="${newPrice}">${newPrice}
+                                    ${currencySelect.value}</button></td>
+                        </tr>
                     </tbody>
                 </table>
+
+
+
             </aside>
         </div>
     </section>
@@ -124,6 +335,29 @@
 
 
 <script setup lang="ts">
+import draggable from 'vuedraggable';
+
+
+
+
+
+
+
+
+
+// STOCK MAINTAINS
+const section2Container = ref<HTMLElement | null>(null);
+const section2Table = ref<HTMLElement | null>(null);
+
+watch(section2Container, (newValue) => {
+    if (newValue) {
+        console.log(newValue.innerHTML);
+    }
+});
+
+
+
+
 
 // ATTRIBUTE VALUES
 const attributeContainer = ref<HTMLElement | null>(null);
@@ -188,18 +422,6 @@ const newAttrValClick = async (): Promise<void> => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useToast } from "vue-toastification";
 const toast = useToast();
@@ -230,6 +452,97 @@ let attributeJSONValues = ref<AttrValues[]>([]); // TEMPLATE
 interface AttrValues {
     name: string
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const selectedValues = ref<string[]>([]);
+const currectAttr = ref<string>();
+
+let arrayList: Record<string, string[]> = {};
+
+watch([selectedValues, currectAttr], ([newValue, currentName]) => {
+    if (currentName) {
+        arrayList[currentName] = [...newValue];
+        section1Items.value = Object.keys(arrayList).map((key, index) => ({
+            id: index + 1, 
+            name: key,
+            value: arrayList[key],
+        }));
+    }
+});
+
+watch(currectAttr, () => {
+    selectedValues.value = [];
+});
+
+const section1Items = ref<Item[]>([]);
+
+interface Item {
+    id: number;
+    name: string;
+    value: string[];
+}
+
+const section2Items = ref<Item[]>([]);
+
+const dragging = ref(false);
+const lastDraggedId = ref<number | null>(null);
+
+const onDragStart = (event: any) => {
+    lastDraggedId.value = event.item.__draggable_context.element.id;
+};
+
+const onDragEnd = () => {
+    dragging.value = false;
+    setTimeout(() => {
+        lastDraggedId.value = null;
+    }, 500);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const selectOption = (option: string): void => {
     inputValue.value = option;
     showDropdown.value = false;
@@ -239,7 +552,7 @@ const selectOption = (option: string): void => {
     const names = allAttrs.value;
     names.forEach(name => {
         if (name.name === option) {
-            console.log(name.attr_values);
+            currectAttr.value = name.name;
             attributeJSONValues.value = Object.values(name.attr_values).map(value => ({
                 name: value
             }));
@@ -336,8 +649,6 @@ const getAttrs = async (): Promise<void> => {
 
 // LOAD WITHOUT RELOAD
 getAttrs();
-
-
 
 
 
