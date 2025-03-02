@@ -234,7 +234,7 @@
 
 
         <!-- ATTRIBUTE VALUE -->
-        <div class="pad--10 b-b-e m-b--10" ref="attributeContainer" :class="{ 'hide': !isSelected }">
+        <div class="pad--10 b-b-e m-b--10"  :class="{ 'hide': !isSelected }">
 
             <!-- ATTRIBUTE VALUES -->
             <div class="b-e pad--10 f f-just-between f-align-items-center gap-10">
@@ -416,71 +416,13 @@
                 </table>
 
 
-                <!-- <tr v-for="(value, index) in attributeValues" :key="index">
-                            <td><span class="f-centered gap-10">
-                                    <p>{{ value }}</p>
-                                    <i v-if="multipleValues" class="m-plus2 border-rounded"></i>
-                                </span></td>
-                            <td>
-                                <input type="number" v-model="tableQuantities[index]" class="tableQty"
-                                    name="attributeValue" min="1" placeholder="Stock">
-                            </td>
-                            <td>
-                                <button class="btn1">{{ foreignKeys.sellPrice }} taka</button>
-                            </td>
-                        </tr> -->
-
-                <!-- Table (Double Attribute)-->
-                <!-- <table ref="section2Table" class="attributeTable" v-if="section2Items.length === 2">
-                    <thead>
-                        <tr>
-                            <th colspan="3" class="text--12 Brown bg-Khaki ">"{{ section2Items[0].name }}" + "{{
-                                section2Items[1].name
-                                }}"</th>
-                        </tr>
-                        <tr>
-                            <th>Values</th>
-                            <th>Stock</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, index) in section2Items[1].value" :key="index">
-
-
-
-
-                            <td class="b">{{ item }}</td>
-
-
-
-
-                            <td>
-                                <input type="number" v-model="singleValueStock" name="attributeValue" min="1"
-                                    placeholder="Stock">
-                            </td>
-                            <td>
-                                <button class="btn" style="cursor: not-allowed;">
-                                    {{ foreignKeys.sellPrice > (foreignKeys.discountPrice > 0 ?
-                                        foreignKeys.discountPrice :
-                                        foreignKeys.sellPrice) ? foreignKeys.discountPrice
-                                        :
-                                        foreignKeys.sellPrice }}
-                                    taka</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table> -->
-
-
 
                 <!-- 2 ATTRIBUTE VALUES -->
                 <table ref="section2Table" class="attributeTable" v-if="section2Items.length === 2">
                     <thead>
                         <tr>
-                            <th colspan="3" class="text--12 Brown bg-Khaki ">
-                                "{{ section2Items[0].name }}" +
-                                "{{ section2Items[1].name }}"
+                            <th colspan="3" class="text--12 Brown bg-Khaki">
+                                "{{ section2Items[0].name }}" + "{{ section2Items[1].name }}"
                             </th>
                         </tr>
                         <tr>
@@ -490,47 +432,49 @@
                         </tr>
                     </thead>
                     <tbody>
-
-
-                        <!-- TR STARTS -->
-                        <tr class="attribute-value-tr324">
+                        <!-- Dynamically render rows from the rows data array -->
+                        <tr v-for="(row, index) in rows" :key="index" class="attribute-value-tr324">
                             <td class="b relative">
                                 <div class="attribute-value-insert">
-                                    <!-- VALUES -->
                                     <span class="placeholder linker-line"
-                                        :class="{ 'attribute-value-assigned': isValueSelectedNow }"
-                                        @click="firstAttrValue">
-                                        <span class="attribute-assigned-name"> {{ section2Items[0].name }}</span>
-                                        <p>{{ newSelected }}</p>
+                                        :class="{ 'attribute-value-assigned': row.isValueSelectedNow }"
+                                        @click="toggleAttrValue(index, 0)">
+                                        <span class="attribute-assigned-name">{{ section2Items[0].name }}</span>
+                                        <p>{{ row.newSelected }}</p>
 
-                                        <div class="show-available-values-outer" v-if="isFirstAttrValueClicked"
-                                            :class="{ 'hide': !isFirstAttrValueClicked }">
+                                        <div class="show-available-values-outer" v-if="row.isFirstAttrValueClicked"
+                                            :class="{ 'hide': !row.isFirstAttrValueClicked }">
                                             <span>"{{ section2Items[0].name }}" Values</span>
-                                            <ul class="show-available-values" @click="getValueSelection">
+                                            <ul class="show-available-values"
+                                                @click="getValueSelection(index, 0, $event)">
                                                 <li v-for="item in section2Items[0].value" :key="item">{{ item }}</li>
                                             </ul>
-                                        </div>
 
+                                        </div>
                                     </span>
+
                                     <i class="m-plus-alt"></i>
+
                                     <span class="placeholder"
-                                        :class="{ 'attribute-value-assigned': isValueSelectedNow }"
-                                        @click="secondAttrValue">
-                                        <span class="attribute-assigned-name"> {{ section2Items[1].name }}</span>
-                                        <p>{{ newSelected2 }}</p>
+                                        :class="{ 'attribute-value-assigned': row.isValueSelectedNow }"
+                                        @click="toggleAttrValue(index, 1)">
+                                        <span class="attribute-assigned-name">{{ section2Items[1].name }}</span>
+                                        <p>{{ row.newSelected2 }}</p>
 
                                         <div class="show-available-values-outer"
-                                            :class="{ 'hide': !isSecondAttrValueClicked }">
+                                            :class="{ 'hide': !row.isSecondAttrValueClicked }">
                                             <span>"{{ section2Items[1].name }}" Values</span>
-                                            <ul class="show-available-values" @click="getValueSelection2">
+                                            <ul class="show-available-values"
+                                                @click="getValueSelection(index, 1, $event)">
                                                 <li v-for="item in section2Items[1].value" :key="item">{{ item }}</li>
                                             </ul>
+
                                         </div>
                                     </span>
                                 </div>
                             </td>
                             <td>
-                                <input type="number" v-model="singleValueStock" name="attributeValue" min="1"
+                                <input type="number" v-model="row.singleValueStock" name="attributeValue" min="1"
                                     placeholder="Stock">
                             </td>
                             <td>
@@ -538,11 +482,7 @@
                             </td>
                         </tr>
 
-
-
-
                         <tr class="last-Tr-entry">
-                            <!-- NEW ROW -->
                             <td colspan="3" class="new-row-item">
                                 <button @click="createNewTr" type="button" class="create-row-button" v-if="isLastTr"><i
                                         class="m-plus"></i></button>
@@ -550,6 +490,7 @@
                         </tr>
                     </tbody>
                 </table>
+
 
 
 
@@ -597,35 +538,49 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable';
 
+const rows = ref([
+    {
+        isFirstAttrValueClicked: false,
+        isSecondAttrValueClicked: false,
+        isValueSelectedNow: false,
+        newSelected: '',
+        newSelected2: '',
+        singleValueStock: 0,
+    },
+]);
+
+const toggleAttrValue = (index: number, attrIndex: number) => {
+    if (attrIndex === 0) {
+        rows.value[index].isFirstAttrValueClicked = !rows.value[index].isFirstAttrValueClicked;
+    } else {
+        rows.value[index].isSecondAttrValueClicked = !rows.value[index].isSecondAttrValueClicked;
+    }
+};
+
+const getValueSelection = (index: number, attrIndex: number, event: Event) => {
+    const currentClicked = event.target as HTMLElement;
+    if (currentClicked) {
+        if (attrIndex === 0) {
+            rows.value[index].newSelected = currentClicked.textContent || '';
+        } else {
+            rows.value[index].newSelected2 = currentClicked.textContent || '';
+        }
+    }
+};
 
 
-const isFirstAttrValueClicked = ref(false);
-const isSecondAttrValueClicked = ref(false);
-const isValueSelectedNow = ref(false);
+const createNewTr = () => {
+    rows.value.push({
+        isFirstAttrValueClicked: false,
+        isSecondAttrValueClicked: false,
+        isValueSelectedNow: false,
+        newSelected: '',
+        newSelected2: '',
+        singleValueStock: 0,
+    });
+};
+
 const isLastTr = ref(true);
-
-const firstAttrValue = () => {
-    isFirstAttrValueClicked.value = !isFirstAttrValueClicked.value;
-}
-
-const secondAttrValue = () => {
-    isSecondAttrValueClicked.value = !isSecondAttrValueClicked.value;
-}
-
-const newSelected = ref<string>('');
-const newSelected2 = ref<string>('');
-const getValueSelection = (event: Event) => {
-    const currentClicked = event.target as HTMLElement;
-    if (currentClicked) {
-        newSelected.value = currentClicked.textContent || '';
-    }
-}
-const getValueSelection2 = (event: Event) => {
-    const currentClicked = event.target as HTMLElement;
-    if (currentClicked) {
-        newSelected2.value = currentClicked.textContent || '';
-    }
-}
 
 
 interface Props {
@@ -653,7 +608,6 @@ watch(([section2Items, foreignKeys]), () => {
 
 
 // ATTRIBUTE VALUES
-const attributeContainer = ref<HTMLElement | null>(null);
 const isSelected = ref(false);
 const isPlusClicked = ref(false);
 
@@ -733,7 +687,7 @@ const options = ref<string[]>([]);
 const filteredOptions = computed(() => {
     const query = inputValue.value.toLowerCase();
     if (!inputValue.value) {
-        isSelected.value = false;
+        isSelected.value = true;
     }
     return options.value.filter(option => option.toLowerCase().includes(query));
 });
@@ -856,7 +810,7 @@ const selectOption = (option: string): void => {
 const handleKeydown = (event: KeyboardEvent): void => {
     if (event.key === 'Escape') {
         inputValue.value = '';
-        isSelected.value = false;
+        isSelected.value = true;
         showDropdown.value = false;
     }
 };
@@ -907,7 +861,7 @@ const newAttNameBtn = async (): Promise<void> => {
         // TURNED OFF ADD CAT DIALOG
         isAddCatClicked.value = !isAddCatClicked.value;
         newCatName.value = '';
-        isSelected.value = false;
+        isSelected.value = true;
 
     } catch {
         toast.error('There was encounted an error. Contact KEHEM IT');
