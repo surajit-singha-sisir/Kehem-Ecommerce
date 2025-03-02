@@ -160,35 +160,49 @@
 
 
 
+.new-row-item {
+    position: relative;
+    padding: 0.1rem !important;
 
-.create-row-button {
-    position: absolute;
-    left: -1.5rem;
-    bottom: -0.5rem;
-    font-size: 0.8rem;
-    outline: none;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    z-index: 6;
-
-    &::after {
-        content: '';
+    .create-row-button {
         position: absolute;
-        left: 50%;
+        right: -1.5rem;
         top: 50%;
-        transform: translate(-50%, -50%);
-        width: 1.6rem;
-        aspect-ratio: 1;
-        border-radius: 50%;
-        background-color: #007bff;
-        z-index: -1;
-    }
-    &:hover {
+        transform: translateY(-50%);
+        font-size: 0.8rem;
+        outline: none;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        z-index: 6;
+
         &::after {
-            background-color: #0750af;
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 1.6rem;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background-color: #007bff;
+            z-index: -1;
+        }
+
+        &:hover {
+            &::after {
+                background-color: #0750af;
+            }
+
+            .last-Tr-entry {
+                background-color: #0750af;
+            }
         }
     }
+}
+
+.last-Tr-entry:hover {
+    background-color: #007bff !important;
 }
 </style>
 
@@ -339,7 +353,7 @@
                                         <span class="attribute-name b Blue-900">{{ element.name }}</span>
                                         <i class="m-chevron-right"></i>
                                         <span class="attribute-values b Cyan-800">{{ element.value.join(", ")
-                                        }}</span>
+                                            }}</span>
                                     </div>
                                 </span>
                             </div>
@@ -476,9 +490,11 @@
                         </tr>
                     </thead>
                     <tbody>
+
+
+                        <!-- TR STARTS -->
                         <tr class="attribute-value-tr324">
                             <td class="b relative">
-                                <button type="button" class="create-row-button"><i class="m-plus"></i></button>
                                 <div class="attribute-value-insert">
                                     <!-- VALUES -->
                                     <span class="placeholder linker-line"
@@ -519,6 +535,17 @@
                             </td>
                             <td>
                                 <button class="btn btn-disabled">100 taka</button>
+                            </td>
+                        </tr>
+
+
+
+
+                        <tr class="last-Tr-entry">
+                            <!-- NEW ROW -->
+                            <td colspan="3" class="new-row-item">
+                                <button @click="createNewTr" type="button" class="create-row-button" v-if="isLastTr"><i
+                                        class="m-plus"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -575,6 +602,7 @@ import draggable from 'vuedraggable';
 const isFirstAttrValueClicked = ref(false);
 const isSecondAttrValueClicked = ref(false);
 const isValueSelectedNow = ref(false);
+const isLastTr = ref(true);
 
 const firstAttrValue = () => {
     isFirstAttrValueClicked.value = !isFirstAttrValueClicked.value;
@@ -616,12 +644,7 @@ const foreignKeys = defineProps<Props>();
 const section2Items = ref<Item[]>([]);
 const section2Container = ref<HTMLElement | null>(null);
 const section2Table = ref<HTMLElement | null>(null);
-const attributeName = ref<string>("");
-const attributeValues = ref<string[]>([]);
-const tableQuantities = ref<number[]>([]);
-const multipleValues = ref(false);
 const singleValueStock = ref('');
-
 watch(([section2Items, foreignKeys]), () => {
 
 });
