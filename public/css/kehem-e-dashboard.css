@@ -611,11 +611,21 @@ button[type=submit]:hover {
 }
 .attributeTable tr {
   border: 1px solid #ccc;
+}
+.attributeTable tr:nth-child(even) {
+  background-color: #ececec;
   transition: background-color 0.3s ease;
+}
+.attributeTable tr:nth-child(odd) {
+  background-color: #f3f3f3;
+  transition: background-color 0.3s ease;
+}
+.attributeTable tr:hover {
+  background-color: #dbdbdb;
 }
 .attributeTable tr th {
   padding: 0.5rem;
-  border: none;
+  border: 1px solid #ccc;
   text-align: center;
 }
 .attributeTable tr td {
@@ -625,7 +635,8 @@ button[type=submit]:hover {
 }
 .attributeTable tr td input {
   margin: auto;
-  width: 5rem;
+  min-width: 5rem;
+  max-width: 100%;
   height: 2rem;
   padding: 0.2rem !important;
   text-align: center;
@@ -899,6 +910,128 @@ button[type=submit]:hover {
 .e-productImage .fileInputBox:hover .uploadOrDragImage {
   color: rgb(86.5, 110, 102.95);
   transition: all 0.3s ease;
+}
+
+.attribute-value-tr324 {
+  z-index: 5;
+}
+.attribute-value-tr324 .attribute-value-insert {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+.attribute-value-tr324 .attribute-value-insert span.placeholder {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 5rem;
+  height: 2rem;
+  background-color: #f7f7f7;
+  border: 1px dashed #ccc;
+  cursor: pointer;
+}
+.attribute-value-tr324 .attribute-value-insert span.placeholder:hover {
+  background-color: #c7c7c7;
+}
+.attribute-value-tr324 .attribute-value-insert span.placeholder .attribute-assigned-name {
+  position: absolute;
+  left: 50%;
+  top: -0.5rem;
+  transform: translateX(-50%);
+  background-color: #d9ff00;
+  padding: 0 5px;
+  font-size: 0.7rem;
+  border-radius: 10px;
+  z-index: 1;
+  color: #3a3a3a;
+}
+.attribute-value-tr324 .attribute-value-insert i {
+  color: #a200ff;
+  font-size: 1.2rem;
+}
+.attribute-value-tr324 .attribute-value-insert .linker-line {
+  position: relative;
+  transition: all 0.2s ease;
+}
+.attribute-value-tr324 .attribute-value-insert .linker-line::after {
+  content: "";
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  background-color: #c7c7c7;
+  width: 4.3rem;
+  aspect-ratio: 1;
+  clip-path: polygon(20% 0%, 20% 2%, 2% 2%, 2% 98%, 20% 98%, 20% 100%, 0 100%, 0 0);
+}
+.attribute-value-tr324 .attribute-value-insert .show-available-values-outer {
+  position: absolute;
+  width: 10rem;
+  left: 120%;
+  top: 0;
+  border-radius: 0.3rem;
+  background-color: #c7c7c7;
+  z-index: 4;
+}
+.attribute-value-tr324 .attribute-value-insert .show-available-values-outer span {
+  display: block;
+  position: relative;
+  width: inherit;
+  padding: 0.5rem 0;
+}
+.attribute-value-tr324 .attribute-value-insert .show-available-values-outer span::before {
+  content: "";
+  position: absolute;
+  left: -0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.8rem;
+  aspect-ratio: 1;
+  clip-path: polygon(100% 0, 100% 100%, 0 50%);
+  background-color: #c7c7c7;
+}
+.attribute-value-tr324 .attribute-value-insert .show-available-values-outer .show-available-values {
+  position: relative;
+  width: 100%;
+  height: auto;
+  background-color: #f7f7f7;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+}
+.attribute-value-tr324 .attribute-value-insert .show-available-values-outer .show-available-values li {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+}
+.attribute-value-tr324 .attribute-value-insert .show-available-values-outer .show-available-values li:hover {
+  background-color: #e4e4e4;
+}
+.attribute-value-tr324 .attribute-value-insert .show-available-values-outer .show-available-values li:not(li:last-child) {
+  border-bottom: 1px dotted #ccc;
+}
+.attribute-value-tr324 .attribute-value-insert .attribute-value-assigned {
+  background-color: #6200ff !important;
+}
+.attribute-value-tr324 .attribute-value-insert .attribute-value-assigned p {
+  color: #fff;
+}
+.attribute-value-tr324 .btn-disabled {
+  cursor: not-allowed;
+}
+
+.attribute-value-tr324:hover .attribute-value-insert .placeholder {
+  border-color: #ff002b;
+  transition: all 0.2s ease;
+}
+
+.attribute-value-tr324:hover .linker-line::after {
+  background-color: #ff002b;
+  transition: all 0.2s ease;
 }
 
 .toast-container {

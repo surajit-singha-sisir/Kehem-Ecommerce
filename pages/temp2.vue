@@ -1,55 +1,219 @@
+<style lang="scss">
+.attribute-value-tr324 {
+  z-index: 5;
+
+  .attribute-value-insert {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+
+    span.placeholder {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 5rem;
+      height: 2rem;
+      background-color: #f7f7f7;
+      border: 1px dashed #ccc;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #c7c7c7;
+      }
+
+
+      .attribute-assigned-name {
+        position: absolute;
+        left: 50%;
+        top: -0.5rem;
+        transform: translateX(-50%);
+        background-color: #d9ff00;
+        padding: 0 5px;
+        font-size: 0.7rem;
+        border-radius: 10px;
+        z-index: 1;
+        color: #3a3a3a;
+      }
+    }
+
+    i {
+      color: #a200ff;
+      font-size: 1.2rem;
+    }
+
+    .linker-line {
+      position: relative;
+      transition: all 0.2s ease;
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: -1rem;
+        top: 50%;
+        background-color: #c7c7c7;
+        width: 4.3rem;
+        aspect-ratio: 1;
+        clip-path: polygon(20% 0%, 20% 2%, 2% 2%, 2% 98%, 20% 98%, 20% 100%, 0 100%, 0 0);
+      }
+
+    }
+
+
+
+    .show-available-values-outer {
+      position: absolute;
+      width: 10rem;
+      left: 120%;
+      top: 0;
+      border-radius: 0.3rem;
+      background-color: #c7c7c7;
+      z-index: 4;
+
+
+      span {
+        display: block;
+        position: relative;
+        width: inherit;
+        padding: 0.5rem 0;
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: -0.7rem;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 0.8rem;
+          aspect-ratio: 1;
+          clip-path: polygon(100% 0, 100% 100%, 0 50%);
+          background-color: #c7c7c7;
+        }
+      }
+
+      .show-available-values {
+        position: relative;
+        width: 100%;
+        height: auto;
+        background-color: #f7f7f7;
+        border: 1px solid #ccc;
+        display: flex;
+        flex-direction: column;
+
+        li {
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 0.5rem;
+
+          &:hover {
+            background-color: #e4e4e4;
+          }
+        }
+
+        li:not(li:last-child) {
+          border-bottom: 1px dotted #ccc;
+        }
+      }
+    }
+
+    .attribute-value-assigned {
+      background-color: #6200ff !important;
+
+      p {
+        color: #fff;
+      }
+    }
+  }
+
+
+
+
+  .btn-disabled {
+    cursor: not-allowed;
+  }
+}
+
+.attribute-value-tr324:hover .attribute-value-insert .placeholder {
+  border-color: #ff002b;
+  transition: all 0.2s ease;
+}
+
+.attribute-value-tr324:hover .linker-line::after {
+  background-color: #ff002b;
+  transition: all 0.2s ease;
+}
+</style>
+
 <template>
-
-    <!-- SELECT ATTRIBUTE -->
-    <div class="pad--10 b-b-e m-b--10">
-
-        <!-- ATTRIBUTE VALUES -->
-        <div class="b-e pad--10 f f-just-between f-align-items-center gap-10">
-            <section class="f f-wrap gap-10" id="attributeValues">
-
-            </section>
-            <div class="relative w-100">
-                <button id="addAttributeBtn" type="button"
-                    class="pad-tb--03 pad-lr--08 plus b-none bg-hov-Purple cur-pointer text--m">+</button>
-
-                <!-- ADD VALUE -->
-                <div id="newValueAssigning" class="absolute hide b-e bg-2 f f-col gap-10 w--150 pad--10">
-                    <!-- COMBOBOX -->
-                    <div class="combo-box">
-                        <div class="Combo-inputbox">
-                            <input type="text" id="newValueAssigningInput" class="combo-input" data-target=""
-                                placeholder="-- Atributes --" data-combo-id="combo3">
-                            <ul class="combo-options" id="newValueAssigningOptions" style="display: none;">
-                                <li class="no-data" style="display: none;">No data found!</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- INPUT VALUE -->
-                    <div class="text-input">
-                        <input type="text" id="attributeValueOption" placeholder="Variable Name">
-                    </div>
-                    <!-- SUBMIT BUTTON -->
-                    <button id="addNewAttributeValue">Submit</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ATTRIBUTE VALUES DETAILS -->
-        <section class="b-e pad--10 m-t--10 hide" id="attributeSection">
-            <table class="attributeTable">
-                <thead>
-                    <tr>
-                        <th id="attributeCat">Size</th>
-                        <th>Stock(Qty)</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </section>
-
-    </div>
-
-
+  <!-- 2 ATTRIBUTE VALUES -->
+  <table ref="section2Table" class="attributeTable">
+    <thead>
+      <tr>
+        <th colspan="3" class="text--12 Brown bg-Khaki ">Size + Weight
+        </th>
+      </tr>
+      <tr>
+        <th>Values</th>
+        <th>Stock</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="attribute-value-tr324">
+        <td class="b">
+          <div class="attribute-value-insert">
+            <!-- VALUES -->
+            <span class="placeholder linker-line attribute-value-assigned" @click="firstAttrValue">
+              <span class="attribute-assigned-name">Size</span>
+              <p>XL</p>
+              <div class="show-available-values-outer" v-if="isFirstAttrValueClicked"
+                :class="{ 'hide': !isFirstAttrValueClicked }">
+                <span>All Values</span>
+                <ul class="show-available-values">
+                  <li @click="attrValueSet(index, value)">M</li>
+                  <li>L</li>
+                  <li>XL</li>
+                  <li>XXL</li>
+                </ul>
+              </div>
+            </span>
+            <i class="m-plus-alt"></i>
+            <span class="placeholder" @click="secondAttrValue">
+              <div class="show-available-values-outer" :class="{ 'hide': !isSecondAttrValueClicked }">
+                <span>All Values</span>
+                <ul class="show-available-values">
+                  <li>M</li>
+                  <li>L</li>
+                  <li>XL</li>
+                  <li>XXL</li>
+                </ul>
+              </div>
+            </span>
+          </div>
+        </td>
+        <td>
+          <input type="number" v-model="singleValueStock" name="attributeValue" min="1" placeholder="Stock">
+        </td>
+        <td>
+          <button class="btn btn-disabled">100 taka</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </template>
+
+<script setup>
+const isFirstAttrValueClicked = ref(false);
+const isSecondAttrValueClicked = ref(false);
+
+const firstAttrValue = () => {
+  isFirstAttrValueClicked.value = !isFirstAttrValueClicked.value;
+}
+
+const secondAttrValue = () => {
+  isSecondAttrValueClicked.value = !isSecondAttrValueClicked.value;
+}
+</script>

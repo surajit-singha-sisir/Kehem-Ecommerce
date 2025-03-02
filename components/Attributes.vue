@@ -156,6 +156,40 @@
         background-color: #ff1c73;
     }
 }
+
+
+
+
+
+.create-row-button {
+    position: absolute;
+    left: -1.5rem;
+    bottom: -0.5rem;
+    font-size: 0.8rem;
+    outline: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    z-index: 6;
+
+    &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 1.6rem;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background-color: #007bff;
+        z-index: -1;
+    }
+    &:hover {
+        &::after {
+            background-color: #0750af;
+        }
+    }
+}
 </style>
 
 <template>
@@ -293,46 +327,235 @@
                 <!-- MENDATORY ATTRIBUTE -->
                 <h4 class="m-tb--10">Your Mendatory Attribute List <span class="Red">(max: 2)</span></h4>
 
-                    <draggable v-model="section2Items" :group="'items'" item-key="id" class="draggable-list"
-                        @start="onDragStart" @end="onDragEnd">
-                        <template #item="{ element }">
-                            <div ref="section2Container" class="draggable-item"
-                                :class="{ 'last-dragged': lastDraggedId === element.id }">
-                                <div class="f-center-start gap-10 w-100">
-                                    <span class="attribute-selected-item">
-                                        <span>::</span>
-                                        <div class="f-centered gap-03">
-                                            <span class="attribute-name b Blue-900">{{ element.name }}</span>
-                                            <i class="m-chevron-right"></i>
-                                            <span class="attribute-values b Cyan-800">{{ element.value.join(", ")
-                                            }}</span>
+                <draggable v-model="section2Items" :group="'items'" item-key="id" class="draggable-list"
+                    @start="onDragStart" @end="onDragEnd">
+                    <template #item="{ element }">
+                        <div ref="section2Container" class="draggable-item"
+                            :class="{ 'last-dragged': lastDraggedId === element.id }">
+                            <div class="f-center-start gap-10 w-100">
+                                <span class="attribute-selected-item">
+                                    <span>::</span>
+                                    <div class="f-centered gap-03">
+                                        <span class="attribute-name b Blue-900">{{ element.name }}</span>
+                                        <i class="m-chevron-right"></i>
+                                        <span class="attribute-values b Cyan-800">{{ element.value.join(", ")
+                                        }}</span>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                    </template>
+                </draggable>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <!-- Table (Single Attribute)-->
+                <table ref="section2Table" class="attributeTable" v-if="section2Items.length === 1">
+                    <thead>
+                        <tr>
+                            <th colspan="3" class="text--12 Brown bg-Khaki ">"{{ section2Items[0].name }}"</th>
+                        </tr>
+                        <tr>
+                            <th>Values</th>
+                            <th>Stock</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in section2Items[0].value" :key="index">
+                            <td class="b">{{ item }}</td>
+                            <td>
+                                <input type="number" v-model="singleValueStock" name="attributeValue" min="1"
+                                    placeholder="Stock">
+                            </td>
+                            <td>
+                                <button class="btn" style="cursor: not-allowed;">
+                                    {{ foreignKeys.sellPrice > (foreignKeys.discountPrice > 0 ?
+                                        foreignKeys.discountPrice :
+                                        foreignKeys.sellPrice) ? foreignKeys.discountPrice
+                                        :
+                                        foreignKeys.sellPrice }}
+                                    taka</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+                <!-- <tr v-for="(value, index) in attributeValues" :key="index">
+                            <td><span class="f-centered gap-10">
+                                    <p>{{ value }}</p>
+                                    <i v-if="multipleValues" class="m-plus2 border-rounded"></i>
+                                </span></td>
+                            <td>
+                                <input type="number" v-model="tableQuantities[index]" class="tableQty"
+                                    name="attributeValue" min="1" placeholder="Stock">
+                            </td>
+                            <td>
+                                <button class="btn1">{{ foreignKeys.sellPrice }} taka</button>
+                            </td>
+                        </tr> -->
+
+                <!-- Table (Double Attribute)-->
+                <!-- <table ref="section2Table" class="attributeTable" v-if="section2Items.length === 2">
+                    <thead>
+                        <tr>
+                            <th colspan="3" class="text--12 Brown bg-Khaki ">"{{ section2Items[0].name }}" + "{{
+                                section2Items[1].name
+                                }}"</th>
+                        </tr>
+                        <tr>
+                            <th>Values</th>
+                            <th>Stock</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in section2Items[1].value" :key="index">
+
+
+
+
+                            <td class="b">{{ item }}</td>
+
+
+
+
+                            <td>
+                                <input type="number" v-model="singleValueStock" name="attributeValue" min="1"
+                                    placeholder="Stock">
+                            </td>
+                            <td>
+                                <button class="btn" style="cursor: not-allowed;">
+                                    {{ foreignKeys.sellPrice > (foreignKeys.discountPrice > 0 ?
+                                        foreignKeys.discountPrice :
+                                        foreignKeys.sellPrice) ? foreignKeys.discountPrice
+                                        :
+                                        foreignKeys.sellPrice }}
+                                    taka</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table> -->
+
+
+
+                <!-- 2 ATTRIBUTE VALUES -->
+                <table ref="section2Table" class="attributeTable" v-if="section2Items.length === 2">
+                    <thead>
+                        <tr>
+                            <th colspan="3" class="text--12 Brown bg-Khaki ">
+                                "{{ section2Items[0].name }}" +
+                                "{{ section2Items[1].name }}"
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Values</th>
+                            <th>Stock</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="attribute-value-tr324">
+                            <td class="b relative">
+                                <button type="button" class="create-row-button"><i class="m-plus"></i></button>
+                                <div class="attribute-value-insert">
+                                    <!-- VALUES -->
+                                    <span class="placeholder linker-line"
+                                        :class="{ 'attribute-value-assigned': isValueSelectedNow }"
+                                        @click="firstAttrValue">
+                                        <span class="attribute-assigned-name"> {{ section2Items[0].name }}</span>
+                                        <p>{{ newSelected }}</p>
+
+                                        <div class="show-available-values-outer" v-if="isFirstAttrValueClicked"
+                                            :class="{ 'hide': !isFirstAttrValueClicked }">
+                                            <span>"{{ section2Items[0].name }}" Values</span>
+                                            <ul class="show-available-values" @click="getValueSelection">
+                                                <li v-for="item in section2Items[0].value" :key="item">{{ item }}</li>
+                                            </ul>
+                                        </div>
+
+                                    </span>
+                                    <i class="m-plus-alt"></i>
+                                    <span class="placeholder"
+                                        :class="{ 'attribute-value-assigned': isValueSelectedNow }"
+                                        @click="secondAttrValue">
+                                        <span class="attribute-assigned-name"> {{ section2Items[1].name }}</span>
+                                        <p>{{ newSelected2 }}</p>
+
+                                        <div class="show-available-values-outer"
+                                            :class="{ 'hide': !isSecondAttrValueClicked }">
+                                            <span>"{{ section2Items[1].name }}" Values</span>
+                                            <ul class="show-available-values" @click="getValueSelection2">
+                                                <li v-for="item in section2Items[1].value" :key="item">{{ item }}</li>
+                                            </ul>
                                         </div>
                                     </span>
                                 </div>
-                            </div>
-                        </template>
-                    </draggable>
+                            </td>
+                            <td>
+                                <input type="number" v-model="singleValueStock" name="attributeValue" min="1"
+                                    placeholder="Stock">
+                            </td>
+                            <td>
+                                <button class="btn btn-disabled">100 taka</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                    <!-- Table -->
-                    <table ref="section2Table" class="attributeTable" v-if="section2Items.length">
-                        <thead>
-                            <tr>
-                                <th colspan="3" class="text--12">{{ attributeName }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="(value, index) in attributeValues" :key="index">
-                                <td>{{ value }}</td>
-                                <td>
-                                    <input type="number" v-model="tableQuantities[index]" class="tableQty"
-                                        name="attributeValue" min="1" placeholder="Stock">
-                                </td>
-                                <td>
-                                    <button class="btn1">{{ foreignKeys.sellPrice }} taka</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -349,9 +572,32 @@ import draggable from 'vuedraggable';
 
 
 
+const isFirstAttrValueClicked = ref(false);
+const isSecondAttrValueClicked = ref(false);
+const isValueSelectedNow = ref(false);
 
+const firstAttrValue = () => {
+    isFirstAttrValueClicked.value = !isFirstAttrValueClicked.value;
+}
 
+const secondAttrValue = () => {
+    isSecondAttrValueClicked.value = !isSecondAttrValueClicked.value;
+}
 
+const newSelected = ref<string>('');
+const newSelected2 = ref<string>('');
+const getValueSelection = (event: Event) => {
+    const currentClicked = event.target as HTMLElement;
+    if (currentClicked) {
+        newSelected.value = currentClicked.textContent || '';
+    }
+}
+const getValueSelection2 = (event: Event) => {
+    const currentClicked = event.target as HTMLElement;
+    if (currentClicked) {
+        newSelected2.value = currentClicked.textContent || '';
+    }
+}
 
 
 interface Props {
@@ -363,35 +609,22 @@ interface Props {
 }
 const foreignKeys = defineProps<Props>();
 
-console.log(foreignKeys);
 
 
 // STOCK MAINTAINS
+
+const section2Items = ref<Item[]>([]);
 const section2Container = ref<HTMLElement | null>(null);
 const section2Table = ref<HTMLElement | null>(null);
 const attributeName = ref<string>("");
 const attributeValues = ref<string[]>([]);
 const tableQuantities = ref<number[]>([]);
+const multipleValues = ref(false);
+const singleValueStock = ref('');
 
-watch([section2Container, section2Table], async ([newContainer, table]) => {
-    if (newContainer) {
-        await nextTick();
+watch(([section2Items, foreignKeys]), () => {
 
-        // Extract attribute name and values
-        attributeName.value = newContainer.querySelector(".attribute-name")?.textContent?.trim() || "";
-        attributeValues.value = newContainer.querySelector(".attribute-values")?.textContent?.trim()?.split(",") || [];
-
-        // Initialize tableQuantities with default stock value
-        tableQuantities.value = attributeValues.value.map(() => Math.floor(foreignKeys.stock / attributeValues.value.length));
-    }
 });
-
-// Watch for changes in tableQuantities
-watch(tableQuantities, (newValues) => {
-    console.log("Updated Quantities:", newValues);
-});
-
-
 
 
 
@@ -536,8 +769,6 @@ interface Item {
     name: string;
     value: string[];
 }
-
-const section2Items = ref<Item[]>([]);
 
 const dragging = ref(false);
 const lastDraggedId = ref<number | null>(null);

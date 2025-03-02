@@ -118,17 +118,17 @@
                     <!-- Buy Price -->
                     <div class="text-input" id="text-input">
                         <input type="number" class="inputbox" name="buyPrice" placeholder="Buy Price"
-                            v-model="buyPrice">
+                            v-model.number="buyPrice">
                     </div>
                     <!-- Sell Price -->
                     <div class="text-input" id="text-input">
                         <input type="number" class="inputbox" name="sellPrice" placeholder="Sell Price"
-                            v-model="sellPrice">
+                            v-model.number="sellPrice">
                     </div>
                     <!-- Discount Price -->
                     <div class="text-input" id="text-input">
                         <input type="number" class="inputbox" name="discountPrice" placeholder="Discount Price"
-                            v-model="discountPrice">
+                            v-model.number="discountPrice">
                     </div>
 
                     <!-- UNIT -->
@@ -149,10 +149,10 @@
                     <div class="f-res f-align-items-center f-just-center gap-10 w-80">
                         <span class="f-0 text--m star">Stock</span>
                         <div class="select-option-1">
-                            <input class="min-w--20" name="stock" v-model="totalStock" type="number"
+                            <input class="min-w--20" name="stock" v-model.number="totalStock" type="number"
                                 id="addProductTotalStock" placeholder="Total Quantity">
                             <div class="option">
-                                <select name="stockUnit" id="addProductStockUnit" v-model="addProductStockUnit"
+                                <select name="stockUnit" id="addProductStockUnit" v-model.trim="addProductStockUnit"
                                     disabled>
                                     <option value="Piece">Piece</option>
                                     <option value="Packet">Packet</option>
