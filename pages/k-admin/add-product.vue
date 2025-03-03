@@ -172,8 +172,12 @@
 
                 </fieldset>
 
-                <!-- TEXT EDITOR -->
+                <!-- DESCRIPTION -->
                 <SummerNote />
+                <!-- BENEFITS -->
+                <Benefits />
+                <!-- Ingredients -->
+                <Ingredients />
 
                 <!-- TAGS -->
                 <section class="e-tags" ref="tagContainer">

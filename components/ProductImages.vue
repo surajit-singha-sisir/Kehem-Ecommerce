@@ -16,7 +16,7 @@
 
                 <div v-if="image.loading" class="loader"></div>
 
-                <img v-if="!image.loading" :src="image.src" :target-id="getId[index].id" class="draggable"
+                <NuxtImg v-if="!image.loading" :src="image.src" :target-id="getId[index].id" class="draggable"
                     draggable="true" @dragstart="handleDragStart($event, index)" />
                 <span class="delete-icon" @click="deleteImage(getId[index].id, index)" aria-label="Delete Image">
                     <i class="m-cross1"></i>
@@ -32,6 +32,22 @@ import { ref, onUnmounted } from 'vue';
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const accessToken = useCookie<string | null>('access');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 interface ImageResponse {
     value: {
@@ -80,7 +96,7 @@ const handleFileUpload = async (event: Event) => {
 
                     if (response && response.data) {
                         const imageResponse = response.data as ImageResponse;
-                        console.log(imageResponse.value);
+                        // console.log(imageResponse.value);
 
                         const imageUrl = `http://192.168.0.111:3000${imageResponse.value.image}`;
                         const lastIndex = previewImages.value.length - 1;
@@ -154,6 +170,31 @@ const handleDrop = (e: DragEvent, index: number) => {
 const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
 };
+
+
+
+
+
+
+
+
+
+
+const POSTImages = ref<{ [key: string]: string }>({}); //POSTREQ
+
+
+watch(previewImages, (newImages) => {
+    const imageSources = newImages.reduce((acc, image, index) => {
+        acc[`img-${index + 1}`] = image.src;
+        return acc;
+    }, {} as { [key: string]: string });
+
+    POSTImages.value = imageSources;
+    console.log(POSTImages.value);
+}, { deep: true });
+
+
+
 
 onUnmounted(() => {
     previewImages.value.forEach((image) => {
