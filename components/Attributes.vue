@@ -432,7 +432,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Dynamically render rows from the rows data array -->
+                        <!-- DYNAMIC MULTI-ATRIBUTE VALUES PICKER -->
                         <tr v-for="(row, index) in rows" :key="index" class="attribute-value-tr324">
                             <td class="b relative">
                                 <div class="attribute-value-insert">
@@ -441,7 +441,6 @@
                                         @click="toggleAttrValue(index, 0)">
                                         <span class="attribute-assigned-name">{{ section2Items[0].name }}</span>
                                         <p>{{ row.newSelected }}</p>
-
                                         <div class="show-available-values-outer" v-if="row.isFirstAttrValueClicked"
                                             :class="{ 'hide': !row.isFirstAttrValueClicked }">
                                             <span>"{{ section2Items[0].name }}" Values</span>

@@ -226,35 +226,12 @@
 
 
             </aside>
-
-            <!-- RIGHT COLUMN -->
-            <aside class="addProductRightColumn">
-
-                <!-- PRODUCT IMAGES -->
-                <section class="e-productImage">
-                    <span class="text--m productImagesTitle">Product Images <span class=" star">(0/5)</span></span>
-
-                    <div class="pad--20 m-tb--10 fileInputBox">
-                        <input type="file" name="" id="dragAndDropFile" accept=".jpg, .jpeg" multiple>
-                        <p class="uploadOrDragImage">Upload or Drag Image</p>
-                    </div>
+            <ProductImages />
 
 
-                    <!-- PREVIEW IMAGES -->
-                    <div class="dragable-image-container gap-10 hide">
-                        <span class="preview-img-container">
-                        </span>
-                        <span class="preview-img-container">
-                        </span>
-                        <span class="preview-img-container">
-                        </span>
-                        <span class="preview-img-container">
-                        </span>
-                        <span class="preview-img-container">
-                        </span>
-                    </div>
-                </section>
-            </aside>
+
+
+            
             <!-- SUBMIT FORM -->
             <section class="submitForm">
                 <input type="submit" value="Submit" class="btn btn-primary w--200">
