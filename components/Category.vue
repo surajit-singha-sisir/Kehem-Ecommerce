@@ -64,15 +64,23 @@ const filteredOptions = computed(() => {
 });
 
 
+
+
+interface CatProps {
+    POSTCat: string;
+}
+
+const { POSTCat } = defineProps<CatProps>();
+const emit = defineEmits<{ (e: 'update:POSTCat', value: string): void }>();
+
 // GET SELECTED OPTION
 const selectOption = (option: string): void => {
     inputValue.value = option;
     showDropdown.value = false;
     isInputClicked.value = true;
-    console.log(option);
+    emit('update:POSTCat', option);
 
 };
-
 
 const handleKeydown = (event: KeyboardEvent): void => {
     if (event.key === 'Escape') {

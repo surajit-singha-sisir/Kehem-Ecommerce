@@ -1,7 +1,7 @@
 <template>
     <section class="pad-tb--20">
         <span class="text--m star">Benefits</span><br><br>
-        <textarea class="summernote" name="summerNote" id="benefits"></textarea>
+        <textarea class="summernote" name="benefits" id="benefits"></textarea>
     </section>
 </template>
 <script setup>

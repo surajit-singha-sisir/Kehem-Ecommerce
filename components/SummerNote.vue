@@ -1,7 +1,7 @@
 <template>
     <section class="summernote">
         <span class="text--m star">Description</span><br><br>
-        <textarea class="summernote" name="summerNote" id="summernote"></textarea>
+        <textarea class="summernote" name="description" id="summernote"></textarea>
     </section>
 </template>
 <script setup>

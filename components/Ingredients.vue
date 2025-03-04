@@ -75,36 +75,35 @@
 }
 </style>
 
-
 <template>
     <section class="border-all f-centered f-col gap-10">
         <h3 class="star text-center pad--10">Ingredients</h3>
 
-        <div v-for="(ingredient, index) in ingredients" :key="index">
+        <div v-for="(ingredient, index) in ingredients" :key="`ingredient-${index}`" class="w-100 f-centered">
             <aside class="f-centered gap-10 pad-b--10 bordered-all">
                 <div class="f-centered ingredient-img-container">
-                    <span class="ingredient-upload-area" v-if="!ingredient.isFile">
-                        <input type="file" :name="'image_' + index" accept=".jpg, .jpeg" class="ingredientImageUpload"
-                            @change="handleImageUpload(index)" />
+                    <span class="ingredient-upload-area" v-if="!ingredient.imageUrl">
+                        <input type="file" :name="`ingredient_image_${index}`" accept=".jpg, .jpeg"
+                            class="ingredientImageUpload" @change="handleImageUpload($event, index)" />
                         <p>Upload Image</p>
                     </span>
-                    <!-- Preview -->
-                    <NuxtImg v-if="ingredient.isFile" class="w-100 scaling" :src="ingredient.ingredientImg" alt="" />
+                    <div v-if="ingredient.loading" class="loader"></div>
+                    <NuxtImg v-else-if="ingredient.imageUrl" class="w-100 scaling" :src="ingredient.imageUrl"
+                        alt="Ingredient image" />
                 </div>
                 <div class="f f-col gap-10 w-100">
-                    <label :for="'name_en_' + index">Ingredient Name (en)</label>
-                    <input type="text" :name="'name_en_' + index" :id="'name_en_' + index"
-                        placeholder="Giloy Powder - 25gm" v-model="ingredient.name_en" />
+                    <label :for="`ingredient_name_en_${index}`">Ingredient Name (en)</label>
+                    <input type="text" :name="`ingredient_name_en_${index}`" :id="`ingredient_name_en_${index}`"
+                        placeholder="Giloy Powder - 25gm" v-model="ingredient.nameEn" />
 
-                    <label :for="'name_bn_' + index">Ingredient Name (bn)</label>
-                    <input type="text" :name="'name_bn_' + index" :id="'name_bn_' + index"
-                        placeholder="গুলঞ্চ চূর্ণ - ২৫গ্রাম" v-model="ingredient.name_bn" />
+                    <label :for="`ingredient_name_bn_${index}`">Ingredient Name (bn)</label>
+                    <input type="text" :name="`ingredient_name_bn_${index}`" :id="`ingredient_name_bn_${index}`"
+                        placeholder="গুলঞ্চ চূর্ণ - ২৫গ্রাম" v-model="ingredient.nameBn" />
                 </div>
             </aside>
         </div>
 
-        <!-- ADD Button -->
-        <div class="new-row-item ingredientadd" @click="newIngredientAdd">
+        <div class="new-row-item ingredientadd" @click="addNewIngredient">
             <button type="button" class="create-row-button">
                 <i class="m-plus"></i>
             </button>
@@ -115,85 +114,84 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useToast } from "vue-toastification";
+
 const toast = useToast();
 const accessToken = useCookie<string | null>('access');
 
-const ingredients = ref<any[]>([
+// Define emits
+const emit = defineEmits<{
+    (e: 'update:ingredients', ingredients: string[][]): void
+}>();
+
+// Ingredient interface
+interface Ingredient {
+    imageUrl: string;
+    nameEn: string;
+    nameBn: string;
+    loading: boolean;
+}
+
+const ingredients = ref<Ingredient[]>([
     {
-        name_en: '',
-        name_bn: '',
-        ingredientImg: '',
-        isFile: false
+        imageUrl: '',
+        nameEn: '',
+        nameBn: '',
+        loading: false
     }
 ]);
 
-interface ImageResponse {
-    value: {
-        id: number;
-        image: string;
-    };
-}
+// Handle image upload
+const handleImageUpload = async (event: Event, index: number) => {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
 
-const handleImageUpload = async (index: number) => {
-    const inputElement = document.querySelector(`input[name='image_${index}']`) as HTMLInputElement;
-    if (inputElement && inputElement.files && inputElement.files.length > 0) {
-        const formData = new FormData();
-        formData.append('image', inputElement.files[0]);
+    const formData = new FormData();
+    formData.append('image', input.files[0]);
+    ingredients.value[index].loading = true;
 
-        try {
-            const response = await useFetch('http://192.168.0.111:3000/api/image_add', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${accessToken.value ?? ''}`,
-                },
-                body: formData,
-            });
+    try {
+        const response = await useFetch('http://192.168.0.111:3000/api/image_add', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${accessToken.value ?? ''}`,
+            },
+            body: formData,
+        });
 
-            if (response && response.data) {
-                const imageResponse = response.data as ImageResponse;
-                const imageUrl = `http://192.168.0.111:3000${imageResponse.value.image}`;
-                ingredients.value[index].ingredientImg = imageUrl;
-                ingredients.value[index].isFile = true;
-            }
-
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            alert('Image upload failed. Please try again.');
+        const imageResponse = response.data as { value: { id: number; image: string } };
+        if (imageResponse?.value?.image) {
+            ingredients.value[index].imageUrl = `http://192.168.0.111:3000${imageResponse.value.image}`;
+            emitIngredients();
         }
+    } catch (error) {
+        console.error('Image upload error:', error);
+        toast.error('Image upload failed. Please try again.');
+    } finally {
+        ingredients.value[index].loading = false;
     }
 };
 
-const newIngredientAdd = () => {
+// Add new ingredient
+const addNewIngredient = () => {
     ingredients.value.push({
-        name_en: '',
-        name_bn: '',
-        ingredientImg: '',
-        isFile: false
+        imageUrl: '',
+        nameEn: '',
+        nameBn: '',
+        loading: false
     });
-
-    toast.success('New Ingredient added successfully!');
+    toast.success('New ingredient added!');
 };
 
-const generateJSON = () => {
-    const json: Record<string, { image: string, name_en: string, name_bn: string }> = {};
-
-    ingredients.value.forEach((ingredient, index) => {
-        if (ingredient.isFile && ingredient.name_en && ingredient.name_bn) {
-            const key = `ingredient-${index + 1}`;
-            json[key] = {
-                image: ingredient.ingredientImg,
-                name_en: ingredient.name_en,
-                name_bn: ingredient.name_bn
-            };
-        }
-    });
-
-    return json;
+// Generate and emit ingredients data
+const emitIngredients = () => {
+    const ingredientsData = ingredients.value
+        .filter(ing => ing.imageUrl && ing.nameEn && ing.nameBn) // Only include complete ingredients
+        .map(ing => [ing.imageUrl, ing.nameEn, ing.nameBn]);
+    emit('update:ingredients', ingredientsData);
 };
 
+// Watch for changes and emit
 watch(ingredients, () => {
-    const json = generateJSON();
-    console.log("Generated JSON:", JSON.stringify(json, null, 2));
+    emitIngredients();
 }, { deep: true });
-
 </script>

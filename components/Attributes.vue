@@ -205,7 +205,6 @@
     background-color: #007bff !important;
 }
 </style>
-
 <template>
     <section>
         <!-- ATTRIBUTES VIEW -->
@@ -232,10 +231,8 @@
             </div>
         </aside>
 
-
         <!-- ATTRIBUTE VALUE -->
-        <div class="pad--10 b-b-e m-b--10"  :class="{ 'hide': !isSelected }">
-
+        <div class="pad--10 b-b-e m-b--10" :class="{ 'hide': !isSelected }">
             <!-- ATTRIBUTE VALUES -->
             <div class="b-e pad--10 f f-just-between f-align-items-center gap-10">
                 <section class="f f-wrap gap-10 f-flex-xxxl">
@@ -256,7 +253,6 @@
                         v-if="isPlusClicked">
                         <i @click="isPlusClicked = !isPlusClicked"
                             class="addAttrValCross btn btn-fire btn-sm z-1 m-x1"></i>
-                        <!-- SELECT OPTION -->
                         <div class="option">
                             <select name="newAttrVal" id="newAttrVal" v-model="selectedAttr">
                                 <option value="selected" selected disabled>-- Select Category --</option>
@@ -266,57 +262,21 @@
                                 </option>
                             </select>
                         </div>
-                        <!-- INPUT VALUE -->
                         <div class="text-input">
                             <input type="text" v-model="newAttrName" placeholder="Variable Name">
                         </div>
-                        <!-- SUBMIT BUTTON -->
-                        <button class="btn btn-primary" type="submit" @click="newAttrValClick">Submit</button>
+                        <button class="btn btn-primary" type="button" @click="newAttrValClick">Submit</button>
                     </div>
                 </div>
             </div>
 
             <!-- ATTRIBUTE VALUES DETAILS -->
             <aside class="b-e pad--10 m-t--10">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <!-- OPTIONAL ATTRIBUTE -->
                 <h4 class="m-b--10">Your Optional Attribute List</h4>
-
                 <draggable v-model="section1Items" :group="'items'" item-key="id" class="draggable-list"
                     @start="onDragStart" @end="onDragEnd">
-                    <template #item="{ element, index }">
+                    <template #item="{ element }">
                         <div v-if="element.value.length >= 1" class="draggable-item"
                             :class="{ 'last-dragged': lastDraggedId === element.id }">
                             <div class="f-center-start gap-10 w-100">
@@ -333,27 +293,19 @@
                     </template>
                 </draggable>
 
-
-
-
-
-
-                <!-- MENDATORY ATTRIBUTE -->
-                <h4 class="m-tb--10">Your Mendatory Attribute List <span class="Red">(max: 2)</span></h4>
-
+                <!-- MANDATORY ATTRIBUTE -->
+                <h4 class="m-tb--10">Your Mandatory Attribute List <span class="Red">(max: 2)</span></h4>
                 <draggable v-model="section2Items" :group="'items'" item-key="id" class="draggable-list"
                     @start="onDragStart" @end="onDragEnd">
                     <template #item="{ element }">
-                        <div ref="section2Container" class="draggable-item"
-                            :class="{ 'last-dragged': lastDraggedId === element.id }">
+                        <div class="draggable-item" :class="{ 'last-dragged': lastDraggedId === element.id }">
                             <div class="f-center-start gap-10 w-100">
                                 <span class="attribute-selected-item">
                                     <span>::</span>
                                     <div class="f-centered gap-03">
                                         <span class="attribute-name b Blue-900">{{ element.name }}</span>
                                         <i class="m-chevron-right"></i>
-                                        <span class="attribute-values b Cyan-800">{{ element.value.join(", ")
-                                            }}</span>
+                                        <span class="attribute-values b Cyan-800">{{ element.value.join(", ") }}</span>
                                     </div>
                                 </span>
                             </div>
@@ -361,33 +313,11 @@
                     </template>
                 </draggable>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                <!-- Table (Single Attribute)-->
-                <table ref="section2Table" class="attributeTable" v-if="section2Items.length === 1">
+                <!-- Table (Single Attribute) -->
+                <table class="attributeTable" v-if="section2Items.length === 1">
                     <thead>
                         <tr>
-                            <th colspan="3" class="text--12 Brown bg-Khaki ">"{{ section2Items[0].name }}"</th>
+                            <th colspan="3" class="text--12 Brown bg-Khaki">"{{ section2Items[0].name }}"</th>
                         </tr>
                         <tr>
                             <th>Values</th>
@@ -399,26 +329,20 @@
                         <tr v-for="(item, index) in section2Items[0].value" :key="index">
                             <td class="b">{{ item }}</td>
                             <td>
-                                <input type="number" v-model="singleValueStock" name="attributeValue" min="1"
+                                <input type="number" v-model="singleAttributeStocks[index]" name="attributeValue" min="1"
                                     placeholder="Stock">
                             </td>
                             <td>
-                                <button class="btn" style="cursor: not-allowed;">
-                                    {{ foreignKeys.sellPrice > (foreignKeys.discountPrice > 0 ?
-                                        foreignKeys.discountPrice :
-                                        foreignKeys.sellPrice) ? foreignKeys.discountPrice
-                                        :
-                                        foreignKeys.sellPrice }}
-                                    taka</button>
+                                <button type="button" class="btn" style="cursor: not-allowed;">
+                                    {{ foreignKeys.sellPrice > (foreignKeys.discountPrice || foreignKeys.sellPrice) ? foreignKeys.discountPrice : foreignKeys.sellPrice }} taka
+                                </button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
 
-
-
                 <!-- 2 ATTRIBUTE VALUES -->
-                <table ref="section2Table" class="attributeTable" v-if="section2Items.length === 2">
+                <table class="attributeTable" v-if="section2Items.length === 2">
                     <thead>
                         <tr>
                             <th colspan="3" class="text--12 Brown bg-Khaki">
@@ -432,7 +356,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- DYNAMIC MULTI-ATRIBUTE VALUES PICKER -->
                         <tr v-for="(row, index) in rows" :key="index" class="attribute-value-tr324">
                             <td class="b relative">
                                 <div class="attribute-value-insert">
@@ -441,46 +364,38 @@
                                         @click="toggleAttrValue(index, 0)">
                                         <span class="attribute-assigned-name">{{ section2Items[0].name }}</span>
                                         <p>{{ row.newSelected }}</p>
-                                        <div class="show-available-values-outer" v-if="row.isFirstAttrValueClicked"
-                                            :class="{ 'hide': !row.isFirstAttrValueClicked }">
+                                        <div class="show-available-values-outer" v-if="row.isFirstAttrValueClicked">
                                             <span>"{{ section2Items[0].name }}" Values</span>
                                             <ul class="show-available-values"
                                                 @click="getValueSelection(index, 0, $event)">
                                                 <li v-for="item in section2Items[0].value" :key="item">{{ item }}</li>
                                             </ul>
-
                                         </div>
                                     </span>
-
                                     <i class="m-plus-alt"></i>
-
                                     <span class="placeholder"
                                         :class="{ 'attribute-value-assigned': row.isValueSelectedNow }"
                                         @click="toggleAttrValue(index, 1)">
                                         <span class="attribute-assigned-name">{{ section2Items[1].name }}</span>
                                         <p>{{ row.newSelected2 }}</p>
-
-                                        <div class="show-available-values-outer"
-                                            :class="{ 'hide': !row.isSecondAttrValueClicked }">
+                                        <div class="show-available-values-outer" v-if="row.isSecondAttrValueClicked">
                                             <span>"{{ section2Items[1].name }}" Values</span>
                                             <ul class="show-available-values"
                                                 @click="getValueSelection(index, 1, $event)">
                                                 <li v-for="item in section2Items[1].value" :key="item">{{ item }}</li>
                                             </ul>
-
                                         </div>
                                     </span>
                                 </div>
                             </td>
                             <td>
-                                <input type="number" v-model="row.singleValueStock" name="attributeValue" min="1"
+                                <input type="number" v-model="rows[index].singleValueStock" name="attributeValue" min="1"
                                     placeholder="Stock">
                             </td>
                             <td>
                                 <button class="btn btn-disabled">100 taka</button>
                             </td>
                         </tr>
-
                         <tr class="last-Tr-entry">
                             <td colspan="3" class="new-row-item">
                                 <button @click="createNewTr" type="button" class="create-row-button" v-if="isLastTr"><i
@@ -489,64 +404,84 @@
                         </tr>
                     </tbody>
                 </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             </aside>
         </div>
     </section>
 </template>
 
-
-
-
 <script setup lang="ts">
 import draggable from 'vuedraggable';
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
+import { useToast } from "vue-toastification";
 
-const rows = ref([
-    {
-        isFirstAttrValueClicked: false,
-        isSecondAttrValueClicked: false,
-        isValueSelectedNow: false,
-        newSelected: '',
-        newSelected2: '',
-        singleValueStock: 0,
-    },
-]);
+const toast = useToast();
+const accessToken = useCookie<string | null>('access');
+
+interface Item {
+    id: number;
+    name: string;
+    value: string[];
+}
+
+interface Props {
+    buyPrice: number;
+    sellPrice: number;
+    discountPrice: number;
+    productCurrency: string;
+    stock: number;
+}
+
+const foreignKeys = defineProps<Props>();
+const emit = defineEmits(['sendGenerateJSON']);
+
+// Reactive variables
+const inputValue = ref<string>('');
+const showDropdown = ref<boolean>(false);
+const isAddCatClicked = ref<boolean>(false);
+const newCatName = ref<string>('');
+const comboBoxContainer = ref<HTMLElement | null>(null);
+const newAddCat = ref<HTMLElement | null>(null);
+const options = ref<string[]>([]);
+const isSelected = ref(false);
+const isPlusClicked = ref(false);
+const selectedAttr = ref('');
+const newAttrName = ref('');
+const selectedValues = ref<string[]>([]);
+const currectAttr = ref<string>();
+const section1Items = ref<Item[]>([]);
+const section2Items = ref<Item[]>([]);
+const dragging = ref(false);
+const lastDraggedId = ref<number | null>(null);
+const singleAttributeStocks = ref<number[]>([]); // For single attribute stock values
+
+// Rows for multiple attributes
+const rows = ref<{
+    isFirstAttrValueClicked: boolean;
+    isSecondAttrValueClicked: boolean;
+    isValueSelectedNow: boolean;
+    newSelected: string;
+    newSelected2: string;
+    singleValueStock: number;
+}[]>([]);
+
+// Initialize first row
+const initRow = () => ({
+    isFirstAttrValueClicked: false,
+    isSecondAttrValueClicked: false,
+    isValueSelectedNow: false,
+    newSelected: '',
+    newSelected2: '',
+    singleValueStock: 0,
+});
+
+rows.value = [initRow()];
+const isLastTr = ref(true);
+
+const filteredOptions = computed(() => {
+    const query = inputValue.value.toLowerCase();
+    if (!inputValue.value) isSelected.value = true;
+    return options.value.filter(option => option.toLowerCase().includes(query));
+});
 
 const toggleAttrValue = (index: number, attrIndex: number) => {
     if (attrIndex === 0) {
@@ -561,168 +496,140 @@ const getValueSelection = (index: number, attrIndex: number, event: Event) => {
     if (currentClicked) {
         if (attrIndex === 0) {
             rows.value[index].newSelected = currentClicked.textContent || '';
+            rows.value[index].isValueSelectedNow = true;
         } else {
             rows.value[index].newSelected2 = currentClicked.textContent || '';
+            rows.value[index].isValueSelectedNow = true;
         }
     }
 };
 
-
 const createNewTr = () => {
-    rows.value.push({
-        isFirstAttrValueClicked: false,
-        isSecondAttrValueClicked: false,
-        isValueSelectedNow: false,
-        newSelected: '',
-        newSelected2: '',
-        singleValueStock: 0,
+    rows.value.push(initRow());
+};
+
+watch(section2Items, (newItems) => {
+    if (newItems.length === 1) {
+        singleAttributeStocks.value = new Array(newItems[0].value.length).fill(0);
+    } else if (newItems.length === 2) {
+        rows.value = [initRow()];
+    }
+}, { deep: true });
+
+let allAttrs = ref<Attribute[]>([]);
+let attributeJSONValues = ref<AttrValues[]>([]);
+
+interface Attribute {
+    name: string;
+    attr_values: string;
+}
+
+interface AttrValues {
+    name: string;
+}
+
+const selectOption = (option: string): void => {
+    inputValue.value = option;
+    showDropdown.value = false;
+    isSelected.value = true;
+    const names = allAttrs.value;
+    names.forEach(name => {
+        if (name.name === option) {
+            currectAttr.value = name.name;
+            attributeJSONValues.value = Object.values(name.attr_values).map(value => ({ name: value }));
+        }
     });
 };
 
-const isLastTr = ref(true);
+const handleKeydown = (event: KeyboardEvent): void => {
+    if (event.key === 'Escape') {
+        inputValue.value = '';
+        isSelected.value = true;
+        showDropdown.value = false;
+    }
+};
 
+const closeDropdown = (event: MouseEvent): void => {
+    if (comboBoxContainer.value && !comboBoxContainer.value.contains(event.target as Node)) {
+        showDropdown.value = false;
+    }
+};
 
-interface Props {
-    buyPrice: number,
-    sellPrice: number,
-    discountPrice: number,
-    productCurrency: string,
-    stock: number,
-}
-const foreignKeys = defineProps<Props>();
+const newAttNameBtn = async (): Promise<void> => {
+    if (!newCatName.value.trim()) {
+        toast.error('Please enter a Attribute name');
+        return;
+    }
+    for (const option of filteredOptions.value) {
+        if (option.trim() === newCatName.value.trim()) {
+            toast.error('Duplicate Attribute name');
+            return;
+        }
+    }
+    try {
+        await $fetch('http://192.168.0.111:3000/api/add_attribute', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${accessToken.value ?? ''}` },
+            body: { name: newCatName.value },
+        });
+        toast.success(`You have added "${newCatName.value}"`);
+        getAttrs();
+        isAddCatClicked.value = false;
+        newCatName.value = '';
+        isSelected.value = true;
+    } catch {
+        toast.error('There was an error. Contact KEHEM IT');
+    }
+};
 
-
-
-// STOCK MAINTAINS
-
-const section2Items = ref<Item[]>([]);
-const section2Container = ref<HTMLElement | null>(null);
-const section2Table = ref<HTMLElement | null>(null);
-const singleValueStock = ref('');
-watch(([section2Items, foreignKeys]), () => {
-
-});
-
-
-
-
-// ATTRIBUTE VALUES
-const isSelected = ref(false);
-const isPlusClicked = ref(false);
-
-const selectedAttr = ref('');
-const newAttrName = ref('');
-
-
-
-// + ATTRIBUTE VALUES
 const newAttrValClick = async (): Promise<void> => {
-    // EMPTY NAME ERROR
     if (!newAttrName.value.trim()) {
         toast.error('Please enter an attribute value name');
         return;
     }
-
-    // DUPLICATE ERROR
     for (const option of attributeJSONValues.value) {
         if (option.name.trim() === newAttrName.value.trim()) {
             toast.error('Duplicate Attribute value');
             return;
         }
     }
-
     try {
         await $fetch('http://192.168.0.111:3000/api/add_attrval', {
             method: 'POST',
-            headers: {
-                Authorization: `Bearer ${accessToken.value ?? ''}`
-            },
-            body: {
-                attr: selectedAttr.value ?? '', // Selected attribute name
-                val: newAttrName.value ?? ''   // New attribute value
-            }
+            headers: { Authorization: `Bearer ${accessToken.value ?? ''}` },
+            body: { attr: selectedAttr.value, val: newAttrName.value },
         });
-
         toast.success(`You have successfully added "${newAttrName.value}"`);
-
-        // Refresh attributes
         await getAttrs();
-
-        // Update attributeJSONValues dynamically
         const selected = allAttrs.value.find(attr => attr.name === selectedAttr.value);
         if (selected) {
-            attributeJSONValues.value = Object.values(selected.attr_values).map(value => ({
-                name: value
-            }));
+            attributeJSONValues.value = Object.values(selected.attr_values).map(value => ({ name: value }));
         }
-
-        // Reset input fields
         selectedAttr.value = '';
         newAttrName.value = '';
-        isPlusClicked.value = !isPlusClicked.value;
-
-    } catch (error) {
+        isPlusClicked.value = false;
+    } catch {
         toast.error("Something went wrong!");
     }
 };
 
-
-
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import { useToast } from "vue-toastification";
-import { Value } from 'sass';
-const toast = useToast();
-const accessToken = useCookie<string | null>('access');
-
-const inputValue = ref<string>('');
-const showDropdown = ref<boolean>(false);
-const isAddCatClicked = ref<boolean>(false);
-const isInputClicked = ref<boolean>(false);
-const newCatName = ref<string>('');
-const comboBoxContainer = ref<HTMLElement | null>(null);
-const newAddCat = ref<HTMLElement | null>(null);
-const options = ref<string[]>([]);
-
-const filteredOptions = computed(() => {
-    const query = inputValue.value.toLowerCase();
-    if (!inputValue.value) {
-        isSelected.value = true;
+const getAttrs = async (): Promise<void> => {
+    try {
+        const { data: attributes } = await useFetch<Attribute[]>('http://192.168.0.111:3000/api/attributes', {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${accessToken.value ?? ''}` },
+        });
+        if (attributes.value) {
+            allAttrs.value = attributes.value;
+            options.value = attributes.value.map((attr) => attr.name);
+        }
+    } catch (error) {
+        console.error('Error fetching attributes:', error);
+        toast('Error fetching attributes');
     }
-    return options.value.filter(option => option.toLowerCase().includes(query));
-});
-
-// GET SELECTED OPTION
-let allAttrs = ref<Attribute[]>([]);
-let attributeJSONValues = ref<AttrValues[]>([]); // TEMPLATE
-
-
-interface AttrValues {
-    name: string
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const selectedValues = ref<string[]>([]);
-const currectAttr = ref<string>();
-
+};
+getAttrs();
 let arrayList: Record<string, string[]> = {};
-
 watch([selectedValues, currectAttr], ([newValue, currentName]) => {
     if (currentName) {
         arrayList[currentName] = [...newValue];
@@ -738,188 +645,56 @@ watch(currectAttr, () => {
     selectedValues.value = [];
 });
 
-const section1Items = ref<Item[]>([]);
-
-interface Item {
-    id: number;
-    name: string;
-    value: string[];
-}
-
-const dragging = ref(false);
-const lastDraggedId = ref<number | null>(null);
-
 const onDragStart = (event: any) => {
     lastDraggedId.value = event.item.__draggable_context.element.id;
 };
 
 const onDragEnd = () => {
     dragging.value = false;
-    setTimeout(() => {
-        lastDraggedId.value = null;
-    }, 500);
+    setTimeout(() => lastDraggedId.value = null, 500);
 };
 
+const generateJSON = () => {
+    const json: Record<string, string[]> = {};
+    const json2: Record<string, Record<string, number>> = {};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const selectOption = (option: string): void => {
-    inputValue.value = option;
-    showDropdown.value = false;
-    isInputClicked.value = true;
-    isSelected.value = true;
-
-    const names = allAttrs.value;
-    names.forEach(name => {
-        if (name.name === option) {
-            currectAttr.value = name.name;
-            attributeJSONValues.value = Object.values(name.attr_values).map(value => ({
-                name: value
-            }));
+    // Optional attributes
+    section1Items.value.forEach((item) => {
+        if (item?.name && item?.value?.length) {
+            json[item.name] = item.value;
         }
     });
-};
 
-
-const handleKeydown = (event: KeyboardEvent): void => {
-    if (event.key === 'Escape') {
-        inputValue.value = '';
-        isSelected.value = true;
-        showDropdown.value = false;
-    }
-};
-
-const closeDropdown = (event: MouseEvent): void => {
-    if (comboBoxContainer.value && !comboBoxContainer.value.contains(event.target as Node)) {
-        showDropdown.value = false;
-        isInputClicked.value = true;
-    }
-    if (isAddCatClicked.value) {
-        isAddCatClicked.value = true;
-    }
-};
-
-// + VALUE
-const newAttNameBtn = async (): Promise<void> => {
-    // EMPTY NAME ERROR
-    if (!newCatName.value.trim()) {
-        toast.error('Please enter a Attribute name');
-        return;
-    }
-    // DUPLICATE ERROR
-    for (const option of filteredOptions.value) {
-        if (option.trim() == newCatName.value.trim()) {
-            toast.error('Duplicate Attribute name');
-            return;
+    // Mandatory attributes
+    section2Items.value.forEach((item, index) => {
+        if (item?.name && item?.value?.length) {
+            const stockMap: Record<string, number> = {};
+            if (section2Items.value.length === 1) {
+                item.value.forEach((value, i) => {
+                    stockMap[value] = singleAttributeStocks.value[i] || 0;
+                });
+            } else if (section2Items.value.length === 2) {
+                rows.value.forEach((row) => {
+                    if (row.newSelected && row.newSelected2) {
+                        stockMap[`${row.newSelected}-${row.newSelected2}`] = row.singleValueStock || 0;
+                    }
+                });
+            }
+            json2[item.name] = stockMap;
         }
-    }
+    });
 
-    // CATCH THE DATA
-    try {
-        await $fetch<{ message: string }>('http://192.168.0.111:3000/api/add_attribute', {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${accessToken.value ?? ''}`,
-            },
-            body: {
-                name: newCatName.value ?? '',
-            },
-        });
-
-
-        toast.success(`You have added "${newCatName.value}"`);
-
-        // RECALL UPDATED ATTR
-        getAttrs();
-
-        // TURNED OFF ADD CAT DIALOG
-        isAddCatClicked.value = !isAddCatClicked.value;
-        newCatName.value = '';
-        isSelected.value = true;
-
-    } catch {
-        toast.error('There was encounted an error. Contact KEHEM IT');
-    }
+    return {
+        "Optional_attributes": json,
+        "Mandetory_attributes": json2
+    };
 };
 
-
-interface Attribute {
-    name: string;
-    attr_values: string
-}
-const getAttrs = async (): Promise<void> => {
-    try {
-        const { data: attributes } = await useFetch<Attribute[]>('http://192.168.0.111:3000/api/attributes', {
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer ${accessToken.value ?? ''}`,
-            },
-        });
-
-        if (attributes.value) {
-            allAttrs.value = attributes.value;
-            options.value = attributes.value.map((attr) => attr.name);
-        }
-
-    } catch (error) {
-        console.error('Error fetching attributes:', error);
-        toast('Error fetching attributes');
-    }
-};
-
-// LOAD WITHOUT RELOAD
-getAttrs();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+emit('sendGenerateJSON', generateJSON);
 
 onMounted(() => {
     document.addEventListener('click', closeDropdown);
-    // LOAD ON RELOAD
-    window.addEventListener('load', getAttrs);
-    return () => {
-        window.removeEventListener('load', getAttrs);
-    };
+    getAttrs();
 });
 
 onBeforeUnmount(() => {

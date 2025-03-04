@@ -1,29 +1,25 @@
 {
-  "cat": "Organic Products",
-  "subcats": [
-    {
-      "subcat": "Organic Fruits",
-      "subsubcats": [
-        "Apple Organic Lution",
-        "Organic Bananas",
-        "Organic Strawberries"
-      ]
-    },
-    {
-      "subcat": "Organic Vegetables",
-      "subsubcats": [
-        "Organic Carrots",
-        "Organic Spinach",
-        "Organic Tomatoes"
-      ]
-    },
-    {
-      "subcat": "Organic Grains",
-      "subsubcats": [
-        "Organic Quinoa",
-        "Organic Oats",
-        "Organic Brown Rice"
-      ]
+  "Mandatory_attributes": {
+    "Size": {
+      "XL": 50,
+      "M": 30
     }
+  },
+  "Optional_attributes": {
+    "Color": ["Blue", "Red", "Yellow"],
+    "Organic": ["Moonseed"]
+  },
+  "faqs": [
+    ["Blue", "Red"],
+    ["Blue", "Red"],
+    ["Blue", "Red"],
+    ["Blue", "Red"]
+  ],
+
+  "ingredients": [
+    ["image link","name_en","name_bn"],
+    ["image link","name_en","name_bn"],
+    ["image link","name_en","name_bn"]
   ]
 }
+// http://192.168.0.111:3000/media/product/image/adhuniktv_biWemkU.jpg
