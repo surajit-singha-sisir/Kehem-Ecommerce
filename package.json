@@ -16,6 +16,8 @@
     "@heroicons/vue": "^2.2.0",
     "@nuxt/image": "^1.9.0",
     "@pinia/nuxt": "^0.10.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.0",
     "mastorscdn": "^1.1.0",
     "nuxt": "^3.15.4",
     "nuxt-auth-utils": "^0.5.16",
