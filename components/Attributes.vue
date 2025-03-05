@@ -205,6 +205,19 @@
     background-color: #007bff !important;
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <template>
     <section>
         <!-- ATTRIBUTES VIEW -->
@@ -313,7 +326,7 @@
                     </template>
                 </draggable>
 
-                <!-- Table (Single Attribute) -->
+                <!-- Single Attribute Table -->
                 <table class="attributeTable" v-if="section2Items.length === 1">
                     <thead>
                         <tr>
@@ -329,19 +342,18 @@
                         <tr v-for="(item, index) in section2Items[0].value" :key="index">
                             <td class="b">{{ item }}</td>
                             <td>
-                                <input type="number" v-model="singleAttributeStocks[index]" name="attributeValue" min="1"
-                                    placeholder="Stock">
+                                <input type="number" v-model.number="singleAttributeStocks[index]" name="attributeStock"
+                                    min="0" placeholder="Stock" @change="validateStock">
                             </td>
                             <td>
-                                <button type="button" class="btn" style="cursor: not-allowed;">
-                                    {{ foreignKeys.sellPrice > (foreignKeys.discountPrice || foreignKeys.sellPrice) ? foreignKeys.discountPrice : foreignKeys.sellPrice }} taka
-                                </button>
+                                <input type="number" v-model.number="singleAttributeAmount[index]" name="attributeAmount"
+                                    min="0" :placeholder="defaultPrice.toString()" @change="updateAttributes">
                             </td>
                         </tr>
                     </tbody>
                 </table>
 
-                <!-- 2 ATTRIBUTE VALUES -->
+                <!-- Two Attributes Table -->
                 <table class="attributeTable" v-if="section2Items.length === 2">
                     <thead>
                         <tr>
@@ -356,14 +368,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(row, index) in rows" :key="index" class="attribute-value-tr324">
+                        <tr v-for="(row, index) in rows" :key="index">
                             <td class="b relative">
                                 <div class="attribute-value-insert">
                                     <span class="placeholder linker-line"
-                                        :class="{ 'attribute-value-assigned': row.isValueSelectedNow }"
+                                        :class="{ 'attribute-value-assigned': row.newSelected }"
                                         @click="toggleAttrValue(index, 0)">
                                         <span class="attribute-assigned-name">{{ section2Items[0].name }}</span>
-                                        <p>{{ row.newSelected }}</p>
+                                        <p>{{ row.newSelected || 'Select...' }}</p>
                                         <div class="show-available-values-outer" v-if="row.isFirstAttrValueClicked">
                                             <span>"{{ section2Items[0].name }}" Values</span>
                                             <ul class="show-available-values"
@@ -373,11 +385,10 @@
                                         </div>
                                     </span>
                                     <i class="m-plus-alt"></i>
-                                    <span class="placeholder"
-                                        :class="{ 'attribute-value-assigned': row.isValueSelectedNow }"
+                                    <span class="placeholder" :class="{ 'attribute-value-assigned': row.newSelected2 }"
                                         @click="toggleAttrValue(index, 1)">
                                         <span class="attribute-assigned-name">{{ section2Items[1].name }}</span>
-                                        <p>{{ row.newSelected2 }}</p>
+                                        <p>{{ row.newSelected2 || 'Select...' }}</p>
                                         <div class="show-available-values-outer" v-if="row.isSecondAttrValueClicked">
                                             <span>"{{ section2Items[1].name }}" Values</span>
                                             <ul class="show-available-values"
@@ -389,17 +400,19 @@
                                 </div>
                             </td>
                             <td>
-                                <input type="number" v-model="rows[index].singleValueStock" name="attributeValue" min="1"
-                                    placeholder="Stock">
+                                <input type="number" v-model.number="row.singleValueStock" name="attributeValue" min="0"
+                                    placeholder="Stock" @change="validateStock">
                             </td>
                             <td>
-                                <button class="btn btn-disabled">100 taka</button>
+                                <input type="number" v-model.number="row.singleValueAmount" name="attributeAmount"
+                                    min="0" :placeholder="defaultPrice.toString()" @change="updateAttributes">
                             </td>
                         </tr>
                         <tr class="last-Tr-entry">
                             <td colspan="3" class="new-row-item">
-                                <button @click="createNewTr" type="button" class="create-row-button" v-if="isLastTr"><i
-                                        class="m-plus"></i></button>
+                                <button @click="createNewTr" type="button" class="create-row-button">
+                                    <i class="m-plus"></i>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
@@ -434,6 +447,14 @@ interface Props {
 const foreignKeys = defineProps<Props>();
 const emit = defineEmits(['sendGenerateJSON']);
 
+// Price handling
+const defaultPrice = computed(() => {
+    return foreignKeys.sellPrice > (foreignKeys.discountPrice || foreignKeys.sellPrice)
+        ? foreignKeys.discountPrice
+        : foreignKeys.sellPrice;
+});
+const currentPrice = ref<number>(defaultPrice.value);
+
 // Reactive variables
 const inputValue = ref<string>('');
 const showDropdown = ref<boolean>(false);
@@ -443,7 +464,7 @@ const comboBoxContainer = ref<HTMLElement | null>(null);
 const newAddCat = ref<HTMLElement | null>(null);
 const options = ref<string[]>([]);
 const isSelected = ref(false);
-const isPlusClicked = ref(false);
+const isPlusClicked = ref<boolean>(false);
 const selectedAttr = ref('');
 const newAttrName = ref('');
 const selectedValues = ref<string[]>([]);
@@ -452,7 +473,8 @@ const section1Items = ref<Item[]>([]);
 const section2Items = ref<Item[]>([]);
 const dragging = ref(false);
 const lastDraggedId = ref<number | null>(null);
-const singleAttributeStocks = ref<number[]>([]); // For single attribute stock values
+const singleAttributeStocks = ref<number[]>([]);
+const singleAttributeAmount = ref<number[]>([]);
 
 // Rows for multiple attributes
 const rows = ref<{
@@ -462,9 +484,10 @@ const rows = ref<{
     newSelected: string;
     newSelected2: string;
     singleValueStock: number;
+    singleValueAmount: number;
 }[]>([]);
 
-// Initialize first row
+// Initialize first row with currentPrice as default
 const initRow = () => ({
     isFirstAttrValueClicked: false,
     isSecondAttrValueClicked: false,
@@ -472,10 +495,35 @@ const initRow = () => ({
     newSelected: '',
     newSelected2: '',
     singleValueStock: 0,
+    singleValueAmount: currentPrice.value
 });
 
 rows.value = [initRow()];
 const isLastTr = ref(true);
+
+// Stock validation function
+const validateStock = () => {
+    let totalStock = 0;
+    if (section2Items.value.length === 1) {
+        totalStock = singleAttributeStocks.value.reduce((sum, stock) => sum + (stock || 0), 0);
+    } else if (section2Items.value.length === 2) {
+        totalStock = rows.value.reduce((sum, row) => sum + (row.singleValueStock || 0), 0);
+    }
+
+    if (totalStock !== foreignKeys.stock) {
+        toast.error(`Total stock (${totalStock}) must equal ${foreignKeys.stock}`);
+        return false;
+    } else {
+        toast.success(`Stock matches: ${totalStock}`);
+        return true;
+    }
+};
+
+// Emit updated JSON whenever attributes change
+const updateAttributes = () => {
+    const json = generateJSON();
+    emit('sendGenerateJSON', json); // Emit the JSON object directly
+};
 
 const filteredOptions = computed(() => {
     const query = inputValue.value.toLowerCase();
@@ -497,23 +545,30 @@ const getValueSelection = (index: number, attrIndex: number, event: Event) => {
         if (attrIndex === 0) {
             rows.value[index].newSelected = currentClicked.textContent || '';
             rows.value[index].isValueSelectedNow = true;
+            rows.value[index].isFirstAttrValueClicked = false;
         } else {
             rows.value[index].newSelected2 = currentClicked.textContent || '';
             rows.value[index].isValueSelectedNow = true;
+            rows.value[index].isSecondAttrValueClicked = false;
         }
+        updateAttributes();
     }
 };
 
 const createNewTr = () => {
     rows.value.push(initRow());
+    updateAttributes();
 };
 
+// Updated watch to initialize with currentPrice and emit
 watch(section2Items, (newItems) => {
     if (newItems.length === 1) {
         singleAttributeStocks.value = new Array(newItems[0].value.length).fill(0);
+        singleAttributeAmount.value = new Array(newItems[0].value.length).fill(currentPrice.value);
     } else if (newItems.length === 2) {
         rows.value = [initRow()];
     }
+    updateAttributes();
 }, { deep: true });
 
 let allAttrs = ref<Attribute[]>([]);
@@ -539,6 +594,7 @@ const selectOption = (option: string): void => {
             attributeJSONValues.value = Object.values(name.attr_values).map(value => ({ name: value }));
         }
     });
+    updateAttributes();
 };
 
 const handleKeydown = (event: KeyboardEvent): void => {
@@ -577,6 +633,7 @@ const newAttNameBtn = async (): Promise<void> => {
         isAddCatClicked.value = false;
         newCatName.value = '';
         isSelected.value = true;
+        updateAttributes();
     } catch {
         toast.error('There was an error. Contact KEHEM IT');
     }
@@ -608,6 +665,7 @@ const newAttrValClick = async (): Promise<void> => {
         selectedAttr.value = '';
         newAttrName.value = '';
         isPlusClicked.value = false;
+        updateAttributes();
     } catch {
         toast.error("Something went wrong!");
     }
@@ -623,6 +681,7 @@ const getAttrs = async (): Promise<void> => {
             allAttrs.value = attributes.value;
             options.value = attributes.value.map((attr) => attr.name);
         }
+        updateAttributes(); // Emit after fetching attributes
     } catch (error) {
         console.error('Error fetching attributes:', error);
         toast('Error fetching attributes');
@@ -630,6 +689,7 @@ const getAttrs = async (): Promise<void> => {
 };
 getAttrs();
 let arrayList: Record<string, string[]> = {};
+
 watch([selectedValues, currectAttr], ([newValue, currentName]) => {
     if (currentName) {
         arrayList[currentName] = [...newValue];
@@ -638,11 +698,14 @@ watch([selectedValues, currectAttr], ([newValue, currentName]) => {
             name: key,
             value: arrayList[key],
         }));
+        updateAttributes();
     }
 });
 
-watch(currectAttr, () => {
+watch([currectAttr, currentPrice], ([newAttr, newPrice], [oldAttr, oldPrice]) => {
     selectedValues.value = [];
+    console.log(currentPrice.value);
+    updateAttributes();
 });
 
 const onDragStart = (event: any) => {
@@ -652,49 +715,54 @@ const onDragStart = (event: any) => {
 const onDragEnd = () => {
     dragging.value = false;
     setTimeout(() => lastDraggedId.value = null, 500);
+    updateAttributes();
 };
 
 const generateJSON = () => {
-    const json: Record<string, string[]> = {};
-    const json2: Record<string, Record<string, number>> = {};
+    const attributes: Record<string, Record<string, [number, number]>> = {};
 
     // Optional attributes
     section1Items.value.forEach((item) => {
         if (item?.name && item?.value?.length) {
-            json[item.name] = item.value;
+            const valueMap: Record<string, [number, number]> = {};
+            item.value.forEach((val) => {
+                valueMap[val] = [0, 0];
+            });
+            attributes[item.name] = valueMap;
         }
     });
 
     // Mandatory attributes
-    section2Items.value.forEach((item, index) => {
+    section2Items.value.forEach((item) => {
         if (item?.name && item?.value?.length) {
-            const stockMap: Record<string, number> = {};
+            const valueMap: Record<string, [number, number]> = {};
             if (section2Items.value.length === 1) {
                 item.value.forEach((value, i) => {
-                    stockMap[value] = singleAttributeStocks.value[i] || 0;
+                    const stock = singleAttributeStocks.value[i] || 0;
+                    const amount = singleAttributeAmount.value[i] || currentPrice.value;
+                    valueMap[value] = [stock, amount];
                 });
             } else if (section2Items.value.length === 2) {
                 rows.value.forEach((row) => {
                     if (row.newSelected && row.newSelected2) {
-                        stockMap[`${row.newSelected}-${row.newSelected2}`] = row.singleValueStock || 0;
+                        const key = `${row.newSelected}-${row.newSelected2}`;
+                        const stock = row.singleValueStock || 0;
+                        const amount = row.singleValueAmount || currentPrice.value;
+                        valueMap[key] = [stock, amount];
                     }
                 });
             }
-            json2[item.name] = stockMap;
+            attributes[item.name] = valueMap;
         }
     });
 
-    return {
-        "Optional_attributes": json,
-        "Mandetory_attributes": json2
-    };
+    return { "attributes": attributes };
 };
-
-emit('sendGenerateJSON', generateJSON);
 
 onMounted(() => {
     document.addEventListener('click', closeDropdown);
     getAttrs();
+    updateAttributes(); // Initial emit
 });
 
 onBeforeUnmount(() => {

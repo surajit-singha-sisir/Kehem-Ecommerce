@@ -1,8 +1,8 @@
 {
   "Mandatory_attributes": {
     "Size": {
-      "XL": 50,
-      "M": 30
+      "XL": [stock, price amount],
+      "M": [stock, price amount]
     }
   },
   "Optional_attributes": {
@@ -17,9 +17,16 @@
   ],
 
   "ingredients": [
-    ["image link","name_en","name_bn"],
-    ["image link","name_en","name_bn"],
-    ["image link","name_en","name_bn"]
-  ]
+    ["image link", "name_en", "name_bn"],
+    ["image link", "name_en", "name_bn"],
+    ["image link", "name_en", "name_bn"]
+  ],
+  "attributes": {
+    "Color": {
+      "Green": [stock, amount],
+      "Blue": [stock, amount],
+      "Yellow": [stock, amount]
+    }
+  }
 }
 // http://192.168.0.111:3000/media/product/image/adhuniktv_biWemkU.jpg

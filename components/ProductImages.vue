@@ -27,6 +27,8 @@
 <script setup lang="ts">
 import { ref, onUnmounted, watch } from 'vue';
 import { useToast } from 'vue-toastification';
+const toast = useToast();
+const accessToken = useCookie<string | null>('access');
 
 defineProps<{
   images: string[]; // Changed from modelValue to images
@@ -36,8 +38,6 @@ const emit = defineEmits<{
   (e: 'update:images', value: string[]): void; // Changed to update:images
 }>();
 
-const toast = useToast();
-const accessToken = useCookie<string | null>('access');
 const fileInput = ref<HTMLInputElement | null>(null);
 
 interface PreviewImage {

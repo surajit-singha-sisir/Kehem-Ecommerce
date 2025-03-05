@@ -105,8 +105,8 @@
                 <!-- PRODUCT TITLE -->
                 <section class="relative f-res f-col gap-10 v-space">
                     <label for="product-title" class="star" id="product-title">Product Title</label>
-                    <input type="text" name="product-title" id="product-title"
-                        placeholder="Type the title of the product" required>
+                    <input type="text" name="title" id="product-title" placeholder="Type the title of the product"
+                        required>
                 </section>
 
                 <Category :POSTCat="category" @update:POSTCat="updateCategory" />
@@ -167,6 +167,9 @@
                 <!-- ATTRIBUTES -->
                 <fieldset class="attributes w-100 f f-col f-just-center b-e pad--10 bg-3 m-tb--10">
                     <legend>Atributes</legend>
+                    <!-- <Attributes :stock="totalStock" :buyPrice="buyPrice" :sellPrice="sellPrice"
+                        :discountPrice="discountPrice" :productCurrency="productPricingCurrency"
+                        @sendGenerateJSON="attributes" /> -->
                     <Attributes :stock="totalStock" :buyPrice="buyPrice" :sellPrice="sellPrice"
                         :discountPrice="discountPrice" :productCurrency="productPricingCurrency"
                         @sendGenerateJSON="attributes" />
@@ -177,6 +180,8 @@
                 <SummerNote />
                 <!-- BENEFITS -->
                 <Benefits />
+                <!-- DOSAGES -->
+                <Dosages />
                 <!-- Ingredients -->
                 <Ingredients v-model:ingredients="ingredientsData" />
 
@@ -263,7 +268,7 @@ const productPricingCurrency = ref('taka');
 const addProductStockUnit = ref('Piece');
 const inputBox = ref<string>('');
 const eTagList = ref<HTMLElement | null>(null);
-const generateJSONFunc = ref<Function | undefined>();
+let generateJSONFunc = ref<(() => any) | null>(null);
 const ingredientsData = ref<string[][]>([]);
 const productImageUrls = ref<string[]>([]);
 
@@ -279,8 +284,8 @@ const updateCategory = (newCategory: string) => {
 };
 
 // ATTRIBUTES
-const attributes = (func: Function) => {
-    generateJSONFunc.value = func;
+const attributes = (json: any) => {
+    generateJSONFunc.value = () => json; // Store the latest JSON as a function returning the data
 };
 
 
@@ -430,10 +435,7 @@ const deleteFaq = (index: number) => {
 
 
 
-
-
-// FORM SUBMISSION
-const addProduct = () => {
+const addProduct = async () => {
     const form = document.querySelector('#addProductForm') as HTMLFormElement;
     if (!form) return;
 
@@ -459,7 +461,6 @@ const addProduct = () => {
     }
 
     if (productImageUrls.value.length > 0) {
-        // Send images as a JSON array of URLs
         formData.append('images', JSON.stringify(productImageUrls.value));
     }
 
@@ -469,7 +470,20 @@ const addProduct = () => {
         }
     }
 
-    // Your form submission logic here
-};
+    try {
+        const response = await fetch('http://192.168.0.111:3000/api/product_create', {
+            method: 'POST',
+            body: formData
+        });
 
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('Product created successfully:', result);
+    } catch (error) {
+        console.error('Error submitting form:', error);
+    }
+};
 </script>
