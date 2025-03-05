@@ -217,7 +217,6 @@
 
 
 
-
 <template>
     <section>
         <!-- ATTRIBUTES VIEW -->
@@ -346,8 +345,9 @@
                                     min="0" placeholder="Stock" @change="validateStock">
                             </td>
                             <td>
-                                <input type="number" v-model.number="singleAttributeAmount[index]" name="attributeAmount"
-                                    min="0" :placeholder="defaultPrice.toString()" @change="updateAttributes">
+                                <input type="number" v-model.number="singleAttributeAmount[index]"
+                                    name="attributeAmount" min="0" :placeholder="defaultPrice.toString()"
+                                    @change="updateAttributes">
                             </td>
                         </tr>
                     </tbody>
@@ -522,7 +522,7 @@ const validateStock = () => {
 // Emit updated JSON whenever attributes change
 const updateAttributes = () => {
     const json = generateJSON();
-    emit('sendGenerateJSON', json); // Emit the JSON object directly
+    emit('sendGenerateJSON', json);
 };
 
 const filteredOptions = computed(() => {
@@ -681,7 +681,7 @@ const getAttrs = async (): Promise<void> => {
             allAttrs.value = attributes.value;
             options.value = attributes.value.map((attr) => attr.name);
         }
-        updateAttributes(); // Emit after fetching attributes
+        updateAttributes();
     } catch (error) {
         console.error('Error fetching attributes:', error);
         toast('Error fetching attributes');
@@ -719,20 +719,17 @@ const onDragEnd = () => {
 };
 
 const generateJSON = () => {
-    const attributes: Record<string, Record<string, [number, number]>> = {};
+    const mandatoryAttributes: Record<string, Record<string, [number, number]>> = {};
+    const optionalAttributes: Record<string, string[]> = {};
 
-    // Optional attributes
+    // Optional attributes (just the values as arrays)
     section1Items.value.forEach((item) => {
         if (item?.name && item?.value?.length) {
-            const valueMap: Record<string, [number, number]> = {};
-            item.value.forEach((val) => {
-                valueMap[val] = [0, 0];
-            });
-            attributes[item.name] = valueMap;
+            optionalAttributes[item.name] = item.value;
         }
     });
 
-    // Mandatory attributes
+    // Mandatory attributes (with stock and price)
     section2Items.value.forEach((item) => {
         if (item?.name && item?.value?.length) {
             const valueMap: Record<string, [number, number]> = {};
@@ -752,17 +749,20 @@ const generateJSON = () => {
                     }
                 });
             }
-            attributes[item.name] = valueMap;
+            mandatoryAttributes[item.name] = valueMap;
         }
     });
 
-    return { "attributes": attributes };
+    return {
+        "Mandatory_attributes": mandatoryAttributes,
+        "Optional_attributes": optionalAttributes
+    };
 };
 
 onMounted(() => {
     document.addEventListener('click', closeDropdown);
     getAttrs();
-    updateAttributes(); // Initial emit
+    updateAttributes();
 });
 
 onBeforeUnmount(() => {
