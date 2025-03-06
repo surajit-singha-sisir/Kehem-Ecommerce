@@ -290,16 +290,14 @@ h2.btn-nav-error {
                     </div>
                     <div class="modal-body" v-if="selectedOrder">
                         <div class="f-between-center gap-10">
-                            <!-- Company Information -->
                             <div class="f-col gap-5">
                                 <h4>From:</h4>
-                                <p><strong>Your Company Name</strong></p>
-                                <p>123 Business Street</p>
-                                <p>Dhaka, Bangladesh</p>
-                                <p>Phone: +880 1234-567890</p>
-                                <p>Email: info@yourcompany.com</p>
+                                <p><strong>{{ companyInfo.name }}</strong></p>
+                                <p>{{ companyInfo.address }}</p>
+                                <p>{{ companyInfo.city }}, {{ companyInfo.country }}</p>
+                                <p>Phone: {{ companyInfo.phone }}</p>
+                                <p>Email: {{ companyInfo.email }}</p>
                             </div>
-                            <!-- Customer Information -->
                             <div class="f-col gap-5 text-right">
                                 <h4>To:</h4>
                                 <p><strong>{{ selectedOrder.name }}</strong></p>
@@ -359,13 +357,41 @@ h2.btn-nav-error {
                                 </tr>
                             </tbody>
                         </table>
+
+                        <hr class="my-10">
+
+                        <div class="f-col gap-10">
+                            <div>
+                                <h4>Terms and Conditions:</h4>
+                                <p>Sold items are non-refundable</p>
+                            </div>
+                            <div>
+                                <h4>Prepared By:</h4>
+                                <p>KEHEM IT</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary" @click="printInvoice">Print</button>
+                        <button class="btn btn-primary" @click="showPrintOptions">Print</button>
                         <button class="btn btn-error" @click="closeModal">Close</button>
                     </div>
                 </div>
             </div>
+
+            <!-- Print Options Modal -->
+            <Teleport to="body">
+                <div v-if="showPrintModal" class="modal-overlay" @click.self="showPrintModal = false">
+                    <div class="print-options-modal">
+                        <h3>Select Print Format</h3>
+                        <div class="f-col gap-10">
+                            <button class="btn btn-primary" @click="printInvoice('pos')">POS Print (80mm)</button>
+                            <button class="btn btn-primary" @click="printInvoice('a5')">A5 Print</button>
+                            <button class="btn btn-primary" @click="printInvoice('default')">Default Print</button>
+                            <button class="btn btn-silver" @click="showPrintModal = false">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </Teleport>
         </Teleport>
     </section>
 </template>
@@ -380,6 +406,7 @@ import { useToast } from 'vue-toastification'
 
 const showModal = ref(false)
 const selectedOrder = ref<Order | null>(null)
+const showPrintModal = ref(false)
 
 // Add to Refs
 const activeOrderKey = ref<string | null>(null)
@@ -389,6 +416,65 @@ const toggleActions = (orderKey: string) => {
     activeOrderKey.value = activeOrderKey.value === orderKey ? null : orderKey
 }
 
+
+
+const normalizeAttribute = (value: any) => {
+    if (!value) return []
+    if (Array.isArray(value) && Array.isArray(value[0])) return value
+    return [value]
+}
+
+// Update formatAttribute to handle quantity
+const formatAttribute = (attr: any) => {
+    if (Array.isArray(attr)) {
+        return `${attr[0]} - ${attr[1]} Qty`
+    }
+    return attr
+}
+
+const companyInfo = {
+    name: "Your Company Name",
+    address: "123 Business Street",
+    city: "Dhaka",
+    country: "Bangladesh",
+    phone: "+880 1234-567890",
+    email: "info@yourcompany.com"
+}
+
+// Calculate subtotal based on products
+const calculateSubtotal = (products: OrderProduct[]) => {
+    return products.reduce((sum, product) => {
+        const basePrice = Number(product.product.discountPrice || product.product.sellPrice)
+        let totalQty = 0
+        if (product.attribute) {
+            Object.values(product.attribute).forEach(value => {
+                const attrs = normalizeAttribute(value)
+                attrs.forEach(attr => {
+                    if (Array.isArray(attr) && attr[1]) {
+                        totalQty += Number(attr[1])
+                    }
+                })
+            })
+        }
+        return sum + basePrice * (totalQty || 1)
+    }, 0)
+}
+
+const calculateProductPrice = (product: OrderProduct) => {
+    const basePrice = Number(product.product.discountPrice || product.product.sellPrice)
+    let totalQty = 0
+    if (product.attribute) {
+        Object.values(product.attribute).forEach(value => {
+            const attrs = normalizeAttribute(value)
+            attrs.forEach(attr => {
+                if (Array.isArray(attr) && attr[1]) {
+                    totalQty += Number(attr[1])
+                }
+            })
+        })
+    }
+    return formatPrice(basePrice * (totalQty || 1))
+}
 
 
 
@@ -672,93 +758,148 @@ const updateCourier = async (orderKey: string, event: Event) => {
 const showInvoiceModal = (orderKey: string) => {
     selectedOrder.value = filteredItems.value.find(item => item.key === orderKey) || null
     showModal.value = true
-    activeOrderKey.value = null // Close dropdown
+    activeOrderKey.value = null
 }
 
 const closeModal = () => {
     showModal.value = false
     selectedOrder.value = null
+    showPrintModal.value = false
 }
 
-const printInvoice = () => {
-    window.print()
-    toast.success('Printing invoice...')
+const showPrintOptions = () => {
+    showPrintModal.value = true
 }
 
+const printInvoice = (format: 'pos' | 'a5' | 'default') => {
+    const printWindow = window.open('', '_blank')
+    if (!printWindow || !selectedOrder.value) return
 
+    const styles = `
+        <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+            .invoice { padding: ${format === 'pos' ? '5px' : '6px'}; }
+            ${format === 'pos' ? 'body { width: 80mm; font-size: 8px; }' : ''}
+            ${format === 'a5' ? 'body { width: 148mm; height: 210mm; font-size: 10px; }' : ''}
+            .flex-between { display: flex; justify-content: space-between; }
+            .flex-col { display: flex; flex-direction: column; }
+            .gap-5 { gap: 5px; }
+            .gap-10 { gap: 10px; }
+            .text-right { text-align: right; }
+            table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+            th, td { border: 1px solid #ddd; padding: 5px; font-size: 10px }
+            th { background: #f5f5f5; }
+            hr { border: none; border-top: 1px solid #ddd; margin: 10px 0; }
+        </style>
+    `
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const normalizeAttribute = (value: any) => {
-    if (!value) return []
-    if (Array.isArray(value) && Array.isArray(value[0])) return value
-    return [value]
-}
-
-// Update formatAttribute to handle quantity
-const formatAttribute = (attr: any) => {
-    if (Array.isArray(attr)) {
-        return `${attr[0]} - ${attr[1]} Qty`
-    }
-    return attr
-}
-
-const companyInfo = {
-    name: "Your Company Name",
-    address: "123 Business Street",
-    city: "Dhaka",
-    country: "Bangladesh",
-    phone: "+880 1234-567890",
-    email: "info@yourcompany.com"
-}
-
-// Calculate subtotal based on products
-const calculateSubtotal = (products: OrderProduct[]) => {
-    return products.reduce((sum, product) => {
-        const basePrice = Number(product.product.discountPrice || product.product.sellPrice)
-        let totalQty = 0
-        if (product.attribute) {
-            Object.values(product.attribute).forEach(value => {
+    const content = `
+        <div class="invoice">
+            <h2>Invoice - Order #${selectedOrder.value.id}</h2>
+            <div class="flex-between gap-10">
+                <div class="flex-col gap-5">
+                    <h4>From:</h4>
+                    <p><strong>${companyInfo.name}</strong></p>
+                    <p>${companyInfo.address}</p>
+                    <p>${companyInfo.city}, ${companyInfo.country}</p>
+                    <p>Phone: ${companyInfo.phone}</p>
+                    <p>Email: ${companyInfo.email}</p>
+                </div>
+                <div class="flex-col gap-5 text-right">
+                    <h4>To:</h4>
+                    <p><strong>${selectedOrder.value.name}</strong></p>
+                    <p>${selectedOrder.value.phone_no}</p>
+                    <p>${selectedOrder.value.address}</p>
+                    <p>${selectedOrder.value.area}, ${selectedOrder.value.district}</p>
+                    <p>${selectedOrder.value.division}</p>
+                </div>
+            </div>
+            <div class="flex-between gap-10">
+                <p><strong>Invoice Date:</strong> ${formatDate(selectedOrder.value.date)}</p>
+                <p><strong>Status:</strong> ${selectedOrder.value.status}</p>
+                <p><strong>Courier:</strong> ${selectedOrder.value.courier}</p>
+            </div>
+            <hr>
+            <h4>Order Details</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Attributes</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${selectedOrder.value.order_products.map(product => `
+                        <tr>
+                            <td>${product.product.title}</td>
+                            <td>${product.attribute ?
+            Object.entries(product.attribute).map(([key, value]) => {
                 const attrs = normalizeAttribute(value)
-                attrs.forEach(attr => {
-                    if (Array.isArray(attr) && attr[1]) {
-                        totalQty += Number(attr[1])
-                    }
-                })
-            })
-        }
-        return sum + basePrice * (totalQty || 1)
-    }, 0)
+                return `${key}<br>` + attrs.map(attr => `  ${formatAttribute(attr)}`).join('<br>')
+            }).join('<br>') :
+            '-'
+        }</td>
+                            <td>${calculateProductPrice(product)}</td>
+                        </tr>
+                    `).join('')}
+                    <tr>
+                        <td colspan="2" class="text-right"><strong>Subtotal:</strong></td>
+                        <td>${formatPrice(calculateSubtotal(selectedOrder.value.order_products))}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-right"><strong>Delivery:</strong></td>
+                        <td>${formatPrice(selectedOrder.value.delivery_charge)}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-right"><strong>Grand Total:</strong></td>
+                        <td>${formatPrice(calculateSubtotal(selectedOrder.value.order_products) + selectedOrder.value.delivery_charge)}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <hr>
+            <div class="flex-col gap-10">
+                <div>
+                    <h4>Terms and Conditions:</h4>
+                    <p>Sold items are non-refundable</p>
+                </div>
+                <div>
+                    <h4>Prepared By:</h4>
+                    <p>KEHEM IT</p>
+                </div>
+            </div>
+        </div>
+    `
+    printWindow.document.write(`
+    <html>
+        <head>
+            <title>Invoice #${selectedOrder.value.id}</title>
+            ${styles}
+        </head>
+        <body>
+            ${content}
+            <script>
+                window.print();
+                window.close();
+            <\/script>
+        </body>
+    </html>
+    </body>
+
+    </html>`)
+
+    printWindow.document.close()
+    showPrintModal.value = false
+    toast.success(`Printing invoice in ${format} format...`)
 }
 
-const calculateProductPrice = (product: OrderProduct) => {
-    const basePrice = Number(product.product.discountPrice || product.product.sellPrice)
-    let totalQty = 0
-    if (product.attribute) {
-        Object.values(product.attribute).forEach(value => {
-            const attrs = normalizeAttribute(value)
-            attrs.forEach(attr => {
-                if (Array.isArray(attr) && attr[1]) {
-                    totalQty += Number(attr[1])
-                }
-            })
-        })
-    }
-    return formatPrice(basePrice * (totalQty || 1))
-}
+
+
+
+
+
+
+
 
 
 
