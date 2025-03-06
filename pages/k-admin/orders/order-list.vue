@@ -13,6 +13,7 @@
     background-color: rgb(233, 233, 233);
     cursor: pointer;
     font-weight: bold;
+    padding: 1rem 0.5rem;
 }
 
 .table-1 .order_summery {
@@ -67,7 +68,72 @@ h2.btn-nav-error {
 </style>
 
 
+<style scoped>
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
 
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.modal-body {
+    margin-bottom: 15px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.my-10 {
+    margin: 10px 0;
+}
+
+.text-right {
+    text-align: right;
+}
+
+@media print {
+    .modal-overlay {
+        background: none;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-height: none;
+        border: none;
+        box-shadow: none;
+    }
+
+    .modal-footer {
+        display: none;
+    }
+}
+</style>
 
 
 <template>
@@ -103,11 +169,16 @@ h2.btn-nav-error {
                     <th @click="sortBy('date')">Date<i
                             :class="sortColumn === 'date' ? (sortDirection ? 'm-triangle-up' : 'm-triangle-down') : 'm-triangle-up'"></i>
                     </th>
+                    <th @click="sortBy('courier')">Courier<i
+                            :class="sortColumn === 'courier' ? (sortDirection ? 'm-triangle-up' : 'm-triangle-down') : 'm-triangle-up'"></i>
+                    </th>
                     <th>Action</th>
                 </tr>
             </thead>
+
+
             <tbody>
-                <tr v-for="item in filteredItems" :key="item.id">
+                <tr v-for="item in filteredItems" :key="item.key">
                     <td>{{ item.id }}</td>
                     <td>
                         <div class="f-centered f-col gap-03">
@@ -156,6 +227,18 @@ h2.btn-nav-error {
                             </button>
                         </div>
                     </td>
+                    <td>
+                        <div class="option">
+                            <select v-model="item.courier" @change="updateCourier(item.key, $event)">
+                                <option value="Pathao">Pathao</option>
+                                <option value="Steadfast">Steadfast</option>
+                                <option value="Sundarban">Sundarban</option>
+                                <option value="SA Paribahan">SA Paribahan</option>
+                                <option value="RedX">RedX</option>
+                                <option value="Janata">Janata</option>
+                            </select>
+                        </div>
+                    </td>
 
 
 
@@ -167,24 +250,25 @@ h2.btn-nav-error {
                     <!-- ACTION -->
                     <td>
                         <div class="f-centered gap-05 relative">
-                            <button class="btn btn-pastel-green btn-sm" @click="toggleActions(item.id)">
+                            <button class="btn btn-pastel-green btn-sm" @click="toggleActions(item.key)">
                                 <i class="m-dots-three-vertical"></i>
                             </button>
                             <!-- Dropdown Menu -->
-                            <div v-if="activeOrderId === item.id" class="dropdown-menu">
-                                <button class="btn btn-sm btn-primary w-100" @click="generateInvoice(item.id)">
+                            <div v-if="activeOrderKey === item.key" class="dropdown-menu">
+                                <button class="btn btn-sm btn-primary w-100" @click="showInvoiceModal(item.key)">
                                     <i class="m-file-text"></i>
                                     <p>Invoice</p>
                                 </button>
-                                <button class="btn btn-sm btn-warning w-100" @click="updateStatus(item.id, 'Pending')">
+                                <button class="btn btn-sm btn-warning w-100" @click="updateStatus(item.key, 'Pending')">
                                     <i class="m-clock"></i>
                                     <p>Pending</p>
                                 </button>
-                                <button class="btn btn-sm btn-success w-100" @click="updateStatus(item.id, 'Approved')">
+                                <button class="btn btn-sm btn-success w-100"
+                                    @click="updateStatus(item.key, 'Approved')">
                                     <i class="m-check"></i>
                                     <p>Approved</p>
                                 </button>
-                                <button class="btn btn-sm btn-error w-100" @click="updateStatus(item.id, 'Cancel')">
+                                <button class="btn btn-sm btn-error w-100" @click="updateStatus(item.key, 'Cancel')">
                                     <i class="m-close"></i>
                                     <p>Cancel</p>
                                 </button>
@@ -194,6 +278,95 @@ h2.btn-nav-error {
                 </tr>
             </tbody>
         </table>
+        <!-- Invoice Modal -->
+        <Teleport to="body">
+            <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Invoice - Order #{{ selectedOrder?.id }}</h3>
+                        <button class="btn btn-sm btn-error" @click="closeModal">
+                            <i class="m-close"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body" v-if="selectedOrder">
+                        <div class="f-between-center gap-10">
+                            <!-- Company Information -->
+                            <div class="f-col gap-5">
+                                <h4>From:</h4>
+                                <p><strong>Your Company Name</strong></p>
+                                <p>123 Business Street</p>
+                                <p>Dhaka, Bangladesh</p>
+                                <p>Phone: +880 1234-567890</p>
+                                <p>Email: info@yourcompany.com</p>
+                            </div>
+                            <!-- Customer Information -->
+                            <div class="f-col gap-5 text-right">
+                                <h4>To:</h4>
+                                <p><strong>{{ selectedOrder.name }}</strong></p>
+                                <p>{{ selectedOrder.phone_no }}</p>
+                                <p>{{ selectedOrder.address }}</p>
+                                <p>{{ selectedOrder.area }}, {{ selectedOrder.district }}</p>
+                                <p>{{ selectedOrder.division }}</p>
+                            </div>
+                        </div>
+
+                        <div class="f-between-center gap-10 mt-20">
+                            <p><strong>Invoice Date:</strong> {{ formatDate(selectedOrder.date) }}</p>
+                            <p><strong>Status:</strong> {{ selectedOrder.status }}</p>
+                            <p><strong>Courier:</strong> {{ selectedOrder.courier }}</p>
+                        </div>
+
+                        <hr class="my-10">
+
+                        <h4>Order Details</h4>
+                        <table class="table table-1 w-100">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Attributes</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="product in selectedOrder.order_products" :key="product.id">
+                                    <td>{{ product.product.title }}</td>
+                                    <td>
+                                        <div v-if="product.attribute">
+                                            <div v-for="(value, key) in product.attribute" :key="key">
+                                                <strong>{{ key }}</strong>
+                                                <div v-for="attr in normalizeAttribute(value)" :key="attr"
+                                                    class="ml-10">
+                                                    {{ formatAttribute(attr) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span v-else>-</span>
+                                    </td>
+                                    <td>{{ calculateProductPrice(product) }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-right"><strong>Subtotal:</strong></td>
+                                    <td>{{ formatPrice(calculateSubtotal(selectedOrder.order_products)) }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-right"><strong>Delivery:</strong></td>
+                                    <td>{{ formatPrice(selectedOrder.delivery_charge) }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-right"><strong>Grand Total:</strong></td>
+                                    <td>{{ formatPrice(calculateSubtotal(selectedOrder.order_products) +
+                                        selectedOrder.delivery_charge) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" @click="printInvoice">Print</button>
+                        <button class="btn btn-error" @click="closeModal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
     </section>
 </template>
 
@@ -205,60 +378,18 @@ import jsPDF from 'jspdf'
 import { useToast } from 'vue-toastification'
 
 
-
-
-
-
+const showModal = ref(false)
+const selectedOrder = ref<Order | null>(null)
 
 // Add to Refs
-const activeOrderId = ref<number | null>(null)
+const activeOrderKey = ref<string | null>(null)
 
-// Add to Utility Functions
-const toggleActions = (orderId: number) => {
-    activeOrderId.value = activeOrderId.value === orderId ? null : orderId
+// Utility Functions
+const toggleActions = (orderKey: string) => {
+    activeOrderKey.value = activeOrderKey.value === orderKey ? null : orderKey
 }
 
-// Add new action functions
-const generateInvoice = (orderId: number) => {
-    const order = filteredItems.value.find(item => item.id === orderId)
-    if (!order) return
 
-    console.log('Generating invoice for order:', orderId)
-    // Add your invoice generation logic here
-    // Could open a new window with invoice details or generate a PDF
-    toast.success(`Invoice generated for order ${orderId}`)
-    activeOrderId.value = null
-}
-
-const updateStatus = async (orderId: number, status: string) => {
-    const order = filteredItems.value.find(item => item.id === orderId)
-    if (!order) return
-
-    try {
-        const response = await fetch(`${API_URL}/orderList/${orderId}`, {
-            method: 'PATCH',
-            headers: {
-                'Authorization': `Bearer ${accessToken.value ?? ''}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ status })
-        })
-
-        if (response.ok && data.value) {
-            const index = data.value.findIndex(item => item.id === orderId)
-            if (index !== -1) {
-                data.value[index].status = status
-                toast.success(`Order ${orderId} status updated to ${status}`)
-            }
-        } else {
-            throw new Error('Failed to update status')
-        }
-    } catch (error) {
-        toast.error(`Error updating status: ${(error as Error).message}`)
-    } finally {
-        activeOrderId.value = null
-    }
-}
 
 
 
@@ -290,8 +421,13 @@ interface Order {
     district: string
     date: string
     status: string
+    courier: string
     order_products: OrderProduct[]
     total: number
+    delivery_charge: number
+    address: string
+    division: string
+
 }
 
 // Constants
@@ -336,6 +472,10 @@ const filteredItems = computed(() => {
                 valueA = new Date(valueA).getTime()
                 valueB = new Date(valueB).getTime()
                 return sortDirection.value ? valueA - valueB : valueB - valueA
+            } else if (key === 'courier') {
+                valueA = String(valueA).toLowerCase()
+                valueB = String(valueB).toLowerCase()
+                return sortDirection.value ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA)
             }
 
             if (typeof valueA === 'number') {
@@ -357,14 +497,6 @@ const formatPrice = (price: number) =>
 
 const formatDate = (date: string) =>
     new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-
-const normalizeAttribute = (value: any) =>
-    Array.isArray(value) && value.length ? (Array.isArray(value[0]) ? value : [value]) : []
-
-const formatAttribute = (attr: any) =>
-    Array.isArray(attr) ?
-        attr.length > 1 ? `${attr.slice(0, -1).join(' ')} - ${attr.at(-1)} Qty` : attr[0]
-        : attr
 
 // Export Functions
 const exportToExcel = () => {
@@ -492,8 +624,194 @@ const sortBy = (column: string) => {
     sortColumn.value = column
 }
 
-const editOrder = (orderId: number) => {
-    console.log('Edit order:', orderId)
+
+
+
+
+
+
+
+
+
+
+
+
+// Action Functions
+
+const updateCourier = async (orderKey: string, event: Event) => {
+    const newCourier = (event.target as HTMLSelectElement).value
+    const order = filteredItems.value.find(item => item.key === orderKey)
+    if (!order) return
+
+    try {
+        const response = await fetch(`${API_URL}/order_detail/${orderKey}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken.value ?? ''}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ courier: newCourier })
+        })
+
+        if (response.ok && data.value) {
+            const index = data.value.findIndex(item => item.key === orderKey)
+            if (index !== -1) {
+                data.value[index].courier = newCourier
+                toast.success(`Courier updated to ${newCourier} for order ${orderKey}`)
+            }
+        } else {
+            throw new Error('Failed to update courier')
+        }
+    } catch (error) {
+        toast.error(`Error updating courier: ${(error as Error).message}`)
+    }
+}
+
+
+// Modal functions
+const showInvoiceModal = (orderKey: string) => {
+    selectedOrder.value = filteredItems.value.find(item => item.key === orderKey) || null
+    showModal.value = true
+    activeOrderKey.value = null // Close dropdown
+}
+
+const closeModal = () => {
+    showModal.value = false
+    selectedOrder.value = null
+}
+
+const printInvoice = () => {
+    window.print()
+    toast.success('Printing invoice...')
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const normalizeAttribute = (value: any) => {
+    if (!value) return []
+    if (Array.isArray(value) && Array.isArray(value[0])) return value
+    return [value]
+}
+
+// Update formatAttribute to handle quantity
+const formatAttribute = (attr: any) => {
+    if (Array.isArray(attr)) {
+        return `${attr[0]} - ${attr[1]} Qty`
+    }
+    return attr
+}
+
+const companyInfo = {
+    name: "Your Company Name",
+    address: "123 Business Street",
+    city: "Dhaka",
+    country: "Bangladesh",
+    phone: "+880 1234-567890",
+    email: "info@yourcompany.com"
+}
+
+// Calculate subtotal based on products
+const calculateSubtotal = (products: OrderProduct[]) => {
+    return products.reduce((sum, product) => {
+        const basePrice = Number(product.product.discountPrice || product.product.sellPrice)
+        let totalQty = 0
+        if (product.attribute) {
+            Object.values(product.attribute).forEach(value => {
+                const attrs = normalizeAttribute(value)
+                attrs.forEach(attr => {
+                    if (Array.isArray(attr) && attr[1]) {
+                        totalQty += Number(attr[1])
+                    }
+                })
+            })
+        }
+        return sum + basePrice * (totalQty || 1)
+    }, 0)
+}
+
+const calculateProductPrice = (product: OrderProduct) => {
+    const basePrice = Number(product.product.discountPrice || product.product.sellPrice)
+    let totalQty = 0
+    if (product.attribute) {
+        Object.values(product.attribute).forEach(value => {
+            const attrs = normalizeAttribute(value)
+            attrs.forEach(attr => {
+                if (Array.isArray(attr) && attr[1]) {
+                    totalQty += Number(attr[1])
+                }
+            })
+        })
+    }
+    return formatPrice(basePrice * (totalQty || 1))
+}
+
+
+
+
+
+const updateStatus = async (orderKey: string, status: string) => {
+    const order = filteredItems.value.find(item => item.key === orderKey)
+    if (!order) return
+    try {
+        const response = await fetch(`${API_URL}/order_detail/${orderKey}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken.value ?? ''}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
+        })
+        if (response.ok && data.value) {
+            const index = data.value.findIndex(item => item.key === orderKey)
+            if (index !== -1) {
+                data.value[index].status = status
+                toast.success(`Order ${orderKey} status updated to ${status}`)
+            }
+        } else {
+            throw new Error('Failed to update status')
+        }
+    } catch (error) {
+        toast.error(`Error updating status: ${(error as Error).message}`)
+    } finally {
+        activeOrderKey.value = null
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const editOrder = (orderKey: number) => {
+    console.log('Edit order:', orderKey)
 }
 
 const deleteOrder = async (orderKey: string) => {
