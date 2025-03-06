@@ -28,5 +28,26 @@
       "Yellow": [stock, amount]
     }
   }
+},
+{
+  {
+  "divisions": [
+    {
+      "id": "1",
+      "name": "Barishal",
+      "bn_name": "বরিশাল",
+      "lat": "22.701002",
+      "long": "90.353451"
+      "districts": [
+        {
+          "id": "1",
+          "division_id": "1",
+          "name": "Bhola",
+          "bn_name": "ভোলা",
+          "lat": "22.685923",
+          "long": "90.648179"
+        },
+      ]
+    },
+  ]
 }
-// http://192.168.0.111:3000/media/product/image/adhuniktv_biWemkU.jpg

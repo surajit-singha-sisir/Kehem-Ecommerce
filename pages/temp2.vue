@@ -1,71 +1,62 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
+interface District {
+  id: string;
+  division_id: string;
+  name: string;
+  bn_name: string;
+  lat: string;
+  lon: string;
+  url: string;
+}
+
+const districts = ref<District[]>([]);
+
+const fetchDistricts = async () => {
+  try {
+    const response = await fetch('/API/districts.json');
+    const data = await response.json();
+
+    // Extract the `data` array from the correct table object
+    const table = data.find((item: any) => item.type === 'table' && item.name === 'districts');
+    if (table && table.data) {
+      districts.value = table.data;
+    }
+  } catch (error) {
+    console.error('Error fetching districts:', error);
+  }
+};
+
+onMounted(fetchDistricts);
+</script>
 
 <template>
-  <!-- 2 ATTRIBUTE VALUES -->
-  <table ref="section2Table" class="attributeTable">
-    <thead>
-      <tr>
-        <th colspan="3" class="text--12 Brown bg-Khaki ">Size + Weight
-        </th>
-      </tr>
-      <tr>
-        <th>Values</th>
-        <th>Stock</th>
-        <th>Amount</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="attribute-value-tr324">
-        <td class="b">
-          <div class="attribute-value-insert">
-            <!-- VALUES -->
-            <span class="placeholder linker-line attribute-value-assigned" @click="firstAttrValue">
-              <span class="attribute-assigned-name">Size</span>
-              <p>XL</p>
-              <div class="show-available-values-outer" v-if="isFirstAttrValueClicked"
-                :class="{ 'hide': !isFirstAttrValueClicked }">
-                <span>All Values</span>
-                <ul class="show-available-values">
-                  <li @click="attrValueSet(index, value)">M</li>
-                  <li>L</li>
-                  <li>XL</li>
-                  <li>XXL</li>
-                </ul>
-              </div>
-            </span>
-            <i class="m-plus-alt"></i>
-            <span class="placeholder" @click="secondAttrValue">
-              <div class="show-available-values-outer" :class="{ 'hide': !isSecondAttrValueClicked }">
-                <span>All Values</span>
-                <ul class="show-available-values">
-                  <li>M</li>
-                  <li>L</li>
-                  <li>XL</li>
-                  <li>XXL</li>
-                </ul>
-              </div>
-            </span>
-          </div>
-        </td>
-        <td>
-          <input type="number" v-model="singleValueStock" name="attributeValue" min="1" placeholder="Stock">
-        </td>
-        <td>
-          <button class="btn btn-disabled">100 taka</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div>
+    <h2>Districts List</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Division ID</th>
+          <th>Name</th>
+          <th>বাংলা নাম</th>
+          <th>Latitude</th>
+          <th>Longitude</th>
+          <th>Website</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="district in districts" :key="district.id">
+          <td>{{ district.id }}</td>
+          <td>{{ district.division_id }}</td>
+          <td>{{ district.name }}</td>
+          <td>{{ district.bn_name }}</td>
+          <td>{{ district.lat }}</td>
+          <td>{{ district.lon }}</td>
+          <td><a :href="'https://' + district.url" target="_blank">{{ district.url }}</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
-
-<script setup>
-const isFirstAttrValueClicked = ref(false);
-const isSecondAttrValueClicked = ref(false);
-
-const firstAttrValue = () => {
-  isFirstAttrValueClicked.value = !isFirstAttrValueClicked.value;
-}
-
-const secondAttrValue = () => {
-  isSecondAttrValueClicked.value = !isSecondAttrValueClicked.value;
-}
-</script>

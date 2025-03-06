@@ -1,5 +1,12 @@
 <style>
+.overflow-scroll {
+    overflow-x: scroll;
+}
+
 .table-1 {
+    width: 100%;
+    border-collapse: collapse;
+
     thead {
         tr {
             font-weight: bold;
@@ -7,10 +14,17 @@
             th {
                 color: #2e3088;
                 background-color: #e6e6e6;
+                cursor: pointer;
             }
         }
-
     }
+
+    tr {
+        overflow: scroll;
+    }
+}
+h2.btn-nav-error {
+    font-size: 1.2rem !important;
 }
 
 .table-cus {
@@ -49,7 +63,9 @@
 
 <template>
     <!-- Your template remains unchanged -->
-    <section class="w-100 f f-col gap-10">
+    <section class="w-100 f f-col gap-10 overflow-scroll">
+        <h2 class="btn btn-nav-error">Products List</h2>
+        <hr>
         <aside class="f-between-center gap-10">
             <span class="f-start-center gap-10">
                 <p>Total Products :</p>
@@ -252,7 +268,7 @@ const exportToPDF = () => {
     doc.setFontSize(10)
     const headers = ['#SL', 'Product', 'Category', 'Attributes']
     const colWidths = [20, 80, 40, 130]
-    
+
     // Draw header
     headers.forEach((header, i) => {
         doc.text(header, margin + colWidths.slice(0, i).reduce((a, b) => a + b, 0), y)
@@ -270,13 +286,13 @@ const exportToPDF = () => {
 
         // SL
         doc.text(String(index + 1), margin, y)
-        
+
         // Product
         doc.text(item.title, margin + colWidths[0], y, { maxWidth: colWidths[1] })
-        
+
         // Category
         doc.text(item.category, margin + colWidths[0] + colWidths[1], y, { maxWidth: colWidths[2] })
-        
+
         // Attributes
         const attrText = Object.entries(item.attributes)
             .map(([key, values]) =>
@@ -326,7 +342,7 @@ const AceDecFilter = (column: string) => {
 const deleteProduct = async (productKey: number) => {
     if (!confirm('Are you sure you want to delete this product?')) return
     try {
-        const response = await fetch(`http://192.168.0.111:3000/api/product_details/${productKey}`, {
+        const response = await fetch(`http://192.168.0.111:3000/api/product_detail/${productKey}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${accessToken.value ?? ''}`,
