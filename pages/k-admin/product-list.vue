@@ -14,6 +14,7 @@
             th {
                 color: #2e3088;
                 background-color: #e6e6e6;
+                background-color: rgb(233, 233, 233);
                 cursor: pointer;
             }
         }

@@ -1,53 +1,85 @@
-{
-  "Mandatory_attributes": {
-    "Size": {
-      "XL": [stock, price amount],
-      "M": [stock, price amount]
-    }
-  },
-  "Optional_attributes": {
-    "Color": ["Blue", "Red", "Yellow"],
-    "Organic": ["Moonseed"]
-  },
-  "faqs": [
-    ["Blue", "Red"],
-    ["Blue", "Red"],
-    ["Blue", "Red"],
-    ["Blue", "Red"]
-  ],
-
-  "ingredients": [
-    ["image link", "name_en", "name_bn"],
-    ["image link", "name_en", "name_bn"],
-    ["image link", "name_en", "name_bn"]
-  ],
-  "attributes": {
-    "Color": {
-      "Green": [stock, amount],
-      "Blue": [stock, amount],
-      "Yellow": [stock, amount]
-    }
-  }
-},
-{
+[
   {
-  "divisions": [
-    {
-      "id": "1",
-      "name": "Barishal",
-      "bn_name": "বরিশাল",
-      "lat": "22.701002",
-      "long": "90.353451"
-      "districts": [
-        {
-          "id": "1",
-          "division_id": "1",
-          "name": "Bhola",
-          "bn_name": "ভোলা",
-          "lat": "22.685923",
-          "long": "90.648179"
+    "id": 1,
+    "order_products": [
+      {
+        "id": 1,
+        "product": {
+          "title": "Moonseed: A Natural Herbal Wonder",
+          "images": "http://192.168.0.111:3000/media/product/image/image_1_mt7GlEI.jpg",
+          "key": "7JnDO1p",
+          "sellPrice": "1200.00",
+          "discountPrice": "1100.00"
         },
-      ]
-    },
-  ]
-}
+        "attribute": {
+          "Size": ["M", 10]
+        },
+        "order": 1
+      }
+    ],
+    "key": "rDwRX1b",
+    "date": "2025-03-06T08:04:04.833743Z",
+    "name": "Anirban singha",
+    "phone_no": "1323323016",
+    "division": "Sylhet",
+    "district": "Moulvibazar",
+    "area": "kamalganj",
+    "address": "Tilakpur",
+    "label": "ranir bazar",
+    "total": 3000,
+    "delivery_charge": 300,
+    "pay_method": "Bkash",
+    "status": "Approved",
+    "courier": "Pathao"
+  },
+  {
+    "id": 2,
+    "order_products": [
+      {
+        "id": 3,
+        "product": {
+          "title": "Jhalmuri: The Spicy and Crunchy Bengali Street Snack",
+          "images": "http://192.168.0.111:3000/media/product/image/Photoleap_24_01_2025_19_21_22_BAhOq_tEsqBa6.jpg",
+          "key": "0Oeo7eE",
+          "sellPrice": "850.00",
+          "discountPrice": "750.00"
+        },
+        "attribute": {
+          "Size": ["M", "1"]
+        },
+        "order": 2
+      },
+      {
+        "id": 4,
+        "product": {
+          "title": "Rupsaar:  Guarder",
+          "images": "http://192.168.0.111:3000/media/product/image/istockphoto-535892075-612x612_MOJ0AcQ.jpg",
+          "key": "dJwZzwv",
+          "sellPrice": "200.00",
+          "discountPrice": "150.00"
+        },
+        "attribute": {
+          "Color": [
+            ["Red", 2],
+            ["Yellow", 3]
+          ]
+        },
+        "order": 2
+      }
+    ],
+    "key": "xRez4nQ",
+    "date": "2025-03-06T09:26:57.098922Z",
+    "name": "SURAJIT SINGHA",
+    "phone_no": "01700905268",
+    "division": "Dhaka",
+    "district": "Dhaka City Corporation",
+    "area": "Mirpur-10",
+    "address": "185-City R/A, Atim School Road, Bagbari",
+    "label": "Nuriya Mosque",
+    "total": 520,
+    "delivery_charge": 120,
+    "pay_method": "Bkash",
+    "status": "Pending",
+    "courier": "Pathao"
+  }
+]
