@@ -27,7 +27,7 @@ const login = async () => {
         accessToken.value = response.access
         refreshToken.value = response.refresh
 
-        await navigateTo('/k-admin/')
+        await navigateTo('/k-admin/dasboard')
     } catch (error) {
         errorMessage.value = 'Invalid username or password. Please try again.'
     }

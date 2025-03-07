@@ -133,6 +133,55 @@ h2.btn-nav-error {
         display: none;
     }
 }
+
+.mastor-las {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem;
+    transition: all 0.3s ease;
+}
+
+
+.loader {
+    height: 25px;
+    aspect-ratio: 2.5;
+    --_g: no-repeat radial-gradient(farthest-side, #000 90%, #0000);
+    background: var(--_g), var(--_g), var(--_g), var(--_g);
+    background-size: 20% 50%;
+    animation: l43 1s infinite linear;
+}
+
+@keyframes l43 {
+    0% {
+        background-position: calc(0*100%/3) 50%, calc(1*100%/3) 50%, calc(2*100%/3) 50%, calc(3*100%/3) 50%
+    }
+
+    16.67% {
+        background-position: calc(0*100%/3) 0, calc(1*100%/3) 50%, calc(2*100%/3) 50%, calc(3*100%/3) 50%
+    }
+
+    33.33% {
+        background-position: calc(0*100%/3) 100%, calc(1*100%/3) 0, calc(2*100%/3) 50%, calc(3*100%/3) 50%
+    }
+
+    50% {
+        background-position: calc(0*100%/3) 50%, calc(1*100%/3) 100%, calc(2*100%/3) 0, calc(3*100%/3) 50%
+    }
+
+    66.67% {
+        background-position: calc(0*100%/3) 50%, calc(1*100%/3) 50%, calc(2*100%/3) 100%, calc(3*100%/3) 0
+    }
+
+    83.33% {
+        background-position: calc(0*100%/3) 50%, calc(1*100%/3) 50%, calc(2*100%/3) 50%, calc(3*100%/3) 100%
+    }
+
+    100% {
+        background-position: calc(0*100%/3) 50%, calc(1*100%/3) 50%, calc(2*100%/3) 50%, calc(3*100%/3) 50%
+    }
+}
 </style>
 
 
@@ -143,7 +192,7 @@ h2.btn-nav-error {
         <aside class="f-between-center gap-10">
             <span class="f-start-center gap-10">
                 <p>Total Orders:</p>
-                <p class="text--12 b Red">{{ filteredItems.length }}</p>
+                <p class="text--12 b Red">{{ totalCount }}</p>
             </span>
             <div class="f-center gap-10">
                 <i class="btn btn-silver m-file-picture" @click="exportToPicture" title="Export to Picture"></i>
@@ -153,7 +202,6 @@ h2.btn-nav-error {
                     placeholder="Search Order..." v-model="searchQuery">
             </div>
         </aside>
-
         <table class="table table-1" ref="tableRef">
             <thead>
                 <tr>
@@ -175,11 +223,12 @@ h2.btn-nav-error {
                     <th>Action</th>
                 </tr>
             </thead>
-
-
             <tbody>
-                <tr v-for="item in filteredItems" :key="item.key">
-                    <td>{{ item.id }}</td>
+                <tr v-for="(item, index) in filteredItems" :key="item.key">
+                    <td>
+                        {{ sortDirection || !sortColumn ? index + 1 : Math.max(1, Math.min(MAX_SERIAL,
+                            filteredItems.length) - index) }}
+                    </td>
                     <td>
                         <div class="f-centered f-col gap-03">
                             <strong>{{ item.name }}</strong>
@@ -200,7 +249,6 @@ h2.btn-nav-error {
                     </td>
                     <td class="order_summery">
                         <div v-for="product in item.order_products" :key="product.id" class="order-product">
-
                             <strong class="Red-700">{{ product.product.title }}</strong>
                             <div>
                                 <b>Price : </b>
@@ -239,21 +287,11 @@ h2.btn-nav-error {
                             </select>
                         </div>
                     </td>
-
-
-
-
-
-
-
-
-                    <!-- ACTION -->
                     <td>
                         <div class="f-centered gap-05 relative">
                             <button class="btn btn-pastel-green btn-sm" @click="toggleActions(item.key)">
                                 <i class="m-dots-three-vertical"></i>
                             </button>
-                            <!-- Dropdown Menu -->
                             <div v-if="activeOrderKey === item.key" class="dropdown-menu">
                                 <button class="btn btn-sm btn-primary w-100" @click="showInvoiceModal(item.key)">
                                     <i class="m-file-text"></i>
@@ -276,8 +314,16 @@ h2.btn-nav-error {
                         </div>
                     </td>
                 </tr>
+
+
+                <tr ref="loadMoreTrigger">
+                    <td colspan="6" class="text-center" v-if="isLoading">
+                        <div class="mastor-las"><span class="loader"></span></div>
+                    </td>
+                </tr>
             </tbody>
         </table>
+
         <!-- Invoice Modal -->
         <Teleport to="body">
             <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
@@ -397,26 +443,46 @@ h2.btn-nav-error {
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import * as XLSX from 'xlsx'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { useToast } from 'vue-toastification'
-
+import { useCookie } from '#app'
 
 const showModal = ref(false)
 const selectedOrder = ref<Order | null>(null)
 const showPrintModal = ref(false)
-
-// Add to Refs
 const activeOrderKey = ref<string | null>(null)
+const loadMoreTrigger = ref<HTMLElement | null>(null)
+const isLoading = ref(false)
+const page = ref(1)
+const totalCount = ref(0)
+const nextUrl = ref<string | null>(null)
+const orders = ref<Order[]>([])
+
+// Constants
+const API_URL = 'http://192.168.0.111:3000/api'
+
+// Refs
+const MAX_SERIAL = 999 // Set your desired maximum value (e.g., 9, 99, 999)
+
+// Refs
+const searchQuery = ref('')
+const sortColumn = ref<number | string>('')
+const sortDirection = ref(true)
+const currentPage = ref(1)
+const nextPageUrl = ref<string | null>(null)
+const tableRef = ref<HTMLElement | null>(null)
+
+// Composables
+const toast = useToast()
+const accessToken = useCookie<string | null>('access')
 
 // Utility Functions
 const toggleActions = (orderKey: string) => {
     activeOrderKey.value = activeOrderKey.value === orderKey ? null : orderKey
 }
-
-
 
 const normalizeAttribute = (value: any) => {
     if (!value) return []
@@ -424,7 +490,6 @@ const normalizeAttribute = (value: any) => {
     return [value]
 }
 
-// Update formatAttribute to handle quantity
 const formatAttribute = (attr: any) => {
     if (Array.isArray(attr)) {
         return `${attr[0]} - ${attr[1]} Qty`
@@ -441,10 +506,9 @@ const companyInfo = {
     email: "info@yourcompany.com"
 }
 
-// Calculate subtotal based on products
 const calculateSubtotal = (products: OrderProduct[]) => {
     return products.reduce((sum, product) => {
-        const basePrice = Number(product.product.discountPrice || product.product.sellPrice)
+        const basePrice = product.product.discountPrice || product.product.sellPrice
         let totalQty = 0
         if (product.attribute) {
             Object.values(product.attribute).forEach(value => {
@@ -461,7 +525,7 @@ const calculateSubtotal = (products: OrderProduct[]) => {
 }
 
 const calculateProductPrice = (product: OrderProduct) => {
-    const basePrice = Number(product.product.discountPrice || product.product.sellPrice)
+    const basePrice = product.product.discountPrice || product.product.sellPrice
     let totalQty = 0
     if (product.attribute) {
         Object.values(product.attribute).forEach(value => {
@@ -476,18 +540,10 @@ const calculateProductPrice = (product: OrderProduct) => {
     return formatPrice(basePrice * (totalQty || 1))
 }
 
-
-
-
-
-
-
-
-
-
-// Types
 interface Product {
     title: string
+    images: string
+    key: string
     sellPrice: number
     discountPrice: number
 }
@@ -496,46 +552,99 @@ interface OrderProduct {
     id: number
     product: Product
     attribute: Record<string, any>
+    order: number
 }
 
 interface Order {
     id: number
+    order_products: OrderProduct[]
     key: string
+    date: string
     name: string
     phone_no: string
-    area: string
+    division: string
     district: string
-    date: string
-    status: string
-    courier: string
-    order_products: OrderProduct[]
+    area: string
+    address: string
+    label: string
     total: number
     delivery_charge: number
-    address: string
-    division: string
-
+    pay_method: string
+    status: string
+    courier: string
 }
 
-// Constants
-const API_URL = 'http://192.168.0.111:3000/api'
+interface ApiResponse {
+    count: number
+    next: string | null
+    previous: string | null
+    results: Order[]
+}
 
-// Refs
-const searchQuery = ref('')
-const sortColumn = ref('')
-const sortDirection = ref(true)
-const tableRef = ref<HTMLElement | null>(null)
+// Initial fetch
+const fetchOrders = async (url: string) => {
+    isLoading.value = true
+    try {
+        const { data, error } = await useFetch<ApiResponse>(url, {
+            headers: { Authorization: `Bearer ${accessToken.value ?? ''}` },
+            transform: (response: ApiResponse) => {
+                response.results.forEach(order => {
+                    order.order_products.forEach(product => {
+                        product.product.sellPrice = Number(product.product.sellPrice)
+                        product.product.discountPrice = Number(product.product.discountPrice)
+                    })
+                })
+                return response
+            }
+        })
 
-// Composables
-const toast = useToast()
-const accessToken = useCookie<string | null>('access')
-const { data } = await useFetch<Order[]>(`${API_URL}/orderList`, {
-    headers: { Authorization: `Bearer ${accessToken.value ?? ''}` },
+        if (error.value) {
+            toast.error('Failed to fetch orders: ' + error.value.message)
+            return
+        }
+
+        if (data.value) {
+            orders.value = [...orders.value, ...data.value.results]
+            totalCount.value = data.value.count
+            nextUrl.value = data.value.next
+        }
+    } catch (err) {
+        toast.error('Error fetching orders: ' + (err as Error).message)
+    } finally {
+        isLoading.value = false
+    }
+}
+
+// Initial load
+fetchOrders(`${API_URL}/orderList?page=${page.value}&page_size=3`)
+
+// Intersection Observer for infinite scroll
+const observer = ref<IntersectionObserver | null>(null)
+onMounted(() => {
+    observer.value = new IntersectionObserver(
+        (entries) => {
+            if (entries[0].isIntersecting && nextUrl.value && !isLoading.value) {
+                fetchOrders(nextUrl.value)
+            }
+        },
+        { threshold: 0.1 }
+    )
+    if (loadMoreTrigger.value) {
+        observer.value.observe(loadMoreTrigger.value)
+    }
+})
+
+onUnmounted(() => {
+    if (observer.value) {
+        observer.value.disconnect()
+    }
 })
 
 // Computed
 const filteredItems = computed(() => {
-    let result = [...(data.value || [])]
+    let result = [...orders.value]
 
+    // Apply search filter
     if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter(item =>
@@ -545,6 +654,7 @@ const filteredItems = computed(() => {
         )
     }
 
+    // Apply sorting (no default sort by 'id')
     if (sortColumn.value) {
         result.sort((a, b) => {
             const key = sortColumn.value as keyof Order
@@ -554,6 +664,9 @@ const filteredItems = computed(() => {
             if (key === 'order_products') {
                 valueA = a.order_products[0]?.product.title || ''
                 valueB = b.order_products[0]?.product.title || ''
+                return sortDirection.value
+                    ? valueA.localeCompare(valueB)
+                    : valueB.localeCompare(valueA)
             } else if (key === 'date') {
                 valueA = new Date(valueA).getTime()
                 valueB = new Date(valueB).getTime()
@@ -561,7 +674,11 @@ const filteredItems = computed(() => {
             } else if (key === 'courier') {
                 valueA = String(valueA).toLowerCase()
                 valueB = String(valueB).toLowerCase()
-                return sortDirection.value ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA)
+                return sortDirection.value
+                    ? valueA.localeCompare(valueB)
+                    : valueB.localeCompare(valueA)
+            } else if (key === 'id') {
+                return sortDirection.value ? valueA - valueB : valueB - valueA
             }
 
             if (typeof valueA === 'number') {
@@ -570,12 +687,24 @@ const filteredItems = computed(() => {
 
             valueA = String(valueA).toLowerCase()
             valueB = String(valueB).toLowerCase()
-            return sortDirection.value ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA)
+            return sortDirection.value
+                ? valueA.localeCompare(valueB)
+                : valueB.localeCompare(valueA)
         })
     }
 
     return result
 })
+
+// Sort function (unchanged)
+const sortBy = (column: string) => {
+    if (sortColumn.value === column) {
+        sortDirection.value = !sortDirection.value
+    } else {
+        sortColumn.value = column
+        sortDirection.value = true // Start with ascending when changing columns
+    }
+}
 
 // Utility Functions
 const formatPrice = (price: number) =>
@@ -705,30 +834,13 @@ const queryFromTable = (event: Event) => {
     searchQuery.value = (event.target as HTMLInputElement).value
 }
 
-const sortBy = (column: string) => {
-    sortDirection.value = sortColumn.value === column ? !sortDirection.value : true
-    sortColumn.value = column
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Action Functions
+// const sortBy = (column: string) => {
+//     sortDirection.value = sortColumn.value === column ? !sortDirection.value : true
+//     sortColumn.value = column
+// }
 
 const updateCourier = async (orderKey: string, event: Event) => {
     const newCourier = (event.target as HTMLSelectElement).value
-    const order = filteredItems.value.find(item => item.key === orderKey)
-    if (!order) return
-
     try {
         const response = await fetch(`${API_URL}/order_detail/${orderKey}`, {
             method: 'PATCH',
@@ -739,20 +851,42 @@ const updateCourier = async (orderKey: string, event: Event) => {
             body: JSON.stringify({ courier: newCourier })
         })
 
-        if (response.ok && data.value) {
-            const index = data.value.findIndex(item => item.key === orderKey)
-            if (index !== -1) {
-                data.value[index].courier = newCourier
-                toast.success(`Courier updated to ${newCourier} for order ${orderKey}`)
-            }
-        } else {
-            throw new Error('Failed to update courier')
+        if (!response.ok) throw new Error('Failed to update courier')
+
+        const index = orders.value.findIndex(item => item.key === orderKey)
+        if (index !== -1) {
+            orders.value[index].courier = newCourier
+            toast.success(`Courier updated to ${newCourier} for order ${orderKey}`)
         }
     } catch (error) {
         toast.error(`Error updating courier: ${(error as Error).message}`)
     }
 }
 
+const updateStatus = async (orderKey: string, status: string) => {
+    try {
+        const response = await fetch(`${API_URL}/order_detail/${orderKey}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken.value ?? ''}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
+        })
+
+        if (!response.ok) throw new Error('Failed to update status')
+
+        const index = orders.value.findIndex(item => item.key === orderKey)
+        if (index !== -1) {
+            orders.value[index].status = status
+            toast.success(`Order ${orderKey} status updated to ${status}`)
+        }
+    } catch (error) {
+        toast.error(`Error updating status: ${(error as Error).message}`)
+    } finally {
+        activeOrderKey.value = null
+    }
+}
 
 // Modal functions
 const showInvoiceModal = (orderKey: string) => {
@@ -836,7 +970,7 @@ const printInvoice = (format: 'pos' | 'a5' | 'default') => {
                             <td>${product.attribute ?
             Object.entries(product.attribute).map(([key, value]) => {
                 const attrs = normalizeAttribute(value)
-                return `${key}<br>` + attrs.map(attr => `  ${formatAttribute(attr)}`).join('<br>')
+                return `${key}<br>` + attrs.map(attr => `  ${formatAttribute(attr)}`).join('<br>')
             }).join('<br>') :
             '-'
         }</td>
@@ -871,87 +1005,30 @@ const printInvoice = (format: 'pos' | 'a5' | 'default') => {
         </div>
     `
     printWindow.document.write(`
-    <html>
-        <head>
-            <title>Invoice #${selectedOrder.value.id}</title>
-            ${styles}
-        </head>
-        <body>
-            ${content}
-            <script>
-                window.print();
-                window.close();
-            <\/script>
-        </body>
-    </html>
-    </body>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Invoice #${selectedOrder.value.id}</title>
+        ${styles}
+    </head>
+    <body>
+        ${content}
+        <script>
+            window.print();
+            window.close();
+</body>
 
-    </html>`)
+</html>
+`)
 
     printWindow.document.close()
     showPrintModal.value = false
     toast.success(`Printing invoice in ${format} format...`)
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-const updateStatus = async (orderKey: string, status: string) => {
-    const order = filteredItems.value.find(item => item.key === orderKey)
-    if (!order) return
-    try {
-        const response = await fetch(`${API_URL}/order_detail/${orderKey}`, {
-            method: 'PATCH',
-            headers: {
-                'Authorization': `Bearer ${accessToken.value ?? ''}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ status })
-        })
-        if (response.ok && data.value) {
-            const index = data.value.findIndex(item => item.key === orderKey)
-            if (index !== -1) {
-                data.value[index].status = status
-                toast.success(`Order ${orderKey} status updated to ${status}`)
-            }
-        } else {
-            throw new Error('Failed to update status')
-        }
-    } catch (error) {
-        toast.error(`Error updating status: ${(error as Error).message}`)
-    } finally {
-        activeOrderKey.value = null
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const editOrder = (orderKey: number) => {
+const editOrder = (orderKey: string) => {
     console.log('Edit order:', orderKey)
 }
 
@@ -959,7 +1036,7 @@ const deleteOrder = async (orderKey: string) => {
     if (!confirm('Are you sure you want to delete this order?')) return
 
     try {
-        const response = await fetch(`${API_URL}/Order_detail/${orderKey}`, {
+        const response = await fetch(`${API_URL}/order_detail/${orderKey}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${accessToken.value ?? ''}`,
@@ -967,12 +1044,11 @@ const deleteOrder = async (orderKey: string) => {
             }
         })
 
-        if (response.ok && data.value) {
-            data.value = data.value.filter(item => item.key !== orderKey)
-            toast.success('Order deleted successfully')
-        } else {
-            throw new Error('Failed to delete order')
-        }
+        if (!response.ok) throw new Error('Failed to delete order')
+
+        orders.value = orders.value.filter(item => item.key !== orderKey)
+        totalCount.value -= 1
+        toast.success('Order deleted successfully')
     } catch (error) {
         toast.error(`Error deleting order: ${(error as Error).message}`)
     }

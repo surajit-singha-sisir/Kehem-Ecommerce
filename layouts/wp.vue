@@ -55,7 +55,7 @@
                 <!-- DASHBOARD -->
                 <ul class="nosubcat">
                     <li>
-                        <NuxtLink to="/">
+                        <NuxtLink to="/k-admin/dashboard">
                             <span class="ecat">
                                 <div class="nosubcaticon w--12">
                                     <img class="img-w-res" src="/icons/home.svg" alt="">
@@ -81,7 +81,7 @@
                     <!-- SUB CATS -->
                     <ul class="ulsubcates">
                         <li>
-                            <NuxtLink to="/">
+                            <NuxtLink to="/k-admin/orders/order-list">
                                 <span class="ecat">
                                     <div class="icon w--08">
                                         <i class="m-chevron-right"></i>
@@ -91,22 +91,52 @@
                             </NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="/">
+                            <!-- <NuxtLink to="/">
                                 <span class="ecat">
                                     <div class="icon w--08">
                                         <i class="m-chevron-right"></i>
                                     </div>
                                     <p>Create Order</p>
                                 </span>
-                            </NuxtLink>
+                            </NuxtLink> -->
                         </li>
-                        <li>
+                        <!-- <li>
                             <NuxtLink to="/">
                                 <span class="ecat">
                                     <div class="icon w--08">
                                         <i class="m-chevron-right"></i>
                                     </div>
                                     <p>Order Reports</p>
+                                </span>
+                            </NuxtLink>
+                        </li> -->
+                        <li>
+                            <NuxtLink to="/k-admin/orders/pending-orders">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Pending Orders</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
+                        <li>
+                            <NuxtLink to="/k-admin/orders/approved-orders">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Approved Orders</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
+                        <li>
+                            <NuxtLink to="/k-admin/orders/cancel-orders">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Cancel Orders</p>
                                 </span>
                             </NuxtLink>
                         </li>
@@ -130,7 +160,7 @@
                     <ul class="ulsubcates">
                         <!-- Manage Sales -->
                         <li>
-                            <NuxtLink to="/">
+                            <NuxtLink to="/k-admin/sales/manage-sales">
                                 <span class="ecat">
                                     <div class="icon w--08">
                                         <i class="m-chevron-right"></i>
@@ -139,58 +169,14 @@
                                 </span>
                             </NuxtLink>
                         </li>
-                        <!-- Office Sales -->
+
                         <li>
-                            <NuxtLink to="/">
+                            <NuxtLink to="/k-admin/sales/sales-reports">
                                 <span class="ecat">
                                     <div class="icon w--08">
                                         <i class="m-chevron-right"></i>
                                     </div>
-                                    <p>Office Sales</p>
-                                </span>
-                            </NuxtLink>
-                        </li>
-                        <!-- Personal Sales -->
-                        <li>
-                            <NuxtLink to="/">
-                                <span class="ecat">
-                                    <div class="icon w--08">
-                                        <i class="m-chevron-right"></i>
-                                    </div>
-                                    <p>Personal Sales</p>
-                                </span>
-                            </NuxtLink>
-                        </li>
-                        <!-- Dummy Sales -->
-                        <li>
-                            <NuxtLink to="/">
-                                <span class="ecat">
-                                    <div class="icon w--08">
-                                        <i class="m-chevron-right"></i>
-                                    </div>
-                                    <p>Dummy Sales</p>
-                                </span>
-                            </NuxtLink>
-                        </li>
-                        <!-- Wholesales -->
-                        <li>
-                            <NuxtLink to="/">
-                                <span class="ecat">
-                                    <div class="icon w--08">
-                                        <i class="m-chevron-right"></i>
-                                    </div>
-                                    <p>Wholesales</p>
-                                </span>
-                            </NuxtLink>
-                        </li>
-                        <!-- Sales Reports -->
-                        <li>
-                            <NuxtLink to="/">
-                                <span class="ecat">
-                                    <div class="icon w--08">
-                                        <i class="m-chevron-right"></i>
-                                    </div>
-                                    <p>Sales Reports</p>
+                                    <p>Sales Report</p>
                                 </span>
                             </NuxtLink>
                         </li>
@@ -214,7 +200,7 @@
                     <ul class="ulsubcates">
                         <!-- Manage Products -->
                         <li>
-                            <NuxtLink to="/">
+                            <NuxtLink to="/k-admin/products/manage-products">
                                 <span class="ecat">
                                     <div class="icon w--08">
                                         <i class="m-chevron-right"></i>
@@ -225,34 +211,12 @@
                         </li>
                         <!-- Add Products -->
                         <li>
-                            <NuxtLink to="/">
+                            <NuxtLink to="/k-admin/products/add-product">
                                 <span class="ecat">
                                     <div class="icon w--08">
                                         <i class="m-chevron-right"></i>
                                     </div>
                                     <p>Add Product</p>
-                                </span>
-                            </NuxtLink>
-                        </li>
-                        <!-- Product Reviews -->
-                        <li>
-                            <NuxtLink to="/">
-                                <span class="ecat">
-                                    <div class="icon w--08">
-                                        <i class="m-chevron-right"></i>
-                                    </div>
-                                    <p>Product Reviews</p>
-                                </span>
-                            </NuxtLink>
-                        </li>
-                        <!-- Product Reports -->
-                        <li>
-                            <NuxtLink to="/">
-                                <span class="ecat">
-                                    <div class="icon w--08">
-                                        <i class="m-chevron-right"></i>
-                                    </div>
-                                    <p>Products Reports</p>
                                 </span>
                             </NuxtLink>
                         </li>

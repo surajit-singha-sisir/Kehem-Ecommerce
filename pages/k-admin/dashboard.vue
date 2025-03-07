@@ -26,7 +26,7 @@ const goForward = () => {
     <section>
         <button class="btn btn-warning m--10" @click="goBack">Go Back</button>
         <button class="btn btn-happy m--10" @click="goForward">Go Forward</button> <br>
-        <NuxtLink to="/k-admin/add-product/" class="btn btn-primary m--10">Add Product</NuxtLink>
+        <NuxtLink to="/k-admin/products/add-product/" class="btn btn-primary m--10">Add Product</NuxtLink>
     </section>
 </template>
 

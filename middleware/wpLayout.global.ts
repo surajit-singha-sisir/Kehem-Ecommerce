@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware((to) => {
   }
 
   if (accessToken && to.path == '/k-admin/login') {
-    return navigateTo('/k-admin/')
+    return navigateTo('/k-admin/dashboard')
   }
 
   if (to.path.startsWith('/k-admin/') && to.path !== '/k-admin/login') {
