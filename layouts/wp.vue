@@ -57,8 +57,8 @@
                     <li>
                         <NuxtLink to="/k-admin/dashboard">
                             <span class="ecat">
-                                <div class="nosubcaticon w--12">
-                                    <img class="img-w-res" src="/icons/home.svg" alt="">
+                                <div class="nosubcaticon">
+                                    <i class="m-m-home text--m"></i>
                                 </div>
                                 <p>Dashboard</p>
                             </span>
@@ -70,7 +70,7 @@
                     <span class="ecatnoclick">
                         <div class="maincatname">
                             <div class="w--12">
-                                <img class="img-w-res" src="/icons/order.svg" alt="">
+                                <i class="m-shopping-cart text--m"></i>
                             </div>
                             <p>Orders</p>
                         </div>
@@ -123,7 +123,7 @@
                                 </span>
                             </NuxtLink>
                         </li>
-                        
+
                         <li>
                             <NuxtLink to="/k-admin/orders/approved-orders">
                                 <span class="ecat">
@@ -151,9 +151,7 @@
                 <div class="esubcats">
                     <span class="ecatnoclick">
                         <div class="maincatname">
-                            <div class="w--12">
-                                <img class="img-w-res" src="/icons/products.svg" alt="">
-                            </div>
+                            <i class="m-shopping-bag text--m"></i>
                             <p>Products</p>
                         </div>
                         <div class="icon w--10 m-r--10 chevron">
@@ -191,9 +189,7 @@
                 <div class="esubcats">
                     <span class="ecatnoclick">
                         <div class="maincatname">
-                            <div class="w--12">
-                                <img class="img-w-res" src="/icons/sales.svg" alt="">
-                            </div>
+                            <i class="m-stats-bars text--m"></i>
                             <p>Sales</p>
                         </div>
                         <div class="icon w--10 m-r--10 chevron">
@@ -231,9 +227,7 @@
                 <div class="esubcats">
                     <span class="ecatnoclick">
                         <div class="maincatname">
-                            <div class="w--12">
-                                <img class="img-w-res" src="/icons/accounts.svg" alt="">
-                            </div>
+                            <i class="m-user3 text--m"></i>
                             <p>Accounts</p>
                         </div>
                         <div class="icon w--10 m-r--10 chevron">

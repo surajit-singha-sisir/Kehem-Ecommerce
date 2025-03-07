@@ -179,14 +179,8 @@ onUnmounted(() => {
 }
 
 .picker-input {
-    padding: 12px 16px;
-    border: 1px solid #d1d5db;
-    border-radius: 10px;
-    width: 220px;
     cursor: pointer;
-    background: #ffffff;
-    font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
     color: #374151;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease;
@@ -200,12 +194,11 @@ onUnmounted(() => {
 .picker-dropdown {
     position: absolute;
     top: calc(100% + 10px);
-    left: 0;
+    right: 0;
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-    padding: 16px;
     z-index: 20;
     width: 300px;
 }
@@ -215,9 +208,10 @@ onUnmounted(() => {
     justify-content: space-between;
     align-items: center;
     padding: 8px 12px;
-    background: #f8fafc;
+    background: #86c3ff;
     /* Light slate background */
-    border-radius: 8px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
     margin-bottom: 12px;
 }
 
@@ -253,7 +247,7 @@ onUnmounted(() => {
 
 .month-select:hover,
 .year-select:hover {
-    background: #e2e8f0;
+    background: #a1edf7;
 }
 
 .calendar-days,

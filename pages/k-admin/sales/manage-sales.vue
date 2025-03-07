@@ -78,14 +78,182 @@ const periodFilter = () => {
                 </div>
             </div>
 
-        </div>
+            <aside class="outer-table">
+                <h3 class="f-start-center gap-05"><i class="m-stats-bars2"></i>
+                    <p>Total Sales Summary</p>
+                </h3><br>
+                <table class="table table-2">
+                    <thead>
+                        <tr>
+                            <th colspan="5">Sales Summery</th>
+                        </tr>
+                        <tr>
+                            <th>SL</th>
+                            <th>Product</th>
+                            <th>Total Sales</th>
+                            <th>Revenue</th>
+                            <th>Total Customers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Something</td>
+                            <td>Something</td>
+                            <td>Something</td>
+                            <td>Something</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Something</td>
+                            <td>Something</td>
+                            <td>Something</td>
+                            <td>Something</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </aside>
+        </div><br>
 
+        <h3 class="f-start-center gap-05"><i class="m-file-text1"></i>
+            <p>Top Customers List</p>
+        </h3>
+        <aside class="outer-table">
+            <table class="table table-3">
+                <thead>
+                    <tr>
+                        <th colspan="5">Top Customers</th>
+                    </tr>
+                    <tr>
+                        <th>SL</th>
+                        <th>Product</th>
+                        <th>Total Sales</th>
+                        <th>Revenue</th>
+                        <th>Total Customers</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Something</td>
+                        <td>Something</td>
+                        <td>Something</td>
+                        <td>Something</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Something</td>
+                        <td>Something</td>
+                        <td>Something</td>
+                        <td>Something</td>
+                    </tr>
+                </tbody>
+            </table>
+        </aside>
     </section>
 </template>
 
 
 
 <style lang="scss">
+.outer-table {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    padding: 2rem 0;
+    scrollbar-width: thin;
+    scrollbar-color: #c4c4c4 transparent;
+
+    &::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #c5d9f8;
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #246fd8;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: #246fd8;
+        }
+    }
+
+    .table-2 {
+        width: 100%;
+        overflow-x: auto;
+        border-collapse: collapse;
+
+        thead {
+            tr {
+                background-color: #c5d9f8;
+
+                th {
+                    color: #313131;
+                    padding: 1rem;
+                }
+
+                &:nth-child(even) {
+                    background-color: #246fd8;
+
+                    th {
+                        color: #fff;
+                    }
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    padding: 1rem;
+                }
+            }
+        }
+    }
+
+    .table-3 {
+        width: 100%;
+        overflow-x: auto;
+        border-collapse: collapse;
+
+        thead {
+            tr {
+                background-color: #eee8b0;
+
+                th {
+                    color: #313131;
+                    padding: 1rem;
+                }
+
+                &:nth-child(even) {
+                    background-color: #1c8796;
+
+                    th {
+                        color: #fff;
+                    }
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    padding: 1rem;
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
 .border-bottom {
     border-bottom: 1px solid #ccc;
 }
@@ -207,6 +375,25 @@ const periodFilter = () => {
                 }
             }
         }
+    }
+}
+
+@media screen and (max-width: 720px) {
+    .filtered {
+        justify-content: center !important;
+        flex-wrap: wrap;
+    }
+
+    .period {
+        justify-content: center !important;
+        flex-wrap: wrap;
+    }
+}
+
+@media screen and (max-width: 520px) {
+    .filtered {
+        justify-content: center !important;
+        flex-wrap: wrap;
     }
 }
 </style>
