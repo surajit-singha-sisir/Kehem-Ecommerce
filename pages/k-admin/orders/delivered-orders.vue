@@ -1,6 +1,6 @@
 <template>
     <section class="w-100 f f-col gap-10 overflow-scroll">
-        <h2 class="f-start-centered btn btn-nav-error">Approved Order List</h2>
+        <h2 class="f-start-centered btn btn-nav-error">Delivered Order List</h2>
         <hr>
         <aside class="f-between-center gap-10">
             <span class="f-start-center gap-10">
@@ -119,26 +119,6 @@
                                     @click="showInvoiceModal(item.key)">
                                     <i class="m-file-text"></i>
                                     <p>Invoice</p>
-                                </button>
-                                <button class="f-start-centered btn btn-sm btn-success w-100"
-                                    @click="updateStatus(item.key, 'Delivered')">
-                                    <i class="m-m-round-tick-mark"></i>
-                                    <p>Delivered</p>
-                                </button>
-                                <button class="f-start-centered btn btn-sm btn-coral w-100"
-                                    @click="updateStatus(item.key, 'Shipping')">
-                                    <i class="m-travel-car"></i>
-                                    <p>Shipping</p>
-                                </button>
-                                <button class="f-start-centered btn btn-sm btn-warning w-100"
-                                    @click="updateStatus(item.key, 'Pending')">
-                                    <i class="m-clock"></i>
-                                    <p>Pending</p>
-                                </button>
-                                <button class="f-start-centered btn btn-sm btn-error w-100"
-                                    @click="updateStatus(item.key, 'Cancel')">
-                                    <i class="m-close"></i>
-                                    <p>Cancel</p>
                                 </button>
                             </div>
                         </div>
@@ -458,7 +438,7 @@ const fetchOrders = async (url: string) => {
 }
 
 // Initial load
-fetchOrders(`${API_URL}/order_filter/Approved?page=${page.value}&page_size=3`)
+fetchOrders(`${API_URL}/order_filter/Delivered?page=${page.value}&page_size=3`)
 
 // Intersection Observer for infinite scroll
 const observer = ref<IntersectionObserver | null>(null)

@@ -1,8 +1,4 @@
 <style>
-.overflow-scroll {
-    overflow-x: scroll;
-}
-
 .table-1 {
     width: 100%;
     border-collapse: collapse;
@@ -65,10 +61,7 @@ h2.btn-nav-error {
 .dropdown-menu button:hover {
     opacity: 0.9;
 }
-</style>
 
-
-<style scoped>
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -269,8 +262,13 @@ h2.btn-nav-error {
                     <td>
                         <div>
                             <p>{{ formatDate(item.date) }}</p>
-                            <button class="btn btn-primary btn-sm"
-                                :class="{ 'btn-primary': item.status === 'Approved', 'btn-warning': item.status === 'Pending' }">
+                            <button class="f-start-centered btn btn-sm w-100" :class="{
+                                'btn-primary': item.status === 'Approved',
+                                'btn-warning': item.status === 'Pending',
+                                'btn-success': item.status === 'Delivered',
+                                'btn-coral': item.status === 'Shipping',
+                                'btn-error': item.status === 'Cancel'
+                            }">
                                 {{ item.status }}
                             </button>
                         </div>
@@ -293,20 +291,34 @@ h2.btn-nav-error {
                                 <i class="m-dots-three-vertical"></i>
                             </button>
                             <div v-if="activeOrderKey === item.key" class="dropdown-menu">
-                                <button class="btn btn-sm btn-primary w-100" @click="showInvoiceModal(item.key)">
+                                <button class="f-start-centered f-start-centered btn btn-sm btn-sleep w-100"
+                                    @click="showInvoiceModal(item.key)">
                                     <i class="m-file-text"></i>
                                     <p>Invoice</p>
                                 </button>
-                                <button class="btn btn-sm btn-warning w-100" @click="updateStatus(item.key, 'Pending')">
-                                    <i class="m-clock"></i>
-                                    <p>Pending</p>
+                                <button class="f-start-centered btn btn-sm btn-success w-100"
+                                    @click="updateStatus(item.key, 'Delivered')" v-if="item.status === 'Shipping'">
+                                    <i class="m-m-round-tick-mark"></i>
+                                    <p>Delivered</p>
                                 </button>
-                                <button class="btn btn-sm btn-success w-100"
-                                    @click="updateStatus(item.key, 'Approved')">
+                                <button class="f-start-centered btn btn-sm btn-coral w-100"
+                                    @click="updateStatus(item.key, 'Shipping')" v-if="item.status === 'Approved'">
+                                    <i class="m-travel-car"></i>
+                                    <p>Shipping</p>
+                                </button>
+                                <button class="f-start-centered btn btn-sm btn-forest-green w-100"
+                                    @click="updateStatus(item.key, 'Approved')" v-if="item.status === 'Pending'">
                                     <i class="m-check"></i>
                                     <p>Approved</p>
                                 </button>
-                                <button class="btn btn-sm btn-error w-100" @click="updateStatus(item.key, 'Cancel')">
+                                <button class="f-start-centered btn btn-sm btn-warning w-100"
+                                    @click="updateStatus(item.key, 'Pending')" v-if="item.status === 'Cancel'">
+                                    <i class="m-clock"></i>
+                                    <p>Pending</p>
+                                </button>
+                                <button class="f-start-centered btn btn-sm btn-error w-100"
+                                    @click="updateStatus(item.key, 'Cancel')"
+                                    v-if="item.status === 'Pending' || item.status === 'Approved'">
                                     <i class="m-close"></i>
                                     <p>Cancel</p>
                                 </button>
@@ -449,7 +461,15 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { useToast } from 'vue-toastification'
 import { useCookie } from '#app'
+const { startRefreshing, stopRefreshing, logout } = useAuth();
 
+onMounted(() => {
+    startRefreshing();
+});
+
+onUnmounted(() => {
+    stopRefreshing();
+});
 const showModal = ref(false)
 const selectedOrder = ref<Order | null>(null)
 const showPrintModal = ref(false)
@@ -599,7 +619,7 @@ const fetchOrders = async (url: string) => {
         })
 
         if (error.value) {
-            toast.error('Failed to fetch orders: ' + error.value.message)
+            toast.error('Failed to fetch orders. Try again later...')
             return
         }
 
@@ -609,7 +629,7 @@ const fetchOrders = async (url: string) => {
             nextUrl.value = data.value.next
         }
     } catch (err) {
-        toast.error('Error fetching orders: ' + (err as Error).message)
+        toast.error('Error fetching orders. Try again later...')
     } finally {
         isLoading.value = false
     }
@@ -859,7 +879,7 @@ const updateCourier = async (orderKey: string, event: Event) => {
             toast.success(`Courier updated to ${newCourier} for order ${orderKey}`)
         }
     } catch (error) {
-        toast.error(`Error updating courier: ${(error as Error).message}`)
+        toast.error(`Error updating courier. Try again later...`)
     }
 }
 
@@ -882,7 +902,7 @@ const updateStatus = async (orderKey: string, status: string) => {
             toast.success(`Order ${orderKey} status updated to ${status}`)
         }
     } catch (error) {
-        toast.error(`Error updating status: ${(error as Error).message}`)
+        toast.error(`Error updating status. Try again later...`)
     } finally {
         activeOrderKey.value = null
     }
@@ -1050,7 +1070,7 @@ const deleteOrder = async (orderKey: string) => {
         totalCount.value -= 1
         toast.success('Order deleted successfully')
     } catch (error) {
-        toast.error(`Error deleting order: ${(error as Error).message}`)
+        toast.error(`Error deleting order. Try again later...`)
     }
 }
 </script>
