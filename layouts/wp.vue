@@ -184,7 +184,45 @@
                         </li>
                     </ul>
                 </div>
+                
 
+                <!-- Stock -->
+                <div class="esubcats">
+                    <span class="ecatnoclick">
+                        <div class="maincatname">
+                            <i class="m-stats-bars text--m"></i>
+                            <p>Sales</p>
+                        </div>
+                        <div class="icon w--10 m-r--10 chevron">
+                            <i class="m-chevron-down"></i>
+                        </div>
+                    </span>
+                    <!-- SUB CATS -->
+                    <ul class="ulsubcates">
+                        <!-- Manage Stock -->
+                        <li>
+                            <NuxtLink to="/k-admin/stock/manage-stock">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Manage Stock</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
+
+                        <li>
+                            <NuxtLink to="/k-admin/stock/stock-reports">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Stock Report</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
+                    </ul>
+                </div>
                 <!-- Sales -->
                 <div class="esubcats">
                     <span class="ecatnoclick">

@@ -1,67 +1,3 @@
-<style>
-.overflow-scroll {
-    overflow-x: scroll;
-}
-
-.table-1 {
-    width: 100%;
-    border-collapse: collapse;
-
-    thead {
-        tr {
-            font-weight: bold;
-
-            th {
-                color: #2e3088;
-                background-color: #e6e6e6;
-                background-color: rgb(233, 233, 233);
-                cursor: pointer;
-            }
-        }
-    }
-
-    tr {
-        overflow: scroll;
-    }
-}
-h2.btn-nav-error {
-    font-size: 1.2rem !important;
-}
-
-.table-cus {
-    thead {
-        tr {
-            font-weight: bold;
-            background-color: #d1dadb;
-            padding: 0;
-
-            th {
-                color: blue;
-                padding: 0.5rem;
-                background-color: #dddddd;
-            }
-        }
-    }
-
-    tbody {
-        tr {
-            td {
-                padding: 0.2rem;
-            }
-        }
-    }
-}
-
-.m-file-pdf {
-    color: #ac21b1;
-}
-
-.m-file-picture {
-    color: #2e3088;
-}
-</style>
-
-
 <template>
     <!-- Your template remains unchanged -->
     <section class="w-100 f f-col gap-10 overflow-scroll">
@@ -138,7 +74,9 @@ h2.btn-nav-error {
                     </td>
                     <td>
                         <div class="f-centered gap-05">
-                            <button class="btn btn-primary btn-sm" data-edit=""><i class="m-edit1"></i></button>
+                            <NuxtLink :to="`/k-admin/products/update/${item.key}`"><button
+                                    class="btn btn-primary btn-sm" data-edit=""><i class="m-edit1"></i></button>
+                            </NuxtLink>
                             <button class="btn btn-error btn-sm" @click="deleteProduct(item.key)" data-delete=""><i
                                     class="m-trash"></i></button>
                         </div>

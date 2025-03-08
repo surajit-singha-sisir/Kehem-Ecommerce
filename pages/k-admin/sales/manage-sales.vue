@@ -16,7 +16,7 @@ import {
 // Register Chart.js components
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
-// Define the product type based on your API data
+// Define types based on your updated API data
 interface ProductSummary {
     product__title: string
     total_amount: string
@@ -24,9 +24,18 @@ interface ProductSummary {
     order_count: number
 }
 
+interface CustomerSummary {
+    phone_no: string
+    customer_name: string
+    total_products_purchased: number
+    total_orders: number
+}
+
 interface SalesData {
     total_orders: number
     grand_total: number
+    unique_customers: number
+    customer_totals: CustomerSummary[]
     product_totals: ProductSummary[]
 }
 
@@ -36,7 +45,7 @@ const accessToken = useCookie<string | null>('access')
 const API_BASE = 'http://192.168.0.111:3000/api/sales_manager'
 
 // State management
-const activePeriod = ref('Week')
+const activePeriod = ref('Today') // Default to 'Today'
 const fromDate = ref<Date | null>(null)
 const toDate = ref<Date | null>(null)
 const salesData = ref<SalesData | null>(null)
@@ -56,6 +65,7 @@ const getPeriodDates = (period: string) => {
     switch (period.toLowerCase()) {
         case 'today':
             start = new Date(today)
+            end = new Date(today) // Still set end, but won't use it in URL
             break
         case 'week':
             start = new Date(today)
@@ -75,12 +85,16 @@ const getPeriodDates = (period: string) => {
 }
 
 // Fetch sales data
-const fetchSalesData = async (start: Date, end: Date) => {
+const fetchSalesData = async (start: Date, end: Date, isToday: boolean = false) => {
     try {
         loading.value = true
         error.value = null
 
-        const url = `${API_BASE}?start_date=${formatDate(start)}&end_date=${formatDate(end)}`
+        // For "Today", only use start_date; otherwise, use both start_date and end_date
+        const url = isToday 
+            ? `${API_BASE}?start_date=${formatDate(start)}`
+            : `${API_BASE}?start_date=${formatDate(start)}&end_date=${formatDate(end)}`
+        
         const response = await useFetch<SalesData>(url, {
             method: 'GET',
             headers: {
@@ -93,10 +107,10 @@ const fetchSalesData = async (start: Date, end: Date) => {
         }
 
         salesData.value = response.data.value
-        console.log('Fetched sales data:', salesData.value) // Debug log
+        console.log('Fetched sales data:', salesData.value)
     } catch (err) {
         error.value = err instanceof Error ? err.message : 'Failed to fetch sales data'
-        console.error('Fetch error:', error.value) // Debug log
+        console.error('Fetch error:', error.value)
     } finally {
         loading.value = false
     }
@@ -106,24 +120,26 @@ const fetchSalesData = async (start: Date, end: Date) => {
 const selectPeriod = (period: string) => {
     activePeriod.value = period
     const { start, end } = getPeriodDates(period)
-    fetchSalesData(start, end)
+    fetchSalesData(start, end, period.toLowerCase() === 'today')
 }
 
 // Handle custom date filter
 const periodFilter = () => {
     if (fromDate.value && toDate.value) {
         activePeriod.value = ''
-        console.log('Filtering with dates:', fromDate.value, toDate.value) // Debug log
+        console.log('Filtering with dates:', fromDate.value, toDate.value)
         fetchSalesData(fromDate.value, toDate.value)
     } else {
-        console.warn('Please select both start and end dates') // Debug log
+        console.warn('Please select both start and end dates')
     }
 }
 
 // Computed properties for display
 const totalRevenue = computed(() => salesData.value?.grand_total || 0)
 const totalOrders = computed(() => salesData.value?.total_orders || 0)
+const uniqueCustomers = computed(() => salesData.value?.unique_customers || 0)
 const productSummaries = computed((): ProductSummary[] => salesData.value?.product_totals || [])
+const customerSummaries = computed((): CustomerSummary[] => salesData.value?.customer_totals || [])
 
 // Chart data
 const chartData = computed(() => ({
@@ -167,8 +183,8 @@ const chartOptions = {
 // Lifecycle hooks
 onMounted(() => {
     startRefreshing()
-    const { start, end } = getPeriodDates('Week')
-    fetchSalesData(start, end)
+    const { start } = getPeriodDates('Today') // Fetch only today's data
+    fetchSalesData(start, start, true) // Pass true for isToday
 })
 
 onUnmounted(() => {
@@ -218,7 +234,7 @@ onUnmounted(() => {
                         <b>BDT</b>
                     </span>
                     <div>
-                        <p class="increased">Orders: {{ totalOrders }}</p>
+                        <p class="increased">Orders: {{ totalOrders }} | Unique Customers: {{ uniqueCustomers }}</p>
                     </div>
                 </div>
             </div>
@@ -276,7 +292,7 @@ onUnmounted(() => {
                 <i class="m-file-text1"></i>
                 <p>Top Customers List</p>
             </h3>
-            <aside class="outer-table">
+            <aside class="outer-table" v-if="!loading && customerSummaries.length > 0">
                 <table class="table table-3">
                     <thead>
                         <tr>
@@ -284,307 +300,30 @@ onUnmounted(() => {
                         </tr>
                         <tr>
                             <th>SL</th>
-                            <th>Product</th>
-                            <th>Total Sales</th>
-                            <th>Revenue</th>
-                            <th>Total Customers</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Total Purchase</th>
+                            <th>Total Orders</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Something</td>
-                            <td>Something</td>
-                            <td>Something</td>
-                            <td>Something</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Something</td>
-                            <td>Something</td>
-                            <td>Something</td>
-                            <td>Something</td>
+                        <tr v-for="(customer, index) in customerSummaries" :key="index">
+                            <td>{{ index + 1 }}</td>
+                            <td>{{ customer.customer_name }}</td>
+                            <td>{{ customer.phone_no }}</td>
+                            <td>{{ customer.total_products_purchased }}</td>
+                            <td>{{ customer.total_orders }}</td>
                         </tr>
                     </tbody>
                 </table>
             </aside>
+            <div v-else-if="!loading && customerSummaries.length === 0" class="no-data">
+                No customer data available for this period
+            </div>
         </div>
     </section>
 </template>
 
 <style lang="scss">
-.loading {
-    text-align: center;
-    padding: 20px;
-}
 
-.error {
-    color: red;
-    text-align: center;
-    padding: 20px;
-}
-
-.time-session {
-    cursor: pointer;
-    padding: 5px 10px;
-}
-
-.time-session.active {
-    background-color: #246fd8;
-    color: white;
-    border-radius: 4px;
-}
-
-.chart-container {
-    margin: 20px 0;
-}
-
-.chart-wrapper {
-    position: relative;
-    height: 400px;
-    width: 100%;
-}
-
-
-
-.outer-table {
-    position: relative;
-    width: 100%;
-    overflow-x: auto;
-    padding: 2rem 0;
-    scrollbar-width: thin;
-    scrollbar-color: #c4c4c4 transparent;
-
-    &::-webkit-scrollbar {
-        height: 8px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: #c5d9f8;
-        border-radius: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: #246fd8;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-
-        &:hover {
-            background: #246fd8;
-        }
-    }
-
-    .table-2 {
-        width: 100%;
-        overflow-x: auto;
-        border-collapse: collapse;
-
-        thead {
-            tr {
-                background-color: #c5d9f8;
-
-                th {
-                    color: #313131;
-                    padding: 1rem;
-                }
-
-                &:nth-child(even) {
-                    background-color: #246fd8;
-
-                    th {
-                        color: #fff;
-                    }
-                }
-            }
-        }
-
-        tbody {
-            tr {
-                td {
-                    padding: 1rem;
-                }
-            }
-        }
-    }
-
-    .table-3 {
-        width: 100%;
-        overflow-x: auto;
-        border-collapse: collapse;
-
-        thead {
-            tr {
-                background-color: #eee8b0;
-
-                th {
-                    color: #313131;
-                    padding: 1rem;
-                }
-
-                &:nth-child(even) {
-                    background-color: #1c8796;
-
-                    th {
-                        color: #fff;
-                    }
-                }
-            }
-        }
-
-        tbody {
-            tr {
-                td {
-                    padding: 1rem;
-                }
-            }
-        }
-    }
-}
-
-
-
-
-
-.border-bottom {
-    border-bottom: 1px solid #ccc;
-}
-
-.sales {
-    position: relative;
-    width: 100%;
-
-    .filtered {
-        display: flex;
-        justify-content: space-between;
-        gap: 1rem;
-        padding: 1rem 0;
-
-        .time-filter {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-
-            div {
-                display: flex;
-                justify-content: flex-start;
-                align-items: center;
-                border: 1px solid #ccc;
-
-                .time-session {
-                    display: block;
-                    padding: 0.5rem 1rem;
-                    cursor: pointer;
-                    border-left: 1px solid #ccc;
-                    border-right: 1px solid #ccc;
-
-                    &:hover {
-                        background-color: #dbe0f3;
-                    }
-                }
-
-                .active {
-                    background-color: #9aaaf1;
-                    border: none;
-
-                    &:hover {
-                        background-color: #9aaaf1;
-                    }
-                }
-            }
-        }
-
-        .period {
-            display: flex;
-            align-items: flex-end;
-            gap: 0.5rem;
-
-            .inner-period {
-                display: flex;
-                flex-direction: column;
-                gap: 0.2rem;
-
-                input {
-                    padding: 0.5rem;
-                    border: 1px solid #ccc;
-                }
-            }
-
-            button {
-                height: 2.3rem;
-            }
-        }
-    }
-
-    .sales-amount {
-        display: flex;
-        flex-direction: row;
-        gap: 1rem;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.4rem 1rem;
-        background-color: #fafafa;
-        // background-image: url(/images/props-1.png);
-        // background-position: right bottom;
-        // background-size: cover;
-        // background-repeat: no-repeat;
-
-
-        .text-set {
-            font-size: 1.2rem;
-            color: #1e3d52;
-        }
-
-        .amount {
-            display: flex;
-            align-items: flex-start;
-            flex-direction: column;
-
-            span {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-
-                b:first-child {
-                    font-size: 2.5rem;
-                }
-            }
-
-            div {
-                display: flex;
-                gap: 1rem;
-
-                p {
-                    font-size: 0.8rem;
-                }
-
-                .increased {
-                    color: #0a6894;
-                }
-
-                .decreased {
-                    color: #d40808;
-                }
-            }
-        }
-    }
-}
-
-@media screen and (max-width: 720px) {
-    .filtered {
-        justify-content: center !important;
-        flex-wrap: wrap;
-    }
-
-    .period {
-        justify-content: center !important;
-        flex-wrap: wrap;
-    }
-}
-
-@media screen and (max-width: 520px) {
-    .filtered {
-        justify-content: center !important;
-        flex-wrap: wrap;
-    }
-}
 </style>

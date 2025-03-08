@@ -49,10 +49,3 @@ const login = async () => {
         </form>
     </section>
 </template>
-
-<style scoped>
-.error-text {
-    color: red;
-    font-size: 14px;
-}
-</style>

@@ -448,7 +448,7 @@ const fetchOrders = async (url: string) => {
 }
 
 // Initial load
-fetchOrders(`${API_URL}/order_filter/Pending?page=${page.value}&page_size=3`)
+fetchOrders(`${API_URL}/order_filter/Pending?page=${page.value}&page_size=5`)
 
 // Intersection Observer for infinite scroll
 const observer = ref<IntersectionObserver | null>(null)
