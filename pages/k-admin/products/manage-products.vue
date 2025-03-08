@@ -281,7 +281,7 @@ const AceDecFilter = (column: string) => {
 const deleteProduct = async (productKey: number) => {
     if (!confirm('Are you sure you want to delete this product?')) return
     try {
-        const response = await fetch(`http://192.168.0.111:3000/api/product_detail/${productKey}`, {
+        const response = await fetch(`http://192.168.0.111:3000/api/product_update/${productKey}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${accessToken.value ?? ''}`,

@@ -54,7 +54,10 @@ const error = ref<string | null>(null)
 
 // Date utility functions
 const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0]
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0') // getMonth() is 0-based
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
 }
 
 const getPeriodDates = (period: string) => {
@@ -91,10 +94,14 @@ const fetchSalesData = async (start: Date, end: Date, isToday: boolean = false) 
         error.value = null
 
         // For "Today", only use start_date; otherwise, use both start_date and end_date
-        const url = isToday 
-            ? `${API_BASE}?start_date=${formatDate(start)}`
-            : `${API_BASE}?start_date=${formatDate(start)}&end_date=${formatDate(end)}`
-        
+        const formattedStart = formatDate(start)
+        const formattedEnd = formatDate(end)
+        const url = isToday
+            ? `${API_BASE}?start_date=${formattedStart}`
+            : `${API_BASE}?start_date=${formattedStart}&end_date=${formattedEnd}`
+
+        console.log('API Request URL:', url) // Log the URL for debugging
+
         const response = await useFetch<SalesData>(url, {
             method: 'GET',
             headers: {
@@ -124,10 +131,17 @@ const selectPeriod = (period: string) => {
 }
 
 // Handle custom date filter
+// Handle custom date filter
 const periodFilter = () => {
     if (fromDate.value && toDate.value) {
         activePeriod.value = ''
         console.log('Filtering with dates:', fromDate.value, toDate.value)
+
+        // Format dates to 'YYYY-MM-DD'
+        const formattedFromDate = formatDate(fromDate.value)
+        const formattedToDate = formatDate(toDate.value)
+
+        console.log('Formatted dates for API:', formattedFromDate, formattedToDate)
         fetchSalesData(fromDate.value, toDate.value)
     } else {
         console.warn('Please select both start and end dates')
@@ -324,6 +338,4 @@ onUnmounted(() => {
     </section>
 </template>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

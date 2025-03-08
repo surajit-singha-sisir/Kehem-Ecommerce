@@ -191,7 +191,7 @@
                     <span class="ecatnoclick">
                         <div class="maincatname">
                             <i class="m-stats-bars text--m"></i>
-                            <p>Sales</p>
+                            <p>Stock</p>
                         </div>
                         <div class="icon w--10 m-r--10 chevron">
                             <i class="m-chevron-down"></i>

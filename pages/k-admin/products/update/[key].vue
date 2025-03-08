@@ -1,154 +1,253 @@
-<!-- pages/update/[key].vue -->
 <template>
-    <div class="container">
-        <h1>Update Product</h1>
-        <div v-if="isLoading">Loading...</div>
-        <form v-else @submit.prevent="submitForm">
-            <section class="pad-tb--20">
-                <label>Title</label>
-                <input v-model="form.title" type="text" class="form-input" />
-            </section>
+    <section class="product-container">
+        <h2><i class="m-edit1"></i> Edit Product</h2>
+        <!-- Header -->
+        <div class="product-header">
+            <p class="Black-900">Product Name</p>
+            <h2>{{ data?.title || 'Loading...' }}</h2>
+        </div>
 
-            <section class="pad-tb--20">
-                <label>Buy Price</label>
-                <input v-model="form.buyPrice" type="number" class="form-input" />
-            </section>
+        <!-- Loading State -->
+        <div v-if="!data && !error" class="loading">
+            <p>Loading...</p>
+        </div>
 
-            <section class="pad-tb--20">
-                <label>Sell Price</label>
-                <input v-model="form.sellPrice" type="number" class="form-input" />
-            </section>
+        <!-- Error State -->
+        <div v-if="error" class="error">
+            <p>Error loading data: {{ error.message }}</p>
+        </div>
 
-            <section class="pad-tb--20">
-                <label>Discount Price</label>
-                <input v-model="form.discountPrice" type="number" class="form-input" />
-            </section>
+        <!-- Product Details -->
+        <div v-if="data">
+            <!-- Filter Tabs -->
+            <fieldset class="time-filter">
+                <legend>Edit Product Info</legend>
+                <div class="filtered">
+                    <span
+                        v-for="product in ['Title', 'Category', 'Price', 'Attributes', 'Stock', 'Description', 'Ingredients', 'Benefits', 'Dosage', 'FAQs', 'Tags', 'Images']"
+                        :key="product" class="time-session" :class="{ active: activeProduct === product }"
+                        @click="selectProduct(product)">
+                        {{ product }}
+                    </span>
+                </div>
+            </fieldset>
 
-            <section class="pad-tb--20">
-                <span class="text--m star">Description</span>
-                <textarea class="summernote" ref="description" name="description"></textarea>
-            </section>
+            <!-- Content -->
+            <div class="product-content">
+                <transition :name="transitionDirection" mode="out-in">
+                    <div :key="activeProduct">
+                        <!-- Title -->
+                        <div v-if="activeProduct === 'Title'" class="card">
+                            <div class="f f-col gap-05">
+                                <h3>Title</h3>
+                                <input type="text" v-model="title" name="title" id="title">
+                            </div>
+                            <span class="f-centered pad-tb--10">
+                                <button @click="productUpdated()" type="button" class="btn btn-primary"><i
+                                        class="m-save"></i> Save</button>
+                            </span>
+                        </div>
 
-            <section class="pad-tb--20">
-                <span class="text--m star">Benefits</span>
-                <textarea class="summernote" ref="benefits" name="benefits"></textarea>
-            </section>
+                        <!-- Category -->
+                        <div v-if="activeProduct === 'Category'" class="card">
+                            <h2>Category</h2>
+                            <p>{{ data.category }}</p>
+                        </div>
 
-            <section class="pad-tb--20">
-                <span class="text--m star">Dosage</span>
-                <textarea class="summernote" ref="dosage" name="dosage"></textarea>
-            </section>
+                        <!-- Price -->
+                        <div v-if="activeProduct === 'Price'" class="card">
+                            <h2>Pricing</h2>
+                            <p><strong>Buy Price:</strong> ${{ data.buyPrice }}</p>
+                            <p><strong>Sell Price:</strong> ${{ data.sellPrice }}</p>
+                            <p><strong>Discount Price:</strong> ${{ data.discountPrice }}</p>
+                        </div>
 
-            <button type="submit" class="submit-btn" :disabled="isSubmitting">Update Product</button>
-        </form>
-    </div>
+                        <!-- Stock -->
+                        <div v-if="activeProduct === 'Stock'" class="card">
+                            <h2>Stock</h2>
+                            <p><strong>Stock:</strong> {{ data.stock }}</p>
+                            <p><strong>Buy Price:</strong> ${{ data.buyPrice }}</p>
+                            <p><strong>Sell Price:</strong> ${{ data.sellPrice }}</p>
+                            <p><strong>Discount Price:</strong> ${{ data.discountPrice }}</p>
+                        </div>
+
+                        <!-- Attributes -->
+                        <div v-if="activeProduct === 'Attributes'" class="card">
+                            <h2>Variants</h2>
+                            <div v-for="(colors, attrName) in data.attributes.Mandatory_attributes" :key="attrName">
+                                <h3>{{ attrName }}</h3>
+                                <div v-for="(values, color) in colors" :key="color" style="margin-left: 1rem;">
+                                    <p>
+                                        {{ color }} - Stock: <button class="variant-button">{{ values[0] }}</button>,
+                                        Price: <button class="variant-button">{{ values[1] }}</button>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div v-if="activeProduct === 'Description'" class="card">
+                            <h2>Description</h2>
+                            <div v-html="data.description"></div>
+                        </div>
+
+                        <!-- Ingredients -->
+                        <div v-if="activeProduct === 'Ingredients'" class="card">
+                            <h2>Ingredients</h2>
+                            <ul style="list-style-type: disc; padding-left: 1.5rem;" v-html="data.ingredients"></ul>
+                        </div>
+
+                        <!-- Benefits -->
+                        <div v-if="activeProduct === 'Benefits'" class="card">
+                            <h2>Benefits</h2>
+                            <ul style="list-style-type: disc; padding-left: 1.5rem;" v-html="data.benefits"></ul>
+                        </div>
+
+                        <!-- Dosage -->
+                        <div v-if="activeProduct === 'Dosage'" class="card">
+                            <h2>How to Prepare</h2>
+                            <ul style="list-style-type: disc; padding-left: 1.5rem;" v-html="data.dosage"></ul>
+                        </div>
+
+                        <!-- FAQs -->
+                        <div v-if="activeProduct === 'FAQs'" class="card">
+                            <h2>FAQs</h2>
+                            <div v-for="(faq, index) in data.faqs" :key="index" style="margin-bottom: 1rem;">
+                                <p style="font-weight: 600;">{{ faq[0] }}</p>
+                                <p>{{ faq[1] }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Tags -->
+                        <div v-if="activeProduct === 'Tags'" class="card">
+                            <h2>Tags</h2>
+                            <div class="tags-container">
+                                <span v-for="tag in data.tags" :key="tag" class="tag">
+                                    {{ tag }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Images -->
+                        <div v-if="activeProduct === 'Images'" class="card">
+                            <h2>Images</h2>
+                            <div class="image-gallery">
+                                <img v-for="image in data.images" :key="image" :src="image" alt="Product Image" />
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+        </div>
+    </section>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+<script setup lang="ts">
+import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import { useCookie } from '#app'
-const { startRefreshing, stopRefreshing } = useAuth()
+
+interface Product {
+    title: string;
+    buyPrice: string;
+    sellPrice: string;
+    discountPrice: string;
+    stock: number;
+    description: string;
+    benefits: string;
+    dosage: string;
+    category: string;
+    attributes: {
+        Mandatory_attributes: {
+            [attributeName: string]: {
+                [variantName: string]: [number, number];
+            };
+        };
+        Optional_attributes: {
+            [attributeName: string]: any;
+        };
+    };
+    faqs: [string, string][];
+    tags: string[];
+    ingredients: [string, string, string][];
+    images: string[];
+}
 
 const route = useRoute()
 const toast = useToast()
 const accessToken = useCookie('access')
 const key = route.params.key
-const form = ref({})
-const description = ref(null)
-const benefits = ref(null)
-const dosage = ref(null)
-const isLoading = ref(false)
-const isSubmitting = ref(false)
+const { startRefreshing, stopRefreshing } = useAuth()
 
-onMounted(async () => {
-    startRefreshing()
-    isLoading.value = true
-    try {
-        const { data, error } = await useFetch(`http://192.168.0.111:3000/api/product_update/${key}`, {
-            headers: {
-                Authorization: `Bearer ${accessToken.value ?? ''}`
+const activeProduct = ref('Title')
+const transitionDirection = ref('slide-right')
+const productList = ['Title', 'Category', 'Price', 'Stock', 'Description', 'Ingredients', 'Benefits', 'Dosage', 'FAQs', 'Tags', 'Attributes', 'Images']
+
+const selectProduct = (product: string) => {
+    const currentIndex = productList.indexOf(activeProduct.value)
+    const newIndex = productList.indexOf(product)
+    transitionDirection.value = newIndex > currentIndex ? 'slide-right' : 'slide-left'
+    activeProduct.value = product
+}
+
+const { data, error } = await useFetch<Product>(`http://192.168.0.111:3000/api/product_update/${key}`, {
+    headers: {
+        Authorization: `Bearer ${accessToken.value ?? ''}`
+    }
+})
+
+watch(error, (newError) => {
+    if (newError) toast.error('Failed to load product data')
+})
+
+watch(data, (newData) => {
+    if (newData) toast.success('Product data loaded successfully')
+})
+
+const originalTitle = ref(data.value?.title || '')
+const title = ref(originalTitle.value)
+
+const productUpdated = async () => {
+    let body = {}
+
+    switch (activeProduct.value) {
+        case 'Title':
+            if (title.value === originalTitle.value) {
+                toast.info('No changes detected in the title')
+                return
             }
-        })
-
-        if (error.value) {
-            toast.error('Failed to load product data')
+            body = { title: title.value }
+            break
+        // Add more cases here if you want to allow editing other fields later
+        case 'Attributes':
+        case 'Images':
+            toast.error('Editing Attributes and Images is not allowed')
             return
-        }
-
-        form.value = data.value
-
-        // Initialize Summernote editors
-        $(description.value).summernote({
-            placeholder: 'Add Description',
-            tabsize: 2,
-            height: 200,
-            toolbar: [['font', ['bold', 'underline', 'clear']], ['para', ['ul', 'ol', 'paragraph']], ['insert', ['picture']]],
-        }).summernote('code', form.value.description)
-
-        $(benefits.value).summernote({
-            placeholder: 'Add Benefits',
-            tabsize: 2,
-            height: 200,
-            toolbar: [['font', ['bold', 'underline', 'clear']], ['para', ['ul', 'ol', 'paragraph']], ['insert', ['picture']]],
-        }).summernote('code', form.value.benefits)
-
-        $(dosage.value).summernote({
-            placeholder: 'Add Dosage',
-            tabsize: 2,
-            height: 200,
-            toolbar: [['font', ['bold', 'underline', 'clear']], ['para', ['ul', 'ol', 'paragraph']], ['insert', ['picture']]],
-        }).summernote('code', form.value.dosage)
-
-        toast.success('Product data loaded successfully')
-    } catch (error) {
-        toast.error('An error occurred while loading product data')
-        console.error('Error fetching product:', error)
-    } finally {
-        isLoading.value = false
+        default:
+            toast.info('Editing this section is not implemented yet')
+            return
     }
-})
-
-onUnmounted(() => {
-    stopRefreshing()
-})
-
-const submitForm = async () => {
-    isSubmitting.value = true
-    form.value.description = $(description.value).summernote('code')
-    form.value.benefits = $(benefits.value).summernote('code')
-    form.value.dosage = $(dosage.value).summernote('code')
 
     try {
-        const { error } = await useFetch(`http://192.168.0.111:3000/api/product_update/${key}`, {
-            method: 'PUT',
+        const { data: updated, error: updateError } = await useFetch(`http://192.168.0.111:3000/api/product_update/${key}`, {
+            method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken.value ?? ''}`
+                Authorization: `Bearer ${accessToken.value ?? ''}`,
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(form.value)
+            body: JSON.stringify(body)
         })
 
-        if (error.value) {
-            toast.error('Failed to update product')
-            return
+        if (updateError.value) {
+            toast.error(`Failed to update product: ${updateError.value.message}`)
+        } else {
+            toast.success('Product updated successfully')
+            if (activeProduct.value === 'Title') originalTitle.value = title.value
         }
-
-        toast.success('Product updated successfully')
-    } catch (error) {
-        toast.error('An error occurred while updating product')
-        console.error('Error updating product:', error)
-    } finally {
-        isSubmitting.value = false
+    } catch (err) {
+        toast.error('An unexpected error occurred while updating the product')
     }
 }
-</script>
 
-<style scoped>
-/* Same styles as before */
-.submit-btn:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-</style>
+onMounted(() => startRefreshing())
+onUnmounted(() => stopRefreshing())
+</script>
