@@ -52,23 +52,56 @@
                         <div v-if="activeProduct === 'Category'" class="card">
                             <h2>Category</h2>
                             <p>{{ data.category }}</p>
+                            <Category :POSTCat="category" @update:POSTCat="updateCategory" />
+
+                            <span class="f-centered pad-tb--10">
+                                <button @click="productUpdated()" type="button" class="btn btn-primary"><i
+                                        class="m-save"></i> Save</button>
+                            </span>
                         </div>
 
                         <!-- Price -->
                         <div v-if="activeProduct === 'Price'" class="card">
-                            <h2>Pricing</h2>
-                            <p><strong>Buy Price:</strong> ${{ data.buyPrice }}</p>
-                            <p><strong>Sell Price:</strong> ${{ data.sellPrice }}</p>
-                            <p><strong>Discount Price:</strong> ${{ data.discountPrice }}</p>
+                            <h2>Update Price</h2> <br>
+                            <div class="f f-col gap-05">
+                                <span class="f f-col gap-05">
+                                    <b>Buy Price</b>
+                                    <input type="text" :placeholder="data.buyPrice + ' taka'" v-model="buyPrice"
+                                        name="buyPrice" id="buyPrice">
+                                </span>
+
+                                <span class="f f-col gap-05">
+                                    <b>Sell Price</b>
+                                    <input type="text" :placeholder="data.sellPrice + ' taka'" v-model="sellPrice"
+                                        name="sellPrice" id="sellPrice">
+                                </span>
+
+                                <span class="f f-col gap-05">
+                                    <b>Discount Price</b>
+                                    <input type="text" :placeholder="data.discountPrice + ' taka'"
+                                        v-model="discountPrice" name="discountPrice" id="discountPrice">
+                                </span>
+
+
+
+                            </div>
+                            <span class="f-centered pad-tb--10">
+                                <button @click="productUpdated()" type="button" class="btn btn-primary"><i
+                                        class="m-save"></i> Save</button>
+                            </span>
                         </div>
 
                         <!-- Stock -->
                         <div v-if="activeProduct === 'Stock'" class="card">
-                            <h2>Stock</h2>
-                            <p><strong>Stock:</strong> {{ data.stock }}</p>
-                            <p><strong>Buy Price:</strong> ${{ data.buyPrice }}</p>
-                            <p><strong>Sell Price:</strong> ${{ data.sellPrice }}</p>
-                            <p><strong>Discount Price:</strong> ${{ data.discountPrice }}</p>
+                            <div class="f f-col gap-05">
+                                <h3>Current Stock</h3>
+                                <input type="text" :placeholder="data.stock + ' pcs'" v-model="stock" name="stock"
+                                    id="stock">
+                            </div>
+                            <span class="f-centered pad-tb--10">
+                                <button @click="productUpdated()" type="button" class="btn btn-primary"><i
+                                        class="m-save"></i> Save</button>
+                            </span>
                         </div>
 
                         <!-- Attributes -->
@@ -87,8 +120,30 @@
 
                         <!-- Description -->
                         <div v-if="activeProduct === 'Description'" class="card">
-                            <h2>Description</h2>
-                            <div v-html="data.description"></div>
+                            <!-- DESCRIPTION -->
+                            <SummerNote v-model="description" />
+                            <span class="f-centered pad-tb--10">
+                                <button @click="productUpdated()" type="button" class="btn btn-primary"><i
+                                        class="m-save"></i> Save</button>
+                            </span>
+                        </div>
+                        
+                        <!-- Benefits -->
+                        <div v-if="activeProduct === 'Benefits'" class="card">
+                            <Benefits v-model="benefits" />
+                            <span class="f-centered pad-tb--10">
+                                <button @click="productUpdated()" type="button" class="btn btn-primary"><i
+                                        class="m-save"></i> Save</button>
+                            </span>
+                        </div>
+
+                        <!-- Dosage -->
+                        <div v-if="activeProduct === 'Dosage'" class="card">
+                            <Dosages v-model="dosages" />
+                            <span class="f-centered pad-tb--10">
+                                <button @click="productUpdated()" type="button" class="btn btn-primary"><i
+                                        class="m-save"></i> Save</button>
+                            </span>
                         </div>
 
                         <!-- Ingredients -->
@@ -145,6 +200,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useToast } from 'vue-toastification'
+
 
 interface Product {
     title: string;
@@ -205,23 +261,112 @@ watch(data, (newData) => {
 
 const originalTitle = ref(data.value?.title || '')
 const title = ref(originalTitle.value)
+const orginalCategory = ref(data.value?.category)
+const category = ref('');
+const updateCategory = (newCategory: string) => {
+    category.value = newCategory;
+};
+// PRICE
+const originalSellPrice = ref(data.value?.sellPrice);
+const sellPrice = ref(data.value?.sellPrice);
+const originalBuyPrice = ref(data.value?.buyPrice);
+const buyPrice = ref(data.value?.buyPrice);
+const originalDiscountPrice = ref(data.value?.discountPrice);
+const discountPrice = ref(data.value?.discountPrice);
+// STOCK
+const originalStock = ref(data.value?.stock);
+const stock = ref(data.value?.stock);
+
+// DESCRIPTION
+const originalDescription = ref(data.value?.description);
+const description = ref(data.value?.description);
+
+// BENEFITS
+const originalBenefits = ref(data.value?.benefits || '')
+const benefits = ref(data.value?.benefits || '')
+
+// DOSAGE
+const originalDosages = ref(data.value?.dosage || '')
+const dosages = ref(data.value?.dosage || '')
 
 const productUpdated = async () => {
     let body = {}
 
     switch (activeProduct.value) {
+        // TITLE
         case 'Title':
-            if (title.value === originalTitle.value) {
+            if (title.value.trim() === originalTitle.value) {
                 toast.info('No changes detected in the title')
                 return
             }
             body = { title: title.value }
             break
-        // Add more cases here if you want to allow editing other fields later
+
+        // CATEGORY
+        case 'Category':
+            if (category.value === orginalCategory.value) {
+                toast.info('No changes detected in the Category')
+                return
+            }
+            body = { category: category.value }
+            break
+
+        // PRICE
+        case 'Price':
+            if (buyPrice.value === originalBuyPrice.value && sellPrice.value === originalSellPrice.value && discountPrice.value === originalDiscountPrice.value) {
+                toast.info('No changes detected in the Prices');
+                return;
+            }
+            body = {
+                buyPrice: buyPrice.value,
+                sellPrice: sellPrice.value,
+                discountPrice: discountPrice.value
+            };
+            break;
+
+        // STOCK
+        case 'Stock':
+            if (stock.value === originalStock.value) {
+                toast.info('No changes detected in the stock')
+                return
+            }
+            body = { stock: stock.value }
+            break
+
+        // DESCRIPTION
+        case 'Description':
+            if (description.value === originalDescription.value) {
+                toast.info('No changes detected in the description')
+                return
+            }
+            body = { description: description.value }
+            break
+
+        // // BENEFITS
+        case 'Benefits':
+            if (benefits.value === originalBenefits.value) {
+                toast.info('No changes detected in the benefits')
+                return
+            }
+            body = { benefits: benefits.value }
+            break
+
+        // DESCRIPTION
+        case 'Dosage':
+            if (dosages.value === originalDosages.value) {
+                toast.info('No changes detected in the dosages')
+                return
+            }
+            body = { dosage: dosages.value }
+            break
+
+        // ATTRIBUTES
         case 'Attributes':
+        // IMAGES
         case 'Images':
             toast.error('Editing Attributes and Images is not allowed')
             return
+
         default:
             toast.info('Editing this section is not implemented yet')
             return

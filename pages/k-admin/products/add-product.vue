@@ -1,4 +1,3 @@
-
 <template>
     <section class="w-100">
         <button class="btn btn-warning m--10" @click="goBack">Go Back</button>
@@ -162,6 +161,7 @@
 <script setup lang="ts">
 import { useToast } from "vue-toastification";
 import type { Ref } from 'vue';
+import { _descriptors } from "chart.js/helpers";
 
 const toast = useToast();
 const accessToken = useCookie<string | null>('access');
@@ -194,7 +194,7 @@ const updateCategory = (newCategory: string) => {
 
 // ATTRIBUTES
 const attributes = (json: any) => {
-    generateJSONFunc.value = () => json; // Store the latest JSON as a function returning the data
+    generateJSONFunc.value = () => json;
 };
 
 
