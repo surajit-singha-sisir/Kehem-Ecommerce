@@ -1,0 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+// Colors
+$bg-base: #ffffff; // White background
+$bg-secondary: #f5f5f5; // Light gray for contrast sections
+$text-primary: #333333; // Dark gray for readable text
+$text-secondary: #666666; // Medium gray for less emphasis
+$accent-primary: #007bff; // Blue for links/buttons
+$accent-hover: #0056b3; // Darker blue for hover states
+$border-color: #e0e0e0; // Light gray for borders
+$error-color: #d9534f; // Red for errors
+$success-color: #5cb85c; // Green for success
+
+// Typography
+$font-primary: "Inter", "Baloo Da 2", sans-serif;
+$font-size-base: 16px; // Base font size
+$font-size-lg: 1.25rem; // 20px
+$font-size-sm: 0.875rem; // 14px
+$line-height-base: 1.5; // Standard line height
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-bold: 700;
+
+// Spacing
+$spacing-unit: 1rem; // Base spacing unit (16px)
+$spacing-sm: $spacing-unit * 0.5; // 8px
+$spacing-md: $spacing-unit; // 16px
+$spacing-lg: $spacing-unit * 1.5; // 24px
+$spacing-xl: $spacing-unit * 2; // 32px
+
+// Breakpoints
+$breakpoint-sm: 576px; // Small devices
+$breakpoint-md: 768px; // Medium devices (tablets)
+$breakpoint-lg: 992px; // Large devices (desktops)
+$breakpoint-xl: 1200px; // Extra large devices
+
+// Shadows
+$shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1); // Subtle shadow
+$shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15); // Medium shadow
+
+// Buttons
+$btn-padding: 0.5rem 1rem;
+$btn-border-radius: 4px;
+
+// Containers
+$container-max-width: 1200px;
+body {
+  background-color: $bg-base;
+  color: $text-primary;
+  font-family: $font-primary;
+  font-size: $font-size-base;
+}
+
+.button {
+  background-color: $accent-primary;
+  padding: $btn-padding;
+  border-radius: $btn-border-radius;
+  &:hover {
+    background-color: $accent-hover;
+  }
+}
+input,
+textarea,
+select,
+button,
+fieldset,
+legend,
+label,
+::placeholder,
+::before,
+::after {
+  font-family: $font-primary;
+}

@@ -1,0 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+body {
+  background-color: #ffffff;
+  color: #333333;
+  font-family: "Inter", "Baloo Da 2", sans-serif;
+  font-size: 16px;
+}
+
+.button {
+  background-color: #007bff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+.button:hover {
+  background-color: #0056b3;
+}
+
+input,
+textarea,
+select,
+button,
+fieldset,
+legend,
+label,
+::placeholder,
+::before,
+::after {
+  font-family: "Inter", "Baloo Da 2", sans-serif;
+}
+
+/*# sourceMappingURL=kehem-e-frontend.css.map */

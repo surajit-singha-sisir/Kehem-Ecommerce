@@ -184,7 +184,7 @@
                         </li>
                     </ul>
                 </div>
-                
+
 
                 <!-- Stock -->
                 <div class="esubcats">
@@ -326,12 +326,41 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-// definePageMeta({
-//     middleware: 'authenticated'
-// });
+useHead({
+    title: 'Dashboard - KEHEM Ecommerce',
+    meta: [
+        { charset: 'UTF-8' }, // Already in global, but can be repeated if needed
+        { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }, // Already in global
+        { name: 'description', content: 'Dashboard - KEHEM Ecommerce' },
+        { name: 'keywords', content: 'KEHEM' },
+        { name: 'author', content: 'Surajit Singha Sisir, Anirban Singha, KEHEM IT' },
+        { name: 'theme-color', content: '#ffffff' },
 
+        // Open Graph Meta Tags
+        { property: 'og:title', content: 'Dashboard - KEHEM Ecommerce' },
+        { property: 'og:description', content: 'Dashboard - KEHEM Ecommerce' },
+        { property: 'og:image', content: 'https://kehem-ecommerce.vercel.app/favicon.jpg' },
+        { property: 'og:url', content: 'https://kehem-ecommerce.vercel.app' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:locale', content: 'en_US' },
 
+        // Twitter Meta Tags
+        { name: 'twitter:card', content: 'kehem-ecommerce' },
+        { name: 'twitter:site', content: '@kehem-ecommerce' },
+        { name: 'twitter:title', content: 'Dashboard - KEHEM Ecommerce' },
+        { name: 'twitter:description', content: 'Dashboard - KEHEM Ecommerce' },
+        { name: 'twitter:image', content: 'https://kehem-ecommerce.vercel.app/favicon.jpg' },
 
+        // Developer and Team Info
+        { name: 'developer', content: 'Surajit Singha Sisir, Anirban Singha' },
+        { name: 'developer-team', content: 'Kehem IT' },
+        { name: 'dev-platform', content: 'Vue, Django, CDN' },
+        { name: 'developer-website', content: 'https://kehem.com' },
+    ],
+    link: [
+        { rel: 'stylesheet', href: '/sass/dashboard/kehem-e-dashboard.css' }
+    ]
+})
 const isUserMenu = ref(false);
 const profileRef = ref<HTMLElement | null>(null);
 

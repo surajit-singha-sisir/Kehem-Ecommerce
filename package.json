@@ -9,7 +9,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "sassbuild": "sass public/css/kehem-e-dashboard.scss public/css/kehem-e-dashboard.css",
-    "sass": "sass --watch public/css/kehem-e-dashboard.scss public/css/kehem-e-dashboard.css"
+    "admin": "sass --watch public/sass/dashboard/kehem-e-dashboard.scss public/sass/dashboard/kehem-e-dashboard.css",
+    "sass": "sass --watch public/sass/frontend/kehem-e-frontend.scss public/sass/frontend/kehem-e-frontend.css"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.23",
