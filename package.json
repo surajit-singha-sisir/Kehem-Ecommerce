@@ -24,6 +24,7 @@
     "mastorscdn": "^1.1.0",
     "nuxt": "^3.15.4",
     "nuxt-auth-utils": "^0.5.16",
+    "pinia-plugin-persistedstate": "^4.2.0",
     "vue": "latest",
     "vue-chartjs": "^5.3.2",
     "vue-router": "latest",

@@ -31,6 +31,6 @@ export default defineNuxtConfig({
     host: '0.0.0.0',
     port: 3000
   },
-
-  modules: ['@nuxt/image', 'nuxt-auth-utils', '@pinia/nuxt'],
+  ssr: false,
+  modules: ['@nuxt/image', 'nuxt-auth-utils', '@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt',],
 })
