@@ -1,9 +1,6 @@
 <template>
   <main class="">
 
-    <FrontNavBar />
-    <HeroSlider />
-
 
 
 

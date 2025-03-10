@@ -1,5 +1,11 @@
 <template>
-    <slot />
+    <main>
+        <TopBar />
+        <FrontNavBar />
+        <HeroSlider />
+
+        <slot />
+    </main>
 </template>
 
 <script setup>
