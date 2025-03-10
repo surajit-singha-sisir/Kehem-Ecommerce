@@ -32,5 +32,12 @@ export default defineNuxtConfig({
     port: 3000
   },
   ssr: false,
-  modules: ['@nuxt/image', 'nuxt-auth-utils', '@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt',],
+  imports: {
+    dirs: ['stores'],
+  },
+  modules: ['@nuxt/image', 'nuxt-auth-utils',
+    ['@pinia/nuxt', {
+      autoImports: ['defineStore', 'acceptHMRUpdate']
+    }],
+    'pinia-plugin-persistedstate/nuxt',],
 })

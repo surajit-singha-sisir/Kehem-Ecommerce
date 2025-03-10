@@ -2,7 +2,6 @@
     <main>
         <TopBar />
         <FrontNavBar />
-        <HeroSlider />
 
         <slot />
     </main>
