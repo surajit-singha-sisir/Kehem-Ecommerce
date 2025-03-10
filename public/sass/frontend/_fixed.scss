@@ -542,3 +542,34 @@ label,
   top: 0;
   z-index: $z-toper;
 }
+.cart-icon {
+  display: flex;
+  align-items: center;
+  color: $bg-secondary;
+  padding: 0.3rem 0.5rem;
+
+  .nav-items-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .cart-counter {
+    position: relative;
+    margin-left: 1rem;
+    border-radius: 50%;
+    color: $bg-secondary;
+    font-size: 0.8rem;
+    z-index: $z-top;
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: 1.5rem;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      @include transform-center;
+      background-color: $accent-primary;
+      z-index: $z-down;
+    }
+  }
+}

@@ -385,4 +385,37 @@ label,
   z-index: 3;
 }
 
+.cart-icon {
+  display: flex;
+  align-items: center;
+  color: #f5f5f5;
+  padding: 0.3rem 0.5rem;
+}
+.cart-icon .nav-items-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cart-icon .cart-counter {
+  position: relative;
+  margin-left: 1rem;
+  border-radius: 50%;
+  color: #f5f5f5;
+  font-size: 0.8rem;
+  z-index: 2;
+}
+.cart-icon .cart-counter::after {
+  content: "";
+  position: absolute;
+  width: 1.5rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #007bff;
+  z-index: -1;
+}
+
 /*# sourceMappingURL=kehem-e-frontend.css.map */

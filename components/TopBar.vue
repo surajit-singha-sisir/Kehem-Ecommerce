@@ -1,7 +1,7 @@
 <template>
     <section class="top-bar">
         <div class="res-container inner-topbar">
-            <div class="icons">
+            <div class="icons m-l--06">
                 <NuxtLink to="/" class="iconLink"><i class="m-facebook rounded branded"></i></NuxtLink>
                 <NuxtLink to="/" class="iconLink"><i class="m-twitter rounded branded"></i></NuxtLink>
                 <NuxtLink to="/" class="iconLink"><i class="m-instagram rounded branded"></i></NuxtLink>
@@ -28,21 +28,17 @@
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 
-// Define reactive variables with types
 const searchText = ref<string>('')
 const isSearchVisible = ref<boolean>(false)
 const searchBarRef = ref<HTMLElement | null>(null)
 const searchInputRef = ref<HTMLInputElement | null>(null)
 
-// Router instance
 const router = useRouter()
 
-// Computed property for button state
 const isSearchDisabled = computed((): boolean => {
     return !searchText.value.trim()
 })
 
-// Toggle search visibility
 const toggleSearch = (): void => {
     isSearchVisible.value = !isSearchVisible.value
     if (isSearchVisible.value) {
@@ -52,7 +48,6 @@ const toggleSearch = (): void => {
     }
 }
 
-// Search submission
 const searchSubmit = (): void => {
     if (searchText.value.trim()) {
         router.push({

@@ -21,21 +21,23 @@
                 <!-- NAV ITEMS -->
                 <div class="nav-items">
                     <div class="inner-nav-items">
-                        <span class="gap-10 f-centered">
-                            <NuxtLink to="#" class="nav-items-link">SHOP</NuxtLink>
+                        <span class="gap-10 f-centered" v-for="(item, index) in navBars" :key="item">
+                            <template v-if="item === 'CART'">
+                                <span class="cart-icon" @click="openCart">
+                                    <NuxtLink to="/cart" class="nav-items-link">
+                                        <i class="m-shopping-cart"></i>
+                                        <p>{{ item }}</p>
+                                    </NuxtLink>
+                                    <p class="cart-counter">5</p>
+                                </span>
+                            </template>
+
+                            <!-- Default HTML for other items -->
+                            <template v-else>
+                                <NuxtLink to="#" class="nav-items-link">{{ item }}</NuxtLink>
+                            </template>
                         </span>
-                        <span class="gap-10 f-centered">
-                            <NuxtLink to="#" class="nav-items-link">TESTIMONIAL</NuxtLink>
-                        </span>
-                        <span class="gap-10 f-centered">
-                            <NuxtLink to="#" class="nav-items-link">ABOUT US</NuxtLink>
-                        </span>
-                        <span class="gap-10 f-centered">
-                            <NuxtLink to="#" class="nav-items-link">CONTACT</NuxtLink>
-                        </span>
-                        <span class="gap-10 f-centered">
-                            <NuxtLink to="#" class="nav-items-link"><i class="m-shopping-cart"></i></NuxtLink>
-                        </span>
+
                     </div>
                 </div>
             </nav>
@@ -67,7 +69,8 @@
                     </span>
                 </div>
                 <div class="border-bottom w-100" @click="LinkClicked">
-                    <span class="gap-10 f-centered"><i class="m-chevron-right"></i>
+                    <span class="gap-10 f-centered cart-icon">
+                        <i class="m-chevron-right"></i>
                         <NuxtLink to="#" class="nav-items-link f-center gap-06"><i class="m-shopping-cart"></i>
                             Cart</NuxtLink>
                     </span>
@@ -95,5 +98,8 @@ const isLinkClicked = ref(false);
 const LinkClicked = () => {
     isLinkClicked.value = false;
 }
+
+
+const navBars: string[] = ['SHOP', 'TESTIMONIAL', 'ABOUT US', 'CONTACT', 'CART'];
 
 </script>
