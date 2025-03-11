@@ -2,6 +2,7 @@
   <main class="">
 
 
+    <HeroSlider />
 
 
 
