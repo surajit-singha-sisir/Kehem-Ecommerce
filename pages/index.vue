@@ -26,7 +26,9 @@
         <ProductGrid :products="products" />
       </div>
     </section> -->
-
+    <benefit />
+  <order />
+    <banner2 />
     <Faq />
     <!-- Features Section -->
     <!-- <section class="features-section">
