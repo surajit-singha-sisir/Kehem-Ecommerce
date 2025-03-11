@@ -1,0 +1,100 @@
+@use "sass:color";
+
+$brand-color: #33db33;
+$z-down: -1;
+$z-ground: 1;
+$z-top: 2;
+$z-toper: 3;
+$z-topest: 4;
+$z-max: 5;
+
+@mixin transform-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.abs-center {
+  @include transform-center;
+}
+.branded {
+  color: #176ea0;
+}
+.rounded {
+  position: relative;
+  z-index: $z-ground;
+
+  &::after {
+    content: "";
+    position: absolute;
+    @include transform-center;
+    border: 1px solid $brand-color;
+    border-radius: 50%;
+    width: 1.8rem;
+    aspect-ratio: 1;
+    z-index: $z-max;
+  }
+}
+
+.bordered {
+  border-width: 1px;
+  border-color: #ccc;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+
+  &.solid {
+    border-style: solid;
+  }
+  &.dashed {
+    border-style: dashed;
+  }
+
+  &.dotted {
+    border-style: dotted;
+  }
+
+  &.double {
+    border-style: double;
+  }
+}
+
+.hovered {
+  &:hover {
+    border-color: #3344db;
+  }
+}
+
+.hero-slider-old {
+  position: relative;
+  max-width: 10rem;
+  height: auto;
+  @extend .bordered;
+  border-style: solid;
+
+  z-index: $z-toper;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  i {
+    color: #fff;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: $z-top;
+
+    &::after {
+      background-color: #176ea0;
+      z-index: $z-down;
+    }
+
+    &:hover::after {
+      background-color: #db3333;
+    }
+  }
+}

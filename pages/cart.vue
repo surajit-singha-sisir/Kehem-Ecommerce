@@ -22,7 +22,7 @@
               <span class="quantity-text">Quantity {{ item.quantity }} Pieces</span>
             </div>
           </div>
-          <button class="remove-item" @click="removeItem(index)">🗑️</button>
+          <button class="remove-item" @click="removeItem(index)"><i class="m-trash"></i></button>
         </div>
       </div>
       <!-- Order Summary -->
@@ -257,7 +257,8 @@ const removeItem = (index: number) => {
   color: #1a1a1a;
 }
 
-.summary-item, .summary-total {
+.summary-item,
+.summary-total {
   display: flex;
   justify-content: space-between;
   margin-bottom: 12px;

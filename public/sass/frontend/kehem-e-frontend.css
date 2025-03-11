@@ -277,7 +277,7 @@ body {
 }
 
 .button {
-  background-color: #007bff;
+  background-color: #1a89ff;
   padding: 0.5rem 1rem;
   border-radius: 4px;
 }
@@ -414,8 +414,57 @@ label,
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  background-color: #007bff;
+  background-color: #1a89ff;
   z-index: -1;
+}
+
+.bordered {
+  border-width: 1px;
+  border-color: #e0e0e0;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+}
+.bordered.dashed {
+  border-style: dashed;
+}
+.bordered.dotted {
+  border-style: dotted;
+}
+.bordered.double {
+  border-style: double;
+}
+
+.trusted-section {
+  width: 100%;
+  padding: 1rem 0;
+  background-color: #1a89ff;
+  color: #ffffff;
+}
+.trusted-section .inner-trusted-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.trusted-section .inner-trusted-section .leftAside {
+  font-size: 1.2rem;
+  text-wrap: wrap;
+  width: 24rem;
+}
+.trusted-section .inner-trusted-section .rating {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  justify-content: center;
+  align-items: baseline;
+}
+.trusted-section .inner-trusted-section .rating h1 {
+  font-size: 5rem;
+  text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff, 1px 1px 0 #ffffff;
+  color: #1a89ff;
+}
+.trusted-section .inner-trusted-section .rating i {
+  color: #fffc39;
 }
 
 /*# sourceMappingURL=kehem-e-frontend.css.map */

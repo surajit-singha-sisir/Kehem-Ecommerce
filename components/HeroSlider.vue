@@ -1,25 +1,24 @@
-<!-- components/HeroSection.vue -->
 <template>
     <section class="hero-section">
         <div class="slider-container">
             <transition-group name="slide" tag="div" class="slides-wrapper">
-                <div v-for="(slide, index) in slides" :key="slide.id" class="slide"
+                <div v-for="(slide, index) in sliders" :key="slide.id" class="slide"
                     :class="{ active: currentSlide === index }">
-                    <NuxtImg :src="slide.image" :alt="slide.title" class="slide-image" :placeholder="[1200, 600, 10]"
+                    <NuxtImg :src="slide.banner" :alt="slide.title" class="slide-image" :placeholder="[1200, 600, 10]"
                         loading="lazy" format="webp" />
                     <div class="slide-content">
                         <h1>{{ slide.title }}</h1>
-                        <p>{{ slide.description }}</p>
-                        <button class="btn btn-rain" @click="handleCta(slide.ctaLink)">
-                            {{ slide.ctaText }}
-                        </button>
+                        <p>{{ slide.sub_title || slide.description }}</p>
+                        <NuxtLink to="#all-products" class="btn btn-rain" @click="handleCta(slide.ctaLink)">
+                            {{ slide.ctaText || 'See all' }}
+                        </NuxtLink>
                     </div>
                 </div>
             </transition-group>
 
             <!-- Navigation dots -->
             <div class="slider-nav">
-                <button v-for="(_, index) in slides" :key="`dot-${index}`" :class="{ active: currentSlide === index }"
+                <button v-for="(_, index) in sliders" :key="`dot-${index}`" :class="{ active: currentSlide === index }"
                     @click="goToSlide(index)" :aria-label="`Go to slide ${index + 1}`" />
             </div>
         </div>
@@ -29,51 +28,35 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref } from 'vue'
 import { useRouter } from 'vue-router'
-
-interface Slide {
-    id: number
-    title: string
-    description: string
-    image: string
-    ctaText: string
-    ctaLink: string
-}
+import { useToast } from "vue-toastification"
+const toast = useToast()
 
 const router = useRouter()
 const currentSlide = ref(0)
 const intervalId = ref<number | null>(null)
 
-const slides: Slide[] = [
-    {
-        id: 1,
-        title: 'সুস্থ জীবন, সুন্দর পৃথিবী',
-        description: '100% Natural Diabetic Care',
-        image: '/images/main-slider.jpg',
-        ctaText: 'Get Started',
-        ctaLink: '/products/moon-seed'
-    },
-    {
-        id: 2,
-        title: 'ডায়াবেটিক কেয়ার',
-        description: '100% Natural Ingredients',
-        image: '/images/slider-2.png',
-        ctaText: 'Learn More',
-        ctaLink: '/products/moon-seed'
-    },
-    {
-        id: 3,
-        title: 'Discover More',
-        description: 'Experience the next level of innovation',
-        image: '/images/slider-3.png',
-        ctaText: 'Learn More',
-        ctaLink: '/products/moon-seed'
-    }
-]
+interface Slide {
+    id: number
+    title: string
+    sub_title?: string
+    description?: string
+    banner: string
+    ctaText?: string
+    ctaLink?: string
+    sort_value?: number
+}
+
+// Remove static slides array since we're using API data
+const { data: sliders, error } = await useFetch<Slide[]>('http://192.168.0.111:3000/api/banner', {
+    method: 'GET'
+})
 
 const startAutoSlide = () => {
-    intervalId.value = window.setInterval(() => {
-        nextSlide()
-    }, 5000)
+    if (sliders.value?.length) {
+        intervalId.value = window.setInterval(() => {
+            nextSlide()
+        }, 5000)
+    }
 }
 
 const stopAutoSlide = () => {
@@ -84,12 +67,15 @@ const stopAutoSlide = () => {
 }
 
 const nextSlide = () => {
-    currentSlide.value = (currentSlide.value + 1) % slides.length
+    if (sliders.value?.length) {
+        currentSlide.value = (currentSlide.value + 1) % sliders.value.length
+    }
 }
 
 const prevSlide = () => {
-    currentSlide.value =
-        (currentSlide.value - 1 + slides.length) % slides.length
+    if (sliders.value?.length) {
+        currentSlide.value = (currentSlide.value - 1 + sliders.value.length) % sliders.value.length
+    }
 }
 
 const goToSlide = (index: number) => {
@@ -98,11 +84,20 @@ const goToSlide = (index: number) => {
     startAutoSlide()
 }
 
-const handleCta = (link: string) => {
-    router.push(link)
+const handleCta = (link: string | undefined) => {
+    if (link) {
+        router.push(link)
+    } else {
+        toast.warning("No link available for this slide")
+    }
 }
 
 onMounted(() => {
+    if (error.value) {
+        toast.error("Failed to load slides")
+    } else if (!sliders.value?.length) {
+        toast.warning("No slides available")
+    }
     startAutoSlide()
 })
 
@@ -115,7 +110,7 @@ onBeforeUnmount(() => {
 .hero-section {
     position: relative;
     width: 100%;
-    height: 600px;
+    height: 85vh;
     overflow: hidden;
 }
 
@@ -151,16 +146,27 @@ onBeforeUnmount(() => {
 .slide-content {
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
+    left: 10%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
     color: white;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+
+    h1 {
+        font-size: 3rem;
+    }
+
+    p {
+        font-size: 1.5rem;
+        padding-bottom: 1rem;
+    }
 }
 
 .slider-nav {
     position: absolute;
-    bottom: 20px;
+    bottom: 3rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;

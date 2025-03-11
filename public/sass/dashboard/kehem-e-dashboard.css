@@ -1863,4 +1863,85 @@ button[type=submit]:hover {
   transition: all 0.2s ease;
 }
 
+.abs-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.branded {
+  color: #176ea0;
+}
+
+.rounded {
+  position: relative;
+  z-index: 1;
+}
+.rounded::after {
+  content: "";
+  position: absolute;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid #33db33;
+  border-radius: 50%;
+  width: 1.8rem;
+  aspect-ratio: 1;
+  z-index: 5;
+}
+
+.bordered, .hero-slider-old {
+  border-width: 1px;
+  border-color: #ccc;
+  padding: 0.5rem;
+  border-radius: 0.2rem;
+}
+.bordered.solid, .solid.hero-slider-old {
+  border-style: solid;
+}
+.bordered.dashed, .dashed.hero-slider-old {
+  border-style: dashed;
+}
+.bordered.dotted, .dotted.hero-slider-old {
+  border-style: dotted;
+}
+.bordered.double, .double.hero-slider-old {
+  border-style: double;
+}
+
+.hovered:hover {
+  border-color: #3344db;
+}
+
+.hero-slider-old {
+  position: relative;
+  max-width: 10rem;
+  height: auto;
+  border-style: solid;
+  z-index: 3;
+}
+.hero-slider-old img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+}
+.hero-slider-old i {
+  color: #fff;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+}
+.hero-slider-old i::after {
+  background-color: #176ea0;
+  z-index: -1;
+}
+.hero-slider-old i:hover::after {
+  background-color: #db3333;
+}
+
 /*# sourceMappingURL=kehem-e-dashboard.css.map */

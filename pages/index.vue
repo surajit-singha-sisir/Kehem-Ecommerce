@@ -3,6 +3,7 @@
 
 
     <HeroSlider />
+    <TrustedSection />
 
 
 
@@ -28,7 +29,7 @@
       </div>
     </section> -->
     <benefit />
-  <order />
+    <order />
     <banner2 />
     <Faq />
     <!-- Features Section -->
@@ -107,73 +108,3 @@ const faqs = [
 
 </script>
 
-
-<style scoped>
-.app-container {
-  min-height: 100vh;
-  background-color: #ffffff;
-  color: #333333;
-}
-
-.container {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 1rem;
-}
-
-.section-title {
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.section-subtitle {
-  font-size: 1rem;
-  text-align: center;
-  margin-bottom: 0;
-}
-
-.trusted-section {
-  background-color: #2e7d32;
-  color: #ffffff;
-  padding: 2rem 0;
-}
-
-.shop-section {
-  padding: 2rem 0;
-  text-align: center;
-}
-
-.features-section {
-  padding: 2rem 0;
-  background-color: #f5f5f5;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-.feature-item {
-  text-align: center;
-}
-
-.feature-icon {
-  display: block;
-  margin: 0 auto 0.5rem;
-}
-
-.feature-title {
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-@media (min-width: 768px) {
-  .features-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-</style>

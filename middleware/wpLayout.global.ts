@@ -34,6 +34,5 @@ export default defineNuxtRouteMiddleware(async (to) => {
     to.meta.layout = 'wp';
   }
 
-  // Update last activity on every k-admin route navigation
   updateLastActivity();
 });

@@ -185,7 +185,116 @@
                     </ul>
                 </div>
 
+                <!-- Frontend -->
+                <div class="esubcats">
+                    <span class="ecatnoclick">
+                        <div class="maincatname">
+                            <i class="m-briefcase2 text--m"></i>
+                            <p>Frontend Editor</p>
+                        </div>
+                        <div class="icon w--10 m-r--10 chevron">
+                            <i class="m-chevron-down"></i>
+                        </div>
+                    </span>
+                    <!-- SUB CATS -->
+                    <ul class="ulsubcates">
+                        <!-- Manage Frontend -->
+                        <li>
+                            <NuxtLink to="/k-admin/frontend-editor/manage-frontend-editor">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Manage Frontend</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
+                        <!-- Frontend HERO -->
+                        <li>
+                            <NuxtLink to="/k-admin/frontend-editor/main-hero">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Hero Section</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
+                        <!-- Frontend Testimonial -->
+                        <li>
+                            <NuxtLink to="/k-admin/frontend-editor/testimonial">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Main Testimonial</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
+                        <!-- Frontend FAQs -->
+                        <li>
+                            <NuxtLink to="/k-admin/frontend-editor/faqs">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Main FAQs</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
+                        <!-- Frontend Footer -->
+                        <li>
+                            <NuxtLink to="/k-admin/frontend-editor/footer">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Footer</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
+                    </ul>
+                </div>
 
+
+                <!-- Landing Page -->
+                <div class="esubcats">
+                    <span class="ecatnoclick">
+                        <div class="maincatname">
+                            <i class="m-download5 text--m"></i>
+                            <p>Landing Pages</p>
+                        </div>
+                        <div class="icon w--10 m-r--10 chevron">
+                            <i class="m-chevron-down"></i>
+                        </div>
+                    </span>
+                    <!-- SUB CATS -->
+                    <ul class="ulsubcates">
+                        <!-- Manage Landing Page -->
+                        <li>
+                            <NuxtLink to="/k-admin/landing-pages/manage-landing-pages">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Manage Landing Pages</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
+                        <!-- Manage Landing Page -->
+                        <li>
+                            <NuxtLink to="/k-admin/landing-pages/add-landing-page">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Add Landing Page</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
+                        
+                    </ul>
+                </div>
                 <!-- Stock -->
                 <div class="esubcats">
                     <span class="ecatnoclick">
