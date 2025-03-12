@@ -8,5 +8,5 @@
 
 <script setup>
 const route = useRoute();
-console.log(route.params.key); // Logs the value of "key" from the URL
+console.log(route.params.key);
 </script>
