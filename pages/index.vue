@@ -6,32 +6,13 @@
     <TrustedSection />
     <ProductList />
 
+    <banner2 />
 
 
 
 
-
-
-
-
-    <!-- Trusted Section -->
-    <!-- <section class="trusted-section">
-      <div class="container">
-        <h2 class="section-title">Trusted by over 10,000 Customers</h2>
-        <p class="section-subtitle">Worldwide sales since 2000 | 4.8 Rating | 10K+ year sales</p>
-      </div>
-    </section> -->
-
-    <!-- Shop Section -->
-    <!-- <section class="shop-section">
-      <div class="container">
-        <h2 class="section-title">SHOP</h2>
-        <ProductGrid :products="products" />
-      </div>
-    </section> -->
     <benefit />
     <order />
-    <banner2 />
     <Faq />
     <!-- Features Section -->
     <!-- <section class="features-section">

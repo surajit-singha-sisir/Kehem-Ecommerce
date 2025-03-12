@@ -54,7 +54,7 @@
                             </NuxtLink>
 
                             <!-- Order Now Button -->
-                            <NuxtLink :to="`/product/${product.key}`" type="button" class="f-centered order-btn"
+                            <NuxtLink :to="`/order/${product.key}`" type="button" class="f-centered order-btn"
                                 @click.prevent="handleOrder(product.key)">
                                 <div class="loader-spinner w--14" v-if="ordering === product.key"></div>
                                 <span class="f-centered gap-10" v-else>

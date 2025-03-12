@@ -16,7 +16,7 @@ export const productCart = defineStore('cart', {
     return {
       cartJSON: savedCart ? JSON.parse(savedCart) : [
         {
-          title: 'Sallad Masud -Generic',
+          title: 'Moonseed - Organic',
           sellPrice: '32.00',
           discountPrice: '343.00',
           attributes: {
