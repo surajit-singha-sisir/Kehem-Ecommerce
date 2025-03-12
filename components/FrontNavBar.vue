@@ -28,7 +28,7 @@
                                         <i class="m-shopping-cart"></i>
                                         <p>{{ item }}</p>
                                     </NuxtLink>
-                                    <p class="cart-counter">5</p>
+                                    <p class="cart-counter">{{ cartCount }}</p>
                                 </span>
                             </template>
 
@@ -37,7 +37,6 @@
                                 <NuxtLink to="#" class="nav-items-link">{{ item }}</NuxtLink>
                             </template>
                         </span>
-
                     </div>
                 </div>
             </nav>
@@ -48,31 +47,24 @@
             @click="darkBGClick"></div>
         <div class="nav-items-responsive" :class="{ 'navToggleAnimStart': isToggledNav || isLinkClicked }">
             <div class="inner-nav-items">
-                <div class="border-bottom w-100" @click="LinkClicked">
-                    <span class="gap-10 f-centered"><i class="m-chevron-right"></i>
-                        <NuxtLink to="/">SHOP</NuxtLink>
-                    </span>
-                </div>
-                <div class="border-bottom w-100" @click="LinkClicked">
-                    <span class="gap-10 f-centered"><i class="m-chevron-right"></i>
-                        <NuxtLink to="#" class="nav-items-link">TESTIMONIAL</NuxtLink>
-                    </span>
-                </div>
-                <div class="border-bottom w-100" @click="LinkClicked">
-                    <span class="gap-10 f-centered"><i class="m-chevron-right"></i>
-                        <NuxtLink to="#" class="nav-items-link">ABOUT US</NuxtLink>
-                    </span>
-                </div>
-                <div class="border-bottom w-100" @click="LinkClicked">
-                    <span class="gap-10 f-centered"><i class="m-chevron-right"></i>
-                        <NuxtLink to="#" class="nav-items-link">CONTACT</NuxtLink>
-                    </span>
-                </div>
-                <div class="border-bottom w-100" @click="LinkClicked">
-                    <span class="gap-10 f-centered cart-icon">
+                <div class="border-bottom w-100" v-for="(item, index) in navBars" :key="index" @click="LinkClicked">
+                    <span class="gap-10 f-centered">
                         <i class="m-chevron-right"></i>
-                        <NuxtLink to="#" class="nav-items-link f-center gap-06"><i class="m-shopping-cart"></i>
-                            Cart</NuxtLink>
+                        <NuxtLink :to="item === 'CART' ? '/cart' : item === 'SHOP' ? '/' : '#'"
+                            :class="{ 'nav-items-link': item !== 'CART', 'nav-items-link f-center gap-06': item === 'CART' }">
+                            <template v-if="item === 'CART'">
+                                <span class="cart-icon cart-icon2" @click="openCart">
+                                    <NuxtLink to="/cart" class="nav-items-link">
+                                        <i class="m-shopping-cart"></i>
+                                        <p>{{ item }}</p>
+                                    </NuxtLink>
+                                    <p class="cart-counter">{{ cartCount }}</p>
+                                </span>
+                            </template>
+                            <template v-else>
+                                {{ item }}
+                            </template>
+                        </NuxtLink>
                     </span>
                 </div>
             </div>
@@ -81,6 +73,15 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
+
+// Access the cart store
+const cartStore = productCart();
+// Use storeToRefs to maintain reactivity
+const { getCartJSON } = storeToRefs(cartStore);
+
+// Compute cart count
+const cartCount = computed(() => getCartJSON.value.length);
 
 const isDarkBgClicked = ref(false);
 const darkBGClick = () => {
@@ -99,7 +100,10 @@ const LinkClicked = () => {
     isLinkClicked.value = false;
 }
 
-
 const navBars: string[] = ['SHOP', 'TESTIMONIAL', 'ABOUT US', 'CONTACT', 'CART'];
 
+// Optional: Add cart opening function if needed
+const openCart = () => {
+    // Add your cart opening logic here if needed
+};
 </script>

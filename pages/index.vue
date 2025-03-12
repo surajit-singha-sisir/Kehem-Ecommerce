@@ -4,6 +4,7 @@
 
     <HeroSlider />
     <TrustedSection />
+    <ProductList />
 
 
 
@@ -107,4 +108,3 @@ const faqs = [
 ];
 
 </script>
-

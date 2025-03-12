@@ -127,7 +127,7 @@
                                         class="m-save"></i> Save</button>
                             </span>
                         </div>
-                        
+
                         <!-- Benefits -->
                         <div v-if="activeProduct === 'Benefits'" class="card">
                             <Benefits v-model="benefits" />

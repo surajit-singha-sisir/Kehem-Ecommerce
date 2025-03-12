@@ -2,35 +2,34 @@
   <section class="container">
     <div class="header">
       <h1>Shopping Cart</h1>
-      <a href="#" class="continue-shopping">Continue Shopping ></a>
+      <NuxtLink to="/#shop" class="continue-shopping">Continue Shopping ></NuxtLink>
     </div>
     <div class="main-content">
-      <!-- Shopping Cart Items -->
       <div class="cart-items">
-        <div v-for="(item, index) in cartItems" :key="index" class="cart-item" :data-price="item.price">
-          <img :src="item.image" :alt="item.name">
+        <div v-for="item in cartItems" :key="item.key" class="cart-item" :data-price="item.sellPrice">
+          <img :src="item.images" :alt="item.title">
           <div class="item-details">
             <div>
-              <h3>{{ item.name }}</h3>
-              <p>{{ item.description }}</p>
-              <p class="price">Tk {{ item.price.toFixed(2) }}/=</p>
+              <h3>{{ item.title }}</h3>
+              <p>{{ getMainAttribute(item.attributes) }}</p>
+              <p class="price">Tk {{ parseFloat(item.discountPrice).toFixed(2) }}/=</p>
             </div>
             <div class="quantity">
-              <button class="decrement" @click="decrementQuantity(index)">-</button>
-              <span class="quantity-value">{{ item.quantity }}</span>
-              <button class="increment" @click="incrementQuantity(index)">+</button>
-              <span class="quantity-text">Quantity {{ item.quantity }} Pieces</span>
+              <button class="decrement" @click="decrementQuantity(item.key)">-</button>
+              <span class="quantity-value">{{ item.total_quantity || 1 }}</span>
+              <button class="increment" @click="incrementQuantity(item.key)">+</button>
+              <span class="quantity-text">Quantity {{ item.total_quantity || 1 }} Pieces</span>
             </div>
           </div>
-          <button class="remove-item" @click="removeItem(index)"><i class="m-trash"></i></button>
+          <button class="remove-item" @click="removeItem(item.key)"><i class="m-trash"></i></button>
         </div>
+        <p v-if="!cartItems.length" class="empty-cart">Your cart is empty</p>
       </div>
-      <!-- Order Summary -->
       <div class="order-summary">
         <h2>Order Summary</h2>
-        <div v-for="(item, index) in cartItems" :key="index" class="summary-item" :data-item="item.id">
-          <p>{{ item.name }} ({{ item.quantity }} x {{ item.price }})</p>
-          <p class="subtotal">Tk {{ (item.quantity * item.price).toFixed(2) }}/=</p>
+        <div v-for="item in cartItems" :key="item.key" class="summary-item" :data-item="item.key">
+          <p>{{ item.title }} ({{ item.total_quantity || 1 }} x {{ parseFloat(item.discountPrice).toFixed(2) }})</p>
+          <p class="subtotal">Tk {{ ((item.total_quantity || 1) * parseFloat(item.discountPrice)).toFixed(2) }}/=</p>
         </div>
         <div class="summary-item delivery-fee">
           <p>Delivery Fee ({{ totalItems }} items x {{ DELIVERY_FEE_PER_ITEM }})</p>
@@ -41,68 +40,88 @@
           <p class="total">Tk {{ total.toFixed(2) }}/=</p>
         </div>
         <p class="delivery-note">ডেলিভারি সময়: সিলেটে ১ দিন এবং সিলেটের বাইরে ২ থেকে ৫ দিন</p>
-        <button class="checkout-btn">Checkout</button>
+        <button class="checkout-btn" :disabled="!cartItems.length">Checkout</button>
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
+import { productCart } from '~/stores/cart'
 
-// Define the item interface
-interface CartItem {
-  id: string
-  name: string
-  description: string
-  price: number
-  quantity: number
-  image: string
+// Define the Product interface (same as in store)
+interface Product {
+  title: string;
+  sellPrice: string;
+  discountPrice: string;
+  attributes: Record<string, Record<string, [number, number]>>;
+  images: string;
+  key: string;
+  total_quantity?: number;
 }
 
-// Initial cart items
-const cartItems = ref<CartItem[]>([
-  {
-    id: 'moonseed',
-    name: 'Moonseed',
-    description: 'Diabetic Care',
-    price: 390.00,
-    quantity: 3,
-    image: '/moonseed.jpg' // Replace with actual image path
-  },
-  {
-    id: 'adger-harbal',
-    name: 'Adger Harbal',
-    description: 'Diabetic Care',
-    price: 790.00,
-    quantity: 1,
-    image: '/adger-harbal.jpg' // Replace with actual image path
-  }
-])
+const cartStore = productCart()
+const cartItems = computed<Product[]>(() => cartStore.getCartJSON)
 
-// Constants
 const DELIVERY_FEE_PER_ITEM = 120
 
-// Computed properties
-const totalItems = computed(() => cartItems.value.reduce((sum, item) => sum + item.quantity, 0))
-const deliveryFee = computed(() => totalItems.value * DELIVERY_FEE_PER_ITEM)
-const total = computed(() => cartItems.value.reduce((sum, item) => sum + (item.quantity * item.price), 0) + deliveryFee.value)
+const totalItems = computed(() => {
+  return cartItems.value.reduce((sum: number, item: Product) => {
+    return sum + (item.total_quantity || 1)
+  }, 0)
+})
 
-// Functions to handle quantity changes
-const decrementQuantity = (index: number) => {
-  if (cartItems.value[index].quantity > 1) {
-    cartItems.value[index].quantity--
+const deliveryFee = computed(() => totalItems.value * DELIVERY_FEE_PER_ITEM)
+
+const total = computed(() => {
+  return cartItems.value.reduce((sum: number, item: Product) => {
+    return sum + ((item.total_quantity || 1) * parseFloat(item.discountPrice))
+  }, 0) + deliveryFee.value
+})
+
+const getMainAttribute = (attributes: Record<string, Record<string, [number, number]>>): string => {
+  const firstAttr = Object.keys(attributes)[0]
+  return firstAttr || 'Product'
+}
+
+const decrementQuantity = (key: string) => {
+  const item = cartItems.value.find(item => item.key === key)
+  if (!item) return
+
+  const currentQuantity = item.total_quantity || 1
+  if (currentQuantity > 1) {
+    const updatedProduct: Product = { ...item, total_quantity: currentQuantity - 1 }
+    cartStore.updateProduct(key, updatedProduct)
+  } else {
+    cartStore.deleteFromCart(key)
   }
 }
 
-const incrementQuantity = (index: number) => {
-  cartItems.value[index].quantity++
+const incrementQuantity = (key: string) => {
+  const item = cartItems.value.find(item => item.key === key)
+  if (!item) return
+
+  const currentQuantity = item.total_quantity || 1
+  const updatedProduct: Product = {
+    ...item,
+    total_quantity: currentQuantity + 1
+  }
+  cartStore.updateProduct(key, updatedProduct)
 }
 
-const removeItem = (index: number) => {
-  cartItems.value.splice(index, 1)
+const removeItem = (key: string) => {
+  cartStore.deleteFromCart(key)
 }
 </script>
+
+
+
+
+
+
+
+
 
 <style scoped>
 .container {
@@ -298,59 +317,3 @@ const removeItem = (index: number) => {
   background-color: #1e40af;
 }
 </style>
-
-<!-- pages/cart.vue
-<template>
-  <div class="cart-page">
-    <h1>Your Cart</h1>
-    <div v-if="cartItems.length > 0">
-      <ul>
-        <li v-for="item in cartItems" :key="item.id">
-          <img :src="item.image" alt="item.name" />
-          <span>{{ item.name }}</span>
-          <span>{{ item.price | currency }}</span>
-          <span>Quantity: {{ item.quantity }}</span>
-          <button @click="removeFromCart(item.id)">Remove</button>
-        </li>
-      </ul>
-      <div>
-        <label for="attributeValue">Attribute Value:</label>
-        <input
-          type="number"
-          id="attributeValue"
-          v-model="newAttribute.value"
-          placeholder="e.g. 10"
-          required
-        />
-      </div>
-
-      <button type="button" @click="addAttribute">Add Attribute</button>
-
-      <button type="submit" class="btn btn-primary">{{ isEdit ? 'Update Product' : 'Add Product' }}</button>
-    </form>
-
-    <div>
-      <h3>Current Cart</h3>
-      <div v-for="product in cartJSON" :key="product.productId">
-        <p>{{ product.productName }} - {{ product.total_quantity }} - ${{ product.price }}</p>
-        <button @click="deleteFromCart(product.productId)">Delete</button>
-        <button @click="editProduct(product)">Edit</button>
-      </div>
-    </div>
-  </section>
-</template>
-
-<script setup>
-import { useCartStore } from '@/stores/cart'
-
-const cartStore = useCartStore()
-
-const cartItems = cartStore.cartItems
-const totalItems = cartStore.totalItems
-const totalPrice = cartStore.totalPrice
-
-// Remove item from the cart
-function removeFromCart(productId) {
-  cartStore.removeFromCart(productId)
-}
-</script> -->

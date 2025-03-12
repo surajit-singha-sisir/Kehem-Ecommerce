@@ -1,11 +1,11 @@
 <template>
 
     <section class="trusted-section">
-        <div class="inner-trusted-section res-container full-width f-between-center gap-10 ">
+        <div class="inner-trusted-section res-container full-width f-between-center gap-10 f-wrap">
             <aside class="leftAside">
                 <h1>Trusted by over 10,000+ customers worldwide since 2000</h1>
             </aside>
-            <aside class="f f-align-items-baseline gap-30">
+            <aside class="f f-align-items-baseline gap-30 f-wrap">
                 <div class="rating">
                     <h1>4.8</h1>
                     <i class="m-m-5-star"></i>
