@@ -25,18 +25,17 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    flex-wrap: wrap; /* Ensures responsiveness */
+    flex-wrap: wrap;
     background-color: #e6f0ea;
     padding: 20px;
-    width: 100%;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
   
   .item {
     text-align: center;
     color: #333;
-    flex: 1; /* Allows items to shrink on small screens */
-    min-width: 150px; /* Ensures items don't get too small */
+    flex: 1;
+    min-width: 150px;
     margin: 10px;
     display: flex;
     align-items: center;
@@ -74,11 +73,10 @@
     font-size: 20px;
     font-weight: bold;
   }
-  
-  /* Mobile responsiveness */
+
   @media (max-width: 768px) {
     .container {
-      flex-direction: column; /* Stack items on smaller screens */
+      flex-direction: column;
       align-items: center;
     }
   }

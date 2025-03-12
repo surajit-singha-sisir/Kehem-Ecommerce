@@ -12,7 +12,6 @@
 
 
     <benefit />
-    <order />
     <Faq />
     <!-- Features Section -->
     <!-- <section class="features-section">

@@ -10,13 +10,14 @@
                     <div class="image">
                         <NuxtImg :src="product.images" :alt="product.title" />
                     </div>
-
+                    <div class="product-name">
+                        <NuxtLink :to="`/product/${product.key}`" class="inner-product-name">{{ product.title }}
+                        </NuxtLink>
+                    </div>
                     <!-- PRODUCT-INFO -->
                     <div class="product-info">
                         <aside class="text-info">
-                            <NuxtLink :to="`/product/${product.key}`" class="product-name">{{ product.title }}
-                            </NuxtLink>
-                            <div class="attribute-name">
+                            <div class="attribute-name"> Varient :
                                 {{ getMainAttribute(product.attributes) }}
                             </div>
                             <div class="pricing">
@@ -24,6 +25,7 @@
                                 <p>Tk {{ parseFloat(product.discountPrice).toFixed(2) }}</p>
                             </div>
                         </aside>
+
                         <aside class="action-btn">
                             <!-- Cart Button States -->
                             <button v-if="!isInCart(product.key) && addingToCart !== product.key" type="button"
@@ -59,7 +61,7 @@
                                 <div class="loader-spinner w--14" v-if="ordering === product.key"></div>
                                 <span class="f-centered gap-10" v-else>
                                     <i class="m-shopping-bag"></i>
-                                    <p>Order Now</p>
+                                    <p>Order</p>
                                 </span>
                             </NuxtLink>
                         </aside>
@@ -70,12 +72,35 @@
     </section>
 </template>
 
+
+<style lang="scss">
+.product-name {
+    .inner-product-name {
+        color: #3858e9;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-wrap: wrap;
+
+        &:hover {
+            text-decoration: underline;
+            text-underline-offset: 5px;
+            text-underline-position: below;
+        }
+    }
+}
+</style>
+
+
+
+
+
+
+
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { productCart } from '~/stores/cart'
 
-// Interface for API response (matches the store's Product interface)
 interface Product {
     title: string
     sellPrice: string
@@ -86,20 +111,17 @@ interface Product {
     total_quantity?: number
 }
 
-// State
 const products = ref<Product[]>([])
 const addingToCart = ref<string | null>(null)
 const ordering = ref<string | null>(null)
 const cartStore = productCart()
 const router = useRouter()
 
-// Check if product is in cart
 const cartItems = computed<Product[]>(() => cartStore.getCartJSON)
 const isInCart = (productKey: string) => {
     return cartItems.value.some(item => item.key === productKey)
 }
 
-// Fetch products from API
 const fetchProducts = async () => {
     try {
         const response = await fetch('http://192.168.0.111:3000/api/shop')
@@ -110,13 +132,11 @@ const fetchProducts = async () => {
     }
 }
 
-// Get main attribute for display
 const getMainAttribute = (attributes: Product['attributes']): string => {
     const firstAttr = Object.keys(attributes)[0]
     return firstAttr || 'Product'
 }
 
-// Add product to cart
 const addToCart = async (product: Product) => {
     addingToCart.value = product.key
 
@@ -132,13 +152,11 @@ const addToCart = async (product: Product) => {
 
     cartStore.addToCart(cartProduct)
 
-    // Show animation for 2.5 seconds then clear
     setTimeout(() => {
         addingToCart.value = null
     }, 2500)
 }
 
-// Handle order with animation
 const handleOrder = async (productKey: string) => {
     ordering.value = productKey
     setTimeout(() => {
@@ -147,7 +165,6 @@ const handleOrder = async (productKey: string) => {
     }, 1000)
 }
 
-// Lifecycle
 onMounted(() => {
     fetchProducts()
 })
