@@ -7,7 +7,7 @@
     <ProductList />
 
     <banner2 />
-
+    <Testimonials />
 
 
 
