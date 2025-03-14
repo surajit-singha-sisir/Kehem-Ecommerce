@@ -6,6 +6,7 @@
 
         <slot />
     </main>
+    <Footer />
 </template>
 
 <script setup>

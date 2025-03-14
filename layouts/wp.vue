@@ -283,12 +283,12 @@
                         </li>
                         <!-- Manage Landing Page -->
                         <li>
-                            <NuxtLink to="/k-admin/landing-pages/add-landing-page">
+                            <NuxtLink to="/k-admin/landing-pages/slider">
                                 <span class="ecat">
                                     <div class="icon w--08">
                                         <i class="m-chevron-right"></i>
                                     </div>
-                                    <p>Add Landing Page</p>
+                                    <p>Slider</p>
                                 </span>
                             </NuxtLink>
                         </li>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 // Dummy data
 const links = ['Available Stores', 'Terms of Service', 'Privacy Policy', 'Shipping Policy', 'Refund & Return Policy'];
 const office = {
@@ -7,9 +7,9 @@ const office = {
     phone: '+8801700055288',
     email: 'abrahamorganic@gmail.com',
 };
-</script>
+</script> -->
 
-<template>
+<!-- <template>
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
@@ -40,89 +40,61 @@ const office = {
             <p class="footer-developed">Developed by KHEM-IT</p>
         </div>
     </footer>
+</template> -->
+<template>
+    <footer class="footer">
+        <div class="inner-footer res-container">
+            <div class="socials f-centered gap-15 pad-t--30">
+                <NuxtLink to="/" class="iconLink"><i class="m-facebook rounded branded"></i></NuxtLink>
+                <NuxtLink to="/" class="iconLink"><i class="m-twitter rounded branded"></i></NuxtLink>
+                <NuxtLink to="/" class="iconLink"><i class="m-instagram rounded branded"></i></NuxtLink>
+                <NuxtLink to="/" class="iconLink"><i class="m-whatsapp rounded branded"></i></NuxtLink>
+            </div>
+
+            <section class="g-res-3-col-container gap-10">
+                <aside class="f-centered f-col gap-05">
+                    <NuxtImg class="w--50" src="images/logo-white.svg" />
+                    <span class="brand-white">ABRAHAM ORGANIC</span>
+                </aside>
+                <aside class="brand-white footer-aside">
+                    <h3>Links</h3>
+                    <span class="hr"></span>
+                    <NuxtLink to="/">Available Stores</NuxtLink>
+                    <NuxtLink to="/">Terms of Service</NuxtLink>
+                    <NuxtLink to="/">Privacy Policy</NuxtLink>
+                    <NuxtLink to="/">Shipping Policy</NuxtLink>
+                    <NuxtLink to="/">Return & Refund Policy</NuxtLink>
+                </aside>
+                <aside class="brand-white footer-aside">
+                    <h3>Office</h3>
+                    <span class="hr"></span>
+                    <address class="f-start-center gap-10">
+                        <i class="m-location"></i>
+                        <p>5, Khan Mansion(5th Floor), Kulaura - 3150, Sylhet, Bangladesh</p>
+                    </address>
+                    <div class="f-start-center gap-10">
+                        <i class="m-phone"></i>
+                        <NuxtLink to="tel:+8801700905268">+8801700-905268</NuxtLink>
+                    </div>
+                    <div class="f-start-center gap-10">
+                        <i class="m-mail6"></i>
+                        <NuxtLink to="mailto:abrahamorganic@gmail.com">abrahamorganic@gmail.com</NuxtLink>
+                    </div>
+                </aside>
+            </section>
+        </div>
+
+        <div class="credit">
+            <div class="res-container m-auto f-center gap-05 f-wrap">
+                <span class="f-centered gap-05">
+                    <p>&copy; 2025</p>
+                    <NuxtLink to="/">Abraham Organic |</NuxtLink>
+                </span>
+                <span class="f-centered gap-05">
+                    <p>Developed by</p>
+                    <NuxtLink to="https://kehem.com/">KEHEM IT</NuxtLink>
+                </span>
+            </div>
+        </div>
+    </footer>
 </template>
-
-<style scoped>
-.footer {
-    background-color: #2e7d32;
-    color: #ffffff;
-    padding: 2rem 0;
-    text-align: center;
-}
-
-.container {
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 0 1rem;
-}
-
-.footer-content {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.footer-logo {
-    margin-bottom: 1rem;
-}
-
-.footer-image {
-    display: block;
-    margin: 0 auto 0.5rem;
-}
-
-.footer-copyright {
-    font-size: 0.875rem;
-}
-
-.footer-title {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-}
-
-.footer-list {
-    list-style: none;
-    padding: 0;
-}
-
-.footer-item {
-    margin-bottom: 0.25rem;
-}
-
-.footer-link {
-    color: #ffffff;
-    text-decoration: none;
-}
-
-.footer-link:hover {
-    text-decoration: underline;
-}
-
-.footer-text {
-    font-size: 0.875rem;
-    margin-bottom: 0.25rem;
-}
-
-.footer-social {
-    margin-top: 0.5rem;
-}
-
-.social-icon {
-    color: #ffffff;
-    margin: 0 0.5rem;
-    text-decoration: none;
-}
-
-.footer-developed {
-    font-size: 0.75rem;
-}
-
-@media (min-width: 768px) {
-    .footer-content {
-        grid-template-columns: repeat(3, 1fr);
-        text-align: left;
-    }
-}
-</style>

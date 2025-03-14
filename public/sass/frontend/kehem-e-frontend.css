@@ -650,5 +650,90 @@ label,
     transform: rotate(1turn);
   }
 }
+.brand-white {
+  color: #f7f7f7;
+}
+
+.brand-white-dark {
+  color: #ebebeb;
+}
+
+footer.footer {
+  position: relative;
+  width: 100%;
+  height: auto;
+  color: #f7f7f7;
+  background-color: #008a7e;
+  margin-top: 6rem;
+  z-index: 5;
+}
+footer.footer .inner-footer {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  gap: 1rem;
+  z-index: 4;
+}
+footer.footer .inner-footer .socials .iconLink i {
+  color: #f7f7f7 !important;
+  z-index: 5;
+}
+footer.footer .inner-footer .socials .iconLink i::after {
+  border-color: #91fda0;
+  transition: all 0.3s ease;
+  z-index: -1;
+}
+footer.footer .inner-footer .socials .iconLink i:hover::after {
+  color: #fff;
+  background-color: #00490b;
+  transition: all 0.3s ease;
+}
+footer.footer::before {
+  content: "";
+  position: absolute;
+  left: 5%;
+  top: -3.2rem;
+  background-image: url(/images/footer-leaf.svg);
+  background-size: 4rem;
+  background-repeat: no-repeat;
+  width: 5rem;
+  aspect-ratio: 1;
+}
+footer.footer::after {
+  content: "";
+  position: absolute;
+  right: 5%;
+  top: -4rem;
+  background-image: url(/images/footer-leaf2.svg);
+  background-size: 4rem;
+  background-repeat: no-repeat;
+  width: 5rem;
+  aspect-ratio: 1;
+}
+footer.footer .footer-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+footer.footer .footer-aside .hr {
+  width: 100%;
+  border-top: 1px solid #d4d4d4;
+  margin-bottom: 1rem;
+}
+footer.footer a {
+  color: #ebebeb;
+}
+footer.footer a:hover {
+  color: #70ff53;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-color: #70ff53;
+}
+footer.footer .credit {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #00665d;
+}
 
 /*# sourceMappingURL=kehem-e-frontend.css.map */

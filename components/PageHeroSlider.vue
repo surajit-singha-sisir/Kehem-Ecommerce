@@ -4,11 +4,11 @@
             <transition-group name="slide" tag="div" class="slides-wrapper">
                 <div v-for="(slide, index) in sliders" :key="slide.id" class="slide"
                     :class="{ active: currentSlide === index }">
-                    <NuxtImg :src="slide.banner" :alt="slide.title" class="slide-image" :placeholder="[1200, 600, 10]"
+                    <NuxtImg :src="slide.image" :alt="slide.headline" class="slide-image" :placeholder="[1200, 600, 10]"
                         loading="lazy" format="webp" />
                     <div class="slide-content">
-                        <h1>{{ slide.title }}</h1>
-                        <p>{{ slide.sub_title || slide.description }}</p>
+                        <h1>{{ slide.headline }}</h1>
+                        <p>{{ slide.sub_headline || slide.description }}</p>
                         <NuxtLink to="#all-products" class="btn btn-rain" @click="handleCta(slide.ctaLink)">
                             {{ slide.ctaText || 'See all' }}
                         </NuxtLink>
@@ -27,29 +27,29 @@
 
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { routerKey, RouterLink, useRouter } from 'vue-router'
 import { useToast } from "vue-toastification"
+const router = useRouter();
 const toast = useToast()
+const parameter = router.currentRoute.value.params.key;
 
-const router = useRouter()
 const currentSlide = ref(0)
 const intervalId = ref<number | null>(null)
 
 interface Slide {
     id: number
-    title: string
-    sub_title?: string
+    headline: string
+    sub_headline?: string
     description?: string
-    banner: string
+    image: string
     ctaText?: string
-    ctaLink?: string
+    ctaLink?: string | '#product-info'
     sort_value?: number
 }
-
-// Remove static slides array since we're using API data
-const { data: sliders, error } = await useFetch<Slide[]>('http://192.168.0.111:3000/api/banner', {
+const { data: sliders, error } = await useFetch<Slide[]>(`http://192.168.0.111:3000/api/product_banner/${parameter}`, {
     method: 'GET'
-})
+});
+
 
 const startAutoSlide = () => {
     if (sliders.value?.length) {
@@ -88,7 +88,6 @@ const handleCta = (link: string | undefined) => {
     if (link) {
         router.push(link)
     } else {
-        toast.warning("No link available for this slide")
     }
 }
 

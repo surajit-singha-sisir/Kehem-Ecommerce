@@ -8,43 +8,7 @@
 
     <banner2 />
     <Testimonials />
-
-
-
-    <!-- <benefit /> -->
     <Faq />
-    <!-- Features Section -->
-    <!-- <section class="features-section">
-      <div class="container">
-        <div class="features-grid">
-          <div class="feature-item">
-            <img src="https://via.placeholder.com/50" alt="Certified Organic" class="feature-icon" />
-            <h3 class="feature-title">Certified Organic Ingredients</h3>
-          </div>
-          <div class="feature-item">
-            <img src="https://via.placeholder.com/50" alt="Clinically Verified" class="feature-icon" />
-            <h3 class="feature-title">Clinically Verified Bio-Active Benefits</h3>
-          </div>
-          <div class="feature-item">
-            <img src="https://via.placeholder.com/50" alt="100% Natural" class="feature-icon" />
-            <h3 class="feature-title">100% Natural & Safe</h3>
-          </div>
-          <div class="feature-item">
-            <img src="https://via.placeholder.com/50" alt="Holistic Health" class="feature-icon" />
-            <h3 class="feature-title">Holistic Health Support</h3>
-          </div>
-        </div>
-      </div>
-    </section> -->
-
-    <!-- Testimonial Section -->
-    <!-- <TestimonialSection :testimonials="testimonials" /> -->
-
-    <!-- FAQ Section -->
-    <!-- <FaqSection :faqs="faqs" /> -->
-
-    <!-- Footer -->
-    <Footer />
   </div>
 </template>
 
