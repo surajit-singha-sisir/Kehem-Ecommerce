@@ -221,7 +221,7 @@ useHead({
     link: [
         {
             rel: 'canonical',
-            href: 'https://yourdomain.com/product/moonseed', // Replace with your actual URL
+            href: 'https://yourdomain.com/product/moonseed',
         },
     ],
     script: [
@@ -231,17 +231,17 @@ useHead({
                 '@context': 'https://schema.org',
                 '@type': 'Product',
                 name: 'Moonseed Organic Seed Blend',
-                image: 'https://yourdomain.com/images/product-1.png', // Replace with your actual domain
+                image: 'https://yourdomain.com/images/product-1.png',
                 description:
                     'Moonseed Organic Seed Blend offers a nutritious mix of premium organic seeds...',
                 sku: 'MOONSEED-001',
                 brand: {
                     '@type': 'Brand',
-                    name: 'Your Brand', // Replace with your brand name
+                    name: 'Your Brand',
                 },
                 offers: {
                     '@type': 'Offer',
-                    url: 'https://yourdomain.com/product/moonseed', // Replace with your actual URL
+                    url: 'https://yourdomain.com/product/moonseed',
                     priceCurrency: 'BDT',
                     price: '100',
                     priceValidUntil: '2025-12-31',
@@ -252,9 +252,7 @@ useHead({
     ],
 })
 
-// Methods
 const handleBuyNow = (): void => {
-    // Add your buy now logic here (e.g., add to cart, redirect to checkout)
     console.log('Buy Now clicked!')
 }
 </script>
@@ -262,42 +260,6 @@ const handleBuyNow = (): void => {
 
 
 <style>
-.ingredients-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    padding: 10px;
-}
-
-.ingredient-item {
-    text-align: center;
-    border: 1px solid #ddd;
-    padding: 10px;
-    background-color: #fff;
-}
-
-.ingredient-image {
-    width: 100%;
-    max-width: 150px;
-    /* Adjust based on your image size */
-    height: auto;
-}
-
-.ingredient-name {
-    margin: 5px 0 0;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.ingredient-local-name {
-    margin: 0;
-    font-size: 12px;
-    color: #666;
-}
-
-
-
-
 .product-display {
     position: relative;
     height: auto;
