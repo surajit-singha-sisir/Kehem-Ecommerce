@@ -29,16 +29,16 @@
                         <aside class="action-btn">
                             <!-- Cart Button States -->
                             <button v-if="!isInCart(product.key) && addingToCart !== product.key" type="button"
-                                class="f-centered cart-btn" @click="addToCart(product)">
-                                <span class="f gap-10">
-                                    <i class="m-shopping-cart"></i>
-                                    <p>Cart</p>
+                                class="f-centered cart-btn w--60" @click="addToCart(product)">
+                                <span class="f-centered gap-05">
+                                    <i class="m-plus2 text--12"></i>
+                                    <p class="text--sm">Cart</p>
                                 </span>
                             </button>
 
                             <!-- Adding Animation -->
-                            <button v-else-if="addingToCart === product.key" type="button" class="f-centered cart-btn"
-                                disabled>
+                            <button v-else-if="addingToCart === product.key" type="button"
+                                class="f-centered cart-btn w--60" disabled>
                                 <div class="wrapper w--12">
                                     <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                                         <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
@@ -51,19 +51,10 @@
                             <NuxtLink v-else to="/cart" class="f-centered cart-btn checkout-btn">
                                 <span class="f gap-10">
                                     <i class="m-shopping-cart"></i>
-                                    <p>Checkout</p>
+                                    <p>Carted</p>
                                 </span>
                             </NuxtLink>
 
-                            <!-- Order Now Button -->
-                            <NuxtLink :to="`/order/${product.key}`" type="button" class="f-centered order-btn"
-                                @click.prevent="handleOrder(product.key)">
-                                <div class="loader-spinner w--14" v-if="ordering === product.key"></div>
-                                <span class="f-centered gap-10" v-else>
-                                    <i class="m-shopping-bag"></i>
-                                    <p>Order</p>
-                                </span>
-                            </NuxtLink>
                         </aside>
                     </div>
                 </div>

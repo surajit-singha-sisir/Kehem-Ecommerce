@@ -1,10 +1,17 @@
 <template>
-    <div>
-        <h1>Order: {{ route.params.key }}</h1>
-    </div>
+    <section>
+        <PageHeroSlider />
+
+        <ProductDisplay />
+    </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const route = useRoute();
-console.log(route.params.key); // Logs the value of "key" from the URL
+
+
+
+
+
+
 </script>

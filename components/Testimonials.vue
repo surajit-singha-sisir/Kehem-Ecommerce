@@ -122,13 +122,14 @@
     aspect-ratio: 1;
     overflow: hidden;
     border-radius: 50%;
+    border: 1px solid #ccc;
 
     img {
         min-width: 100%;
         max-width: 100%;
         height: 100%;
         object-fit: cover;
-        object-position: center;
+        object-position: top;
         transition: 0.3s ease;
 
         &:hover {

@@ -1,5 +1,5 @@
 <template>
-  <main class="">
+  <div>
 
 
     <HeroSlider />
@@ -11,7 +11,7 @@
 
 
 
-    <benefit />
+    <!-- <benefit /> -->
     <Faq />
     <!-- Features Section -->
     <!-- <section class="features-section">
@@ -45,7 +45,7 @@
 
     <!-- Footer -->
     <Footer />
-  </main>
+  </div>
 </template>
 
 <script setup lang="ts">

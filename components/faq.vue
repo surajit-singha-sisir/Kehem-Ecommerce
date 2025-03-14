@@ -5,7 +5,9 @@
       নীচে আমাদের প্রায়শই জিজ্ঞাসিত প্রশ্নগুলো দেওয়া হয়েছে, আপনি যদি আপনার প্রশ্নের উত্তর না পান তবে আমাদের সাথে
       যোগাযোগ করুন
     </div>
-    <div v-for="(faq, index) in faqs" :key="index" class="faq-item">
+    <div v-if="isLoading" class="loading">Loading FAQs...</div>
+    <div v-else-if="error" class="error">{{ error }}</div>
+    <div v-else v-for="(faq, index) in faqs" :key="faq.id" class="faq-item">
       <div class="faq-question" @click="toggleFAQ(index)">
         <span>{{ faq.question }}</span>
         <span class="toggle-icon">{{ activeIndex === index ? '-' : '+' }}</span>
@@ -20,26 +22,45 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
-const faqs = ref([
-  { question: "What is Moon Seed?", answer: "Moon Seed is a natural supplement designed to support blood sugar management and overall wellness." },
-  { question: "Who can use Moon Seed?", answer: "Anyone looking for natural blood sugar management and overall wellness can use Moon Seed. However, if you have any medical conditions, consult your doctor before use." },
-  { question: "Is Moon Seed 100% natural?", answer: "Yes, Moon Seed is made from 100% natural ingredients, carefully sourced for quality and effectiveness." },
-  { question: "How does Moon Seed help with blood sugar levels?", answer: "Moon Seed contains natural compounds that help regulate blood sugar levels by improving insulin sensitivity and supporting metabolic health." },
-  { question: "How should I take Moon Seed?", answer: "Follow the dosage instructions on the packaging or consult your healthcare provider for personalized advice." },
-  { question: "How long does it take to see results?", answer: "Results may vary, but most users notice improvements within a few weeks of consistent use." },
-  { question: "Does Moon Seed have any side effects?", answer: "Moon Seed is generally well-tolerated, but if you experience any adverse effects, discontinue use and consult a doctor." },
-  { question: "How should I store Moon Seed?", answer: "Store Moon Seed in a cool, dry place away from direct sunlight to maintain its potency." },
-  { question: "Where can I buy Moon Seed?", answer: "Moon Seed is available on our official website and select authorized retailers." },
-  { question: "Do you offer home delivery?", answer: "Yes, we offer home delivery to most locations. Check our website for shipping details." },
-])
-
-const activeIndex = ref(null)
+import { ref, onMounted } from 'vue'
+const faqs = ref([]);
+const activeIndex = ref(null);
+const isLoading = ref(false);
+const error = ref(null);
 
 const toggleFAQ = (index) => {
-  activeIndex.value = activeIndex.value === index ? null : index
-}
+  activeIndex.value = activeIndex.value === index ? null : index;
+};
+
+const fetchFAQs = async () => {
+  isLoading.value = true;
+  error.value = null;
+
+  try {
+    const { data, status, error: fetchError } = await useFetch(
+      'http://192.168.0.111:3000/api/faqs',
+      {
+        method: 'GET',
+      }
+    );
+
+    if (status.value === 'success' && data.value) {
+      faqs.value = data.value;
+    } else {
+      throw new Error(fetchError.value?.message || 'Failed to fetch FAQs');
+    }
+  } catch (err) {
+    error.value = 'Error loading FAQs. Please try again later.';
+    console.error('FAQ fetch error:', err);
+    toast.error('Failed to load FAQs');
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchFAQs();
+});
 </script>
 
 <style scoped>

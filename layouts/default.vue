@@ -1,5 +1,6 @@
 <template>
     <main>
+        <NuxtLoadingIndicator />
         <TopBar />
         <FrontNavBar />
 
