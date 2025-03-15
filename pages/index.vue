@@ -14,14 +14,6 @@
 
 <script setup lang="ts">
 
-// const products = [
-//   { id: 1, name: 'Moonseed', price: 'Tk 300 - Tk 500', image: 'https://via.placeholder.com/150' },
-//   { id: 2, name: 'Moonseed', price: 'Tk 300 - Tk 500', image: 'https://via.placeholder.com/150' },
-//   { id: 3, name: 'Moonseed', price: 'Tk 300 - Tk 500', image: 'https://via.placeholder.com/150' },
-//   { id: 4, name: 'Moonseed', price: 'Tk 300 - Tk 500', image: 'https://via.placeholder.com/150' },
-//   { id: 5, name: 'Moonseed', price: 'Tk 300 - Tk 500', image: 'https://via.placeholder.com/150' },
-//   { id: 6, name: 'Moonseed', price: 'Tk 300 - Tk 500', image: 'https://via.placeholder.com/150' },
-// ];
 
 const testimonials = [
   {

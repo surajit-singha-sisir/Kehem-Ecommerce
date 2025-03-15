@@ -3,11 +3,12 @@
         <div class="inner-product-display res-container m-auto">
             <aside class="slider-container">
                 <figure class="slider">
-                    <NuxtImg src="images/product-1.png" alt="Moonseed Organic Seed Blend"
-                        sizes="sm:100vw md:50vw lg:33vw" quality="80" loading="lazy" />
+                    <NuxtImg :src="pageData?.images[0] || 'images/product-1.png'"
+                        :alt="pageData?.title || 'Product Image'" sizes="sm:100vw md:50vw lg:33vw" quality="80"
+                        loading="lazy" itemprop="image" />
                 </figure>
                 <div class="blob">
-                    <NuxtImg src="images/blob.svg" alt="" loading="lazy" />
+                    <NuxtImg src="images/blob.svg" alt="" loading="lazy" aria-hidden="true" />
                 </div>
             </aside>
             <aside class="page-product-info">
@@ -19,33 +20,33 @@
                     <meta itemprop="priceCurrency" content="BDT" />
                     <strong class="current-price" itemprop="price">{{ pageData?.discountPrice }}</strong>
                     <span class="old-price">{{ pageData?.sellPrice }}</span>
-                    <meta itemprop="availability" content="https://schema.org/InStock" />
+                    <meta itemprop="availability"
+                        :content="pageData?.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'" />
                     <meta itemprop="priceValidUntil" content="2025-12-31" />
                 </div>
                 <div class="product-attributes">
-                    <fieldset class="f-start-center gap-05 f-wrap pad--10 w-fit bordered b-rad--03"
-                        v-for="(attrValues, attrKey, index) in pageData?.attributes.Mandatory_attributes" :key="index">
+                    <fieldset v-for="(attrValues, attrKey, index) in pageData?.attributes.Mandatory_attributes"
+                        :key="index" class="f-start-center gap-05 f-wrap pad--10 w-fit bordered b-rad--03">
                         <legend class="attribute-value pad--05 text-center">
                             {{ attrKey }}
                         </legend>
                         <div class="radio pad-lr--10 b-rad--02" v-for="(value, valueKey, valueIndex) in attrValues"
                             :key="valueIndex"
-                            :class="{ 'btn-primary': isAttrSelected, 'btn-nav-cold': !isAttrSelected }">
+                            :class="{ 'btn-primary': selectedAttributes[attrKey] === valueKey, 'btn-nav-cold': selectedAttributes[attrKey] !== valueKey }">
                             <input type="radio" :name="'radio-' + attrKey" :id="'radio-' + attrKey + '-' + valueIndex"
-                                :value="valueKey">
+                                :value="valueKey" v-model="selectedAttributes[attrKey]" />
                             <label :for="'radio-' + attrKey + '-' + valueIndex">
                                 {{ valueKey }}
                             </label>
                         </div>
                     </fieldset>
-
                 </div>
-                <button type="button" class="btn btn-primary w--80 buy-now" aria-label="Buy Moonseed Organic Seed Blend"
-                    @click="handleBuyNow">
-                    Buy Now !
+
+                <button type="button" class="btn btn-primary w--80 buy-now"
+                    :aria-label="`Buy ${pageData?.title || 'Product'}`" @click="handleBuyNow">
+                    Buy Now!
                 </button>
-                <p class="short-description text-dotted-3" itemprop="description" v-html="descriptionData">
-                </p>
+                <p class="short-description text-dotted-3" itemprop="description" v-html="shortDescription"></p>
                 <nav>
                     <NuxtLink to="/#related-products" rel="related">
                         Explore More Organic Products
@@ -80,11 +81,8 @@
                 </div>
 
                 <div class="info-container">
-                    <div v-if="activeTab === 'Description'" v-html="pageData?.description">
-
-                    </div>
-                    <div v-if="activeTab === 'Benefits'" v-html="pageData?.benefits">
-                    </div>
+                    <div v-if="activeTab === 'Description'" v-html="pageData?.description"></div>
+                    <div v-if="activeTab === 'Benefits'" v-html="pageData?.benefits"></div>
                     <div v-if="activeTab === 'Ingredients'" class="g-res-4-col-container gap-10">
                         <div v-for="(ingredient, index) in pageData?.ingredients" :key="index"
                             class="f-center gap-10 f-col border-all b-rad--05 b-Silver pad--05">
@@ -97,8 +95,7 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="activeTab === 'Dosage'" v-html="pageData?.dosage">
-                    </div>
+                    <div v-if="activeTab === 'Dosage'" v-html="pageData?.dosage"></div>
                     <div v-if="activeTab === 'FAQ'">
                         <div v-for="item in pageData?.faqs" class="f-center-start gap-05 f-col pad-b--20">
                             <h3>{{ item[0] }}</h3>
@@ -111,22 +108,16 @@
             <div class="related-products res-container">
                 <h2>Related Products</h2>
                 <div class="product-showcase">
-                    <!-- PRODUCT IMAGE -->
                     <div class="image">
-                        <NuxtImg src="images/product-1.png" />
+                        <NuxtImg src="images/product-1.png" alt="Moonseed" />
                     </div>
-                    <!-- PRODUCT INFO -->
                     <div class="related-product-info">
-                        <!-- PRODUCT NAME -->
                         <h1 class="product-name">Moonseed</h1>
-                        <!-- CATEGORY -->
                         <p class="category">Blood Care</p>
-                        <!-- PRICING -->
                         <div class="pricing">
-                            <strong class="current-price" itemprop="price">Tk 570</strong>
+                            <strong class="current-price">Tk 570</strong>
                             <span class="old-price">Tk 450</span>
                         </div>
-                        <!-- ADD TO CART -->
                         <button type="button" class="btn btn-primary">
                             <span class="f-centered gap--05">
                                 <i class="m-plus2"></i>
@@ -137,126 +128,252 @@
                 </div>
             </div>
         </div>
-
     </section>
 </template>
 
 <script setup lang="ts">
 import { useHead } from '@unhead/vue'
+import { useToast } from 'vue-toastification'
+import { useRouter } from 'vue-router'
+import { productCart } from '~/stores/cart'
 
-const isAttrSelected = ref(false);
-const currentRouteKey = useRoute().params.key;
-const activeTab = ref('Ingredients') // Set default active tab
+// State
+const selectedAttributes = ref<Record<string, string>>({})
+const activeTab = ref('Description')
+const currentRouteKey = useRoute().params.key
+const toast = useToast()
+const cartStore = productCart()
+const router = useRouter()
 
-// Function to handle tab switching
+// Interface for API response
+interface PageData {
+    title: string
+    buyPrice: string
+    sellPrice: string
+    discountPrice: string
+    stock: number
+    description: string
+    benefits: string
+    dosage: string
+    category: string
+    attributes: {
+        Mandatory_attributes: Record<string, Record<string, [number, number]>>
+        Optional_attributes: Record<string, string[]>
+    }
+    faqs: [string, string][]
+    tags: string[]
+    ingredients: [string, string, string][]
+    images: string[]
+    sold: any[]
+}
+
+interface CartProduct {
+    title: string
+    sellPrice: string
+    discountPrice: string
+    attributes: Record<string, Record<string, [number, number]>>
+    images: string
+    key: string
+    total_quantity?: number
+}
+
+const { data: pageData, error } = await useFetch<PageData>(`http://192.168.0.111:3000/api/landing_page/${currentRouteKey}`)
+
+onMounted(() => {
+    if (pageData.value?.attributes?.Mandatory_attributes) {
+        Object.keys(pageData.value.attributes.Mandatory_attributes).forEach(attrKey => {
+            selectedAttributes.value[attrKey] = ''
+        })
+
+        const existingProduct = cartStore.getCartJSON.find(
+            (item: CartProduct) => item.key === currentRouteKey
+        ) as CartProduct | undefined
+        if (existingProduct && pageData.value) {
+            Object.entries(existingProduct.attributes).forEach(([attrKey, attrValues]) => {
+                const selectedValue = Object.keys(attrValues)[0]
+
+
+                if (pageData.value.attributes.Mandatory_attributes[attrKey]) {
+                    selectedAttributes.value[attrKey] = selectedValue
+                }
+
+            })
+        }
+    }
+})
+
+// Switch tab
 const switchTab = (tabName: string) => {
     activeTab.value = tabName
 }
 
-interface PageData {
-    title: string;
-    buyPrice: string;
-    sellPrice: string;
-    discountPrice: string;
-    stock: number;
-    description: string;
-    benefits: string;
-    dosage: string;
-    category: string;
-    attributes: {
-        Mandatory_attributes: {
-            [key: string]: {  // Dynamic key for attribute type (e.g., "Color")
-                [key: string]: [number, number];  // Dynamic key for attribute value (e.g., "Red") with [stock, price]
-            };
-        };
-        Optional_attributes: {
-            [key: string]: string[];  // Dynamic key for optional attributes (e.g., "Organic", "Weight") with string array values
-        };
-    };
-    faqs: [string, string][]; // Array of [question, answer] tuples
-    tags: string[];
-    ingredients: [string, string, string][]; // [imageUrl, englishName, localName]
-    images: string[];
-    sold: any[]; // Empty array in the example, could be typed more specifically if needed
+// Generate short description for SEO
+const shortDescription = computed(() => {
+    if (!pageData.value?.description) return 'Explore this organic product for a healthy lifestyle.'
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = pageData.value.description
+    const text = tempDiv.textContent || tempDiv.innerText || ''
+    return text.length > 160 ? `${text.substring(0, 157)}...` : text
+})
+
+// Handle Buy Now with cart check and update
+const handleBuyNow = () => {
+    if (!pageData.value) {
+        toast.error('Product data not loaded.')
+        return
+    }
+
+    const mandatoryAttrs = pageData.value.attributes.Mandatory_attributes
+    const hasUnselectedAttribute = Object.keys(mandatoryAttrs).some(
+        attrKey => !selectedAttributes.value[attrKey]
+    )
+
+    if (hasUnselectedAttribute) {
+        toast.error('Please select all mandatory attributes.')
+        return
+    }
+
+    // Filter selected mandatory attributes
+    const selectedAttrs: Record<string, Record<string, [number, number]>> = {}
+    Object.entries(selectedAttributes.value).forEach(([attrKey, selectedValue]) => {
+        if (mandatoryAttrs[attrKey] && mandatoryAttrs[attrKey][selectedValue]) {
+            selectedAttrs[attrKey] = {
+                [selectedValue]: mandatoryAttrs[attrKey][selectedValue]
+            }
+        }
+    })
+
+    // Prepare cart product
+    const cartProduct: CartProduct = {
+        title: pageData.value.title,
+        sellPrice: pageData.value.sellPrice,
+        discountPrice: pageData.value.discountPrice,
+        attributes: selectedAttrs,
+        images: pageData.value.images[0],
+        key: currentRouteKey,
+        total_quantity: 1
+    }
+
+    // Check if product exists in cart
+    const existingProductIndex = cartStore.getCartJSON.findIndex(
+        (item: CartProduct) => item.key === currentRouteKey
+    )
+
+    if (existingProductIndex !== -1) {
+        const existingProduct = cartStore.getCartJSON[existingProductIndex] as CartProduct
+        const attributesChanged = JSON.stringify(existingProduct.attributes) !== JSON.stringify(selectedAttrs)
+
+        if (attributesChanged) {
+            cartStore.updateProduct(currentRouteKey, cartProduct)
+            toast.success(`${pageData.value.title} updated in cart with new attributes!`)
+        } else {
+            toast.info(`${pageData.value.title} is already in your cart.`)
+        }
+    } else {
+        cartStore.addToCart(cartProduct)
+        toast.success(`${pageData.value.title} added to cart!`)
+    }
+
+    router.push('/cart')
 }
 
-
-const { data: pageData, error } = await useFetch<PageData>(`http://192.168.0.111:3000/api/landing_page/${currentRouteKey}`);
-
-const descriptionData = pageData.value?.description;
-
-console.log(descriptionData);
-
-
-
-interface Price {
-    current: string
-    old: string
-}
-
-const price: Price = {
-    current: 'Tk 100',
-    old: 'Tk 150',
-}
-
-const description: string =
-    'Moonseed Organic Seed Blend offers a nutritious mix of premium organic seeds, perfect for health-conscious individuals seeking natural superfoods.'
+// SEO Configuration
 useHead({
-    title: 'Moonseed Organic Seed Blend - Buy Now at Tk 100',
+    title: computed(() => `${pageData.value?.title || 'Product'} - Buy Now at Tk ${pageData.value?.discountPrice || ''}`),
     meta: [
         {
             name: 'description',
-            content:
-                'Shop Moonseed Organic Seed Blend for only Tk 100. Premium organic seeds for a healthy lifestyle. Buy now!',
+            content: computed(() => shortDescription.value)
         },
         {
             name: 'keywords',
-            content: 'organic seeds, Moonseed, superfoods, healthy living',
+            content: computed(() =>
+                `${pageData.value?.title || 'product'}, ${pageData.value?.category || 'health'}, ${pageData.value?.tags?.join(', ') || 'organic, natural'}`
+            )
         },
         {
             name: 'robots',
-            content: 'index, follow',
-        },
+            content: 'index, follow'
+        }
     ],
     link: [
         {
             rel: 'canonical',
-            href: 'https://yourdomain.com/product/moonseed',
+            href: computed(() => `http://192.168.0.111:3000/product/${currentRouteKey}`)
         },
+        {
+            rel: 'alternate',
+            hreflang: 'en-bd',
+            href: computed(() => `http://192.168.0.111:3000/product/${currentRouteKey}`)
+        }
     ],
     script: [
         {
             type: 'application/ld+json',
-            innerHTML: JSON.stringify({
+            innerHTML: computed(() => JSON.stringify({
                 '@context': 'https://schema.org',
                 '@type': 'Product',
-                name: 'Moonseed Organic Seed Blend',
-                image: 'https://yourdomain.com/images/product-1.png',
-                description:
-                    'Moonseed Organic Seed Blend offers a nutritious mix of premium organic seeds...',
-                sku: 'MOONSEED-001',
+                name: pageData.value?.title || 'Product',
+                image: pageData.value?.images || ['http://192.168.0.111:3000/images/product-1.png'],
+                description: shortDescription.value,
+                sku: currentRouteKey,
                 brand: {
                     '@type': 'Brand',
-                    name: 'Your Brand',
+                    name: 'Your Brand'
                 },
                 offers: {
                     '@type': 'Offer',
-                    url: 'https://yourdomain.com/product/moonseed',
+                    url: `http://192.168.0.111:3000/product/${currentRouteKey}`,
                     priceCurrency: 'BDT',
-                    price: '100',
+                    price: pageData.value?.discountPrice || '0',
                     priceValidUntil: '2025-12-31',
-                    availability: 'https://schema.org/InStock',
+                    availability: pageData.value?.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'
                 },
-            }),
+                category: pageData.value?.category || 'Health',
+                additionalProperty: [
+                    ...Object.entries(pageData.value?.attributes.Mandatory_attributes || {}).map(([key, values]) => ({
+                        '@type': 'PropertyValue',
+                        name: key,
+                        value: Object.keys(values).join(', ')
+                    })),
+                    ...Object.entries(pageData.value?.attributes.Optional_attributes || {}).map(([key, values]) => ({
+                        '@type': 'PropertyValue',
+                        name: key,
+                        value: values.join(', ')
+                    }))
+                ]
+            }))
         },
-    ],
+        {
+            type: 'application/ld+json',
+            innerHTML: computed(() => JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                    {
+                        '@type': 'ListItem',
+                        position: 1,
+                        name: 'Home',
+                        item: 'http://192.168.0.111:3000/'
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 2,
+                        name: 'Shop',
+                        item: 'http://192.168.0.111:3000/shop'
+                    },
+                    {
+                        '@type': 'ListItem',
+                        position: 3,
+                        name: pageData.value?.title || 'Product',
+                        item: `http://192.168.0.111:3000/product/${currentRouteKey}`
+                    }
+                ]
+            }))
+        }
+    ]
 })
-
-const handleBuyNow = (): void => {
-    console.log('Buy Now clicked!')
-}
 </script>
-
 
 
 <style>
