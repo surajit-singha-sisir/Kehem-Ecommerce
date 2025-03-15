@@ -6,6 +6,7 @@ interface Product {
   discountPrice: string;
   attributes: Record<string, Record<string, [number, number]>>;
   images: string;
+  category: string;
   key: string;
   total_quantity?: number;
 }
@@ -19,6 +20,7 @@ export const productCart = defineStore('cart', {
           title: 'Moonseed - Organic',
           sellPrice: '32.00',
           discountPrice: '343.00',
+          category: 'Organic',
           attributes: {
             Weight: {
               '100mg': [23, 232],
@@ -46,7 +48,7 @@ export const productCart = defineStore('cart', {
     },
 
     updateProduct(key: string, updatedProduct: Product) {
-      const index = this.cartJSON.findIndex((product: Product) => product.key === key); // Fixed key comparison
+      const index = this.cartJSON.findIndex((product: Product) => product.key === key);
       if (index !== -1) {
         this.cartJSON[index] = updatedProduct;
         this.saveCartToLocalStorage();
@@ -55,7 +57,13 @@ export const productCart = defineStore('cart', {
 
     saveCartToLocalStorage() {
       localStorage.setItem('cartJSON', JSON.stringify(this.cartJSON));
-    }
+    },
+
+    // Added clearCart function
+    clearCart() {
+      this.cartJSON = []; // Reset the cart to an empty array
+      this.saveCartToLocalStorage(); // Update localStorage to reflect the empty cart
+    },
   },
 
   getters: {

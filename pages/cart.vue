@@ -1,46 +1,59 @@
 <template>
-  <section class="container">
-    <div class="header">
+  <section class="res-container m-auto pad-t--10">
+    <div class="f-between-center gap-10 pad-b--20">
       <h1>Shopping Cart</h1>
       <NuxtLink to="/#shop" class="continue-shopping">Continue Shopping ></NuxtLink>
     </div>
-    <div class="main-content">
-      <div class="cart-items">
-        <div v-for="item in cartItems" :key="item.key" class="cart-item" :data-price="item.sellPrice">
+    <div class="g-res-3-col-container gap-10">
+      <div class="span-2 f f-col gap-10">
+        <div v-for="item in cartItems" :key="item.key" class="cart-item border all" :data-price="item.sellPrice">
           <img :src="item.images" :alt="item.title">
-          <div class="item-details">
-            <div>
-              <h3>{{ item.title }}</h3>
-              <p>{{ getMainAttribute(item.attributes) }}</p>
-              <p class="price">Tk {{ parseFloat(item.discountPrice).toFixed(2) }}/=</p>
+          <div class="f-center-start f-col gap-05 w-100">
+            <div class="f-center-start f-col gap-03 text--09">
+              <h3 class="text--11">{{ item.title }}</h3>
+              <p>{{ item.category }}</p>
+              <b>Tk {{ parseFloat(item.discountPrice).toFixed(2) }}/=</b>
             </div>
-            <div class="quantity">
-              <button class="decrement" @click="decrementQuantity(item.key)">-</button>
-              <span class="quantity-value">{{ item.total_quantity || 1 }}</span>
-              <button class="increment" @click="incrementQuantity(item.key)">+</button>
-              <span class="quantity-text">Quantity {{ item.total_quantity || 1 }} Pieces</span>
+
+            <p>{{ getMainAttribute(item.attributes) }} | Varient: <b>{{
+              Object.keys(Object.values(item.attributes)[0])[0] }}</b></p>
+
+            <div class="f-start-center gap-10">
+              <button class="btn btn-mass btn-sm" @click="decrementQuantity(item.key)"><i class="m-minus2"></i></button>
+              <span class="text--11">{{ item.total_quantity || 1 }}</span>
+              <button class="btn btn-mass btn-sm" @click="incrementQuantity(item.key)"><i class="m-plus2"></i></button>
+              <span class="text--08">Quantity {{ item.total_quantity || 1 }} Pieces</span>
             </div>
           </div>
-          <button class="remove-item" @click="removeItem(item.key)"><i class="m-trash"></i></button>
+          <button class="btn btn-error bordered" @click="removeItem(item.key)"><i class="m-trash"></i></button>
         </div>
         <p v-if="!cartItems.length" class="empty-cart">Your cart is empty</p>
       </div>
-      <div class="order-summary">
+      <div class="f-center-between f-col">
         <h2>Order Summary</h2>
-        <div v-for="item in cartItems" :key="item.key" class="summary-item" :data-item="item.key">
-          <p>{{ item.title }} ({{ item.total_quantity || 1 }} x {{ parseFloat(item.discountPrice).toFixed(2) }})</p>
-          <p class="subtotal">Tk {{ ((item.total_quantity || 1) * parseFloat(item.discountPrice)).toFixed(2) }}/=</p>
+        <div v-for="item in cartItems" :key="item.key" class="f-between-start gap-10 pad-tb--05 text--09 border bottom"
+          :data-item="item.key">
+          <div>
+            <b class="d-block m-b--05">{{ item.title }}</b>
+            <p><b>{{ item.total_quantity || 1 }}</b> (<b>{{ Object.keys(Object.values(item.attributes)[0])[0] }}</b>) x
+              {{
+                parseFloat(item.discountPrice).toFixed(2)
+              }}</p>
+          </div>
+          <p>{{ ((item.total_quantity || 1) * parseFloat(item.discountPrice)).toFixed(2) }}/=</p>
         </div>
-        <div class="summary-item delivery-fee">
+        <div class="f-between-center gap-10 pad-tb--05 text--09">
           <p>Delivery Fee ({{ totalItems }} items x {{ DELIVERY_FEE_PER_ITEM }})</p>
-          <p>Tk {{ deliveryFee.toFixed(2) }}/=</p>
+          <p>{{ deliveryFee.toFixed(2) }}/=</p>
         </div>
-        <div class="summary-total">
-          <p>TOTAL</p>
-          <p class="total">Tk {{ total.toFixed(2) }}/=</p>
+        <div class="f-between-center gap-10 border bottom top pad-tb--05">
+          <b>TOTAL</b>
+          <b class="total">Tk {{ total.toFixed(2) }}/=</b>
         </div>
-        <p class="delivery-note">ডেলিভারি সময়: সিলেটে ১ দিন এবং সিলেটের বাইরে ২ থেকে ৫ দিন</p>
-        <button class="checkout-btn" :disabled="!cartItems.length">Checkout</button>
+        <p class="pad-tb--05 text--09"><b class="u">ডেলিভারি সময়:</b> সিলেটে ১ দিন এবং সিলেটের বাইরে ২ থেকে ৫ দিন</p>
+        <div class="f-centered">
+          <button class="btn btn-primary w--100 m-t--10" :disabled="!cartItems.length" @click="goToOrder">Order</button>
+        </div>
       </div>
     </div>
   </section>
@@ -49,11 +62,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { productCart } from '~/stores/cart'
+import { useToast } from "vue-toastification"
+const toast = useToast()
 
-// Define the Product interface (same as in store)
 interface Product {
   title: string;
   sellPrice: string;
+  category: string;
   discountPrice: string;
   attributes: Record<string, Record<string, [number, number]>>;
   images: string;
@@ -112,6 +127,12 @@ const incrementQuantity = (key: string) => {
 
 const removeItem = (key: string) => {
   cartStore.deleteFromCart(key)
+  toast('You have deleted a cart item')
+}
+
+const route = useRouter();
+const goToOrder = () => {
+  route.push('/order')
 }
 </script>
 
@@ -123,44 +144,24 @@ const removeItem = (key: string) => {
 
 
 
-<style scoped>
-.container {
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 0 20px;
+<style>
+.border {
+  width: 100%;
+  border: none;
+
+  &.top {
+    border-top: 1px solid #ccc;
+  }
+
+  &.bottom {
+    border-bottom: 1px solid #ccc;
+  }
+
+  &.all {
+    border: 1px solid #ccc;
+  }
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.header h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-.continue-shopping {
-  text-decoration: none;
-  color: #4a90e2;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.main-content {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 30px;
-}
-
-.cart-items {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
 
 .cart-item {
   display: flex;
@@ -184,136 +185,5 @@ const removeItem = (key: string) => {
   border-radius: 8px;
   margin-right: 20px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.item-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 80px;
-}
-
-.item-details h3 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 4px;
-}
-
-.item-details p {
-  font-size: 12px;
-  color: #6b7280;
-  margin-bottom: 8px;
-}
-
-.price {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 8px;
-}
-
-.quantity {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.quantity button {
-  width: 28px;
-  height: 28px;
-  background-color: #f3f4f6;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  color: #374151;
-  transition: background-color 0.2s ease;
-}
-
-.quantity button:hover {
-  background-color: #e5e7eb;
-}
-
-.quantity .quantity-value {
-  font-size: 14px;
-  color: #374151;
-  width: 24px;
-  text-align: center;
-}
-
-.quantity .quantity-text {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.remove-item {
-  background: none;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  color: #ef4444;
-  transition: color 0.2s ease;
-}
-
-.remove-item:hover {
-  color: #dc2626;
-}
-
-.order-summary {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  height: fit-content;
-}
-
-.order-summary h2 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 15px;
-  color: #1a1a1a;
-}
-
-.summary-item,
-.summary-total {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 13px;
-  color: #374151;
-}
-
-.summary-total {
-  font-weight: 600;
-  font-size: 14px;
-  border-top: 1px solid #e5e7eb;
-  padding-top: 12px;
-  margin-top: 12px;
-}
-
-.delivery-note {
-  font-size: 11px;
-  color: #16a085;
-  margin: 15px 0;
-  line-height: 1.4;
-}
-
-.checkout-btn {
-  width: 100%;
-  padding: 12px;
-  background-color: #1e3a8a;
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.checkout-btn:hover {
-  background-color: #1e40af;
 }
 </style>
