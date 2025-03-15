@@ -21,7 +21,7 @@
                     <strong class="current-price" itemprop="price">{{ pageData?.discountPrice }}</strong>
                     <span class="old-price">{{ pageData?.sellPrice }}</span>
                     <meta itemprop="availability"
-                        :content="pageData?.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'" />
+                        :content="pageData && pageData.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'" />
                     <meta itemprop="priceValidUntil" content="2025-12-31" />
                 </div>
                 <div class="product-attributes">
@@ -140,12 +140,12 @@ import { productCart } from '~/stores/cart'
 // State
 const selectedAttributes = ref<Record<string, string>>({})
 const activeTab = ref('Description')
-const currentRouteKey = useRoute().params.key
+const route = useRoute()
+const currentRouteKey = Array.isArray(route.params.key) ? route.params.key[0] : route.params.key
 const toast = useToast()
 const cartStore = productCart()
 const router = useRouter()
 
-// Interface for API response
 interface PageData {
     title: string
     buyPrice: string
@@ -188,26 +188,22 @@ onMounted(() => {
         const existingProduct = cartStore.getCartJSON.find(
             (item: CartProduct) => item.key === currentRouteKey
         ) as CartProduct | undefined
-        if (existingProduct && pageData.value) {
+
+        if (existingProduct && pageData.value?.attributes?.Mandatory_attributes) {
             Object.entries(existingProduct.attributes).forEach(([attrKey, attrValues]) => {
                 const selectedValue = Object.keys(attrValues)[0]
-
-
-                if (pageData.value.attributes.Mandatory_attributes[attrKey]) {
+                if (pageData.value?.attributes?.Mandatory_attributes?.[attrKey]) {
                     selectedAttributes.value[attrKey] = selectedValue
                 }
-
             })
         }
     }
 })
 
-// Switch tab
 const switchTab = (tabName: string) => {
     activeTab.value = tabName
 }
 
-// Generate short description for SEO
 const shortDescription = computed(() => {
     if (!pageData.value?.description) return 'Explore this organic product for a healthy lifestyle.'
     const tempDiv = document.createElement('div')
@@ -216,7 +212,6 @@ const shortDescription = computed(() => {
     return text.length > 160 ? `${text.substring(0, 157)}...` : text
 })
 
-// Handle Buy Now with cart check and update
 const handleBuyNow = () => {
     if (!pageData.value) {
         toast.error('Product data not loaded.')
@@ -264,7 +259,7 @@ const handleBuyNow = () => {
         const attributesChanged = JSON.stringify(existingProduct.attributes) !== JSON.stringify(selectedAttrs)
 
         if (attributesChanged) {
-            cartStore.updateProduct(currentRouteKey, cartProduct)
+            cartStore.updateProduct(currentRouteKey, cartProduct) // Fix 5: currentRouteKey is now guaranteed string
             toast.success(`${pageData.value.title} updated in cart with new attributes!`)
         } else {
             toast.info(`${pageData.value.title} is already in your cart.`)
@@ -327,7 +322,7 @@ useHead({
                     priceCurrency: 'BDT',
                     price: pageData.value?.discountPrice || '0',
                     priceValidUntil: '2025-12-31',
-                    availability: pageData.value?.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock'
+                    availability: pageData.value && pageData.value.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' // Fix 6: Add null check
                 },
                 category: pageData.value?.category || 'Health',
                 additionalProperty: [
