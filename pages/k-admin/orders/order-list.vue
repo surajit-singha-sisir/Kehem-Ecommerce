@@ -609,6 +609,7 @@ const fetchOrders = async (url: string) => {
             headers: { Authorization: `Bearer ${accessToken.value ?? ''}` },
             transform: (response: ApiResponse) => {
                 response.results.forEach(order => {
+                    console.log(response.results)
                     order.order_products.forEach(product => {
                         product.product.sellPrice = Number(product.product.sellPrice)
                         product.product.discountPrice = Number(product.product.discountPrice)

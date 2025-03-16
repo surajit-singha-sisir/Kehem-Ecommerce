@@ -112,11 +112,12 @@ interface Product {
   attributes: Record<string, Record<string, [number, number]>>;
   images: string;
   key: string;
-  total_quantity?: number;
+  total_quantity: number;
 }
 
 const cartStore = productCart()
 const cartItems = computed<Product[]>(() => cartStore.getCartJSON)
+
 
 const DELIVERY_FEE_PER_ITEM = 120
 
@@ -310,11 +311,23 @@ const handleSubmit = async () => {
       courier: null, // Optional field, can be updated later
     };
 
-    // Prepare order_product data based on cart items
-    const orderProducts = cartItems.value.map((item) => ({
-      product: item.key, // Assuming 'key' is the product ID in Django
-      attribute: item.attributes, // Matches your JSONField in order_product
-    }));
+    const pk = cartItems.value;
+    console.log(pk);
+
+    const orderProducts = cartItems.value.map((item) => {
+      const attributeName = Object.keys(item.attributes)[0];
+      const attributeValues = Object.values(item.attributes)[0][attributeName];
+
+      return {
+        product: item.key,
+        attribute: {
+          [attributeName]: [
+            item.total_quantity || 1,
+            parseFloat(item.discountPrice)
+          ]
+        }
+      };
+    });
 
     const payload = {
       order: orderData,
