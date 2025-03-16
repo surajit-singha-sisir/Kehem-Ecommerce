@@ -281,6 +281,9 @@ onMounted(() => {
 })
 
 
+// const pk = Object.keys(Object.values(item.attributes)[0])[0];
+console.log(cartItems.value);
+
 const handleSubmit = async () => {
   if (
     form.fullName &&
@@ -311,19 +314,21 @@ const handleSubmit = async () => {
       courier: null, // Optional field, can be updated later
     };
 
-    const pk = cartItems.value;
-    console.log(pk);
-
     const orderProducts = cartItems.value.map((item) => {
+      // Get the first attribute name (e.g., "Color")
       const attributeName = Object.keys(item.attributes)[0];
-      const attributeValues = Object.values(item.attributes)[0][attributeName];
+
+      // Get the first attribute value pair (e.g., { "Red": [50, 350] })
+      const attributeValues = item.attributes[attributeName];
+      const firstAttributeValueKey = Object.keys(attributeValues)[0]; // e.g., "Red"
 
       return {
         product: item.key,
         attribute: {
           [attributeName]: [
-            item.total_quantity || 1,
-            parseFloat(item.discountPrice)
+            item.total_quantity || 1, // Use total_quantity instead of original qty (50)
+            parseFloat(item.discountPrice), // Discount price (350)
+            firstAttributeValueKey // Attribute value name (e.g., "Red")
           ]
         }
       };
