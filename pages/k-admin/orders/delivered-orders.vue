@@ -350,18 +350,18 @@ const { startRefreshing, stopRefreshing, logout } = useAuth()
 
 // Company Info
 const companyInfo = {
-    name: "Your Company Name",
-    address: "123 Business Street",
-    city: "Dhaka",
+    name: "Abraham Organic",
+    address: "Nehar Market, Zindabazar",
+    city: "Sylhet",
     country: "Bangladesh",
     phone: "+880 1234-567890",
-    email: "info@yourcompany.com"
+    email: "abrahamorganic@gmail.com"
 }
 
 // Lifecycle Hooks
 onMounted(() => {
     startRefreshing()
-    fetchOrders(`${API_URL}//order_filter/Pending?page=${page.value}&page_size=5`)
+    fetchOrders(`${API_URL}/order_filter/Delivered?page=${page.value}&page_size=5`)
     if (loadMoreTrigger.value) {
         observer.value = new IntersectionObserver(
             (entries) => {

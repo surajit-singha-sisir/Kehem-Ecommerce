@@ -1,22 +1,25 @@
 <template>
-    <section class="w-100 f f-col gap-10 overflow-scroll">
-        <h2 class="f-start-centered btn btn-nav-error">Approved Order List</h2>
+    <section class="w-100 f f-col gap-10">
+        <!-- Header Section -->
+        <h2 class="btn btn-nav-error">Order List</h2>
         <hr>
+
+        <!-- Filters and Controls -->
         <aside class="f-between-center gap-10">
             <span class="f-start-center gap-10">
                 <p>Total Orders:</p>
                 <p class="text--12 b Red">{{ totalCount }}</p>
             </span>
             <div class="f-center gap-10">
-                <i class="f-start-centered btn btn-silver m-file-picture" @click="exportToPicture"
-                    title="Export to Picture"></i>
-                <i class="f-start-centered btn btn-silver m-file-pdf" @click="exportToPDF" title="Export to PDF"></i>
-                <i class="f-start-centered btn btn-silver m-microsoftexcel" @click="exportToExcel"
-                    title="Export to Excel"></i>
+                <i class="btn btn-silver m-file-picture" @click="exportToPicture" title="Export to Picture"></i>
+                <i class="btn btn-silver m-file-pdf" @click="exportToPDF" title="Export to PDF"></i>
+                <i class="btn btn-silver m-microsoftexcel" @click="exportToExcel" title="Export to Excel"></i>
                 <input @input="queryFromTable" type="text" class="search-input" id="textSearch"
-                    placeholder="Search Order..." v-model="searchQuery">
+                    placeholder="Search Order..." v-model="searchQuery" aria-label="Search orders">
             </div>
         </aside>
+
+        <!-- Orders Table -->
         <table class="table table-1" ref="tableRef">
             <thead>
                 <tr>
@@ -40,23 +43,21 @@
             </thead>
             <tbody>
                 <tr v-for="(item, index) in filteredItems" :key="item.key">
-                    <td>
-                        {{ sortDirection || !sortColumn ? index + 1 : Math.max(1, Math.min(MAX_SERIAL,
-                            filteredItems.length) - index) }}
-                    </td>
+                    <td>{{ sortDirection || !sortColumn ? index + 1 : Math.max(1, Math.min(MAX_SERIAL,
+                        filteredItems.length) - index) }}</td>
                     <td>
                         <div class="f-centered f-col gap-03">
                             <strong>{{ item.name }}</strong>
-                            <NuxtLink :to="`tel:${item.phone_no}`"
-                                class="f-start-centered btn btn-nav-primary btn-sm border-all">
+                            <NuxtLink :to="`tel:${item.phone_no}`" class="btn btn-nav-primary btn-sm border-all">
                                 <i class="m-phone"></i> {{ item.phone_no }}
                             </NuxtLink>
                             <span>
                                 <b>Shipping:</b>
                                 <address>
-                                    {{ item.area }}, {{ item.district }}
+                                    {{ item.address }}<br>
+                                    {{ item.area }}, {{ item.district }}, {{ item.division }}
                                     <NuxtLink target="_blank"
-                                        :to="`https://www.google.com/maps/search/?q=${item.area}, ${item.district}`">
+                                        :to="`https://www.google.com/maps/search/?q=${item.area}, ${item.district}, ${item.division}`">
                                         <i class="Blue m-external-link"></i>
                                     </NuxtLink>
                                 </address>
@@ -65,19 +66,15 @@
                     </td>
                     <td class="order_summery">
                         <div v-for="product in item.order_products" :key="product.id" class="order-product">
+                            <!-- Changed from product.product.title to product ID since product is a number -->
                             <strong class="Red-700">{{ product.product.title }}</strong>
-                            <div>
-                                <b>Price : </b>
-                                {{ formatPrice(product.product.discountPrice || product.product.sellPrice) }}/=
-                            </div>
-                            <div v-if="product.attribute" class="f gap-05 w-100">
-                                <b>Attribute : </b>
-                                <span v-for="(value, key) in product.attribute" :key="key" class="f gap-05">
-                                    <strong class="Maroon">{{ key }}</strong> -
-                                    <button v-for="attr in normalizeAttribute(value)" :key="attr"
-                                        class="f-start-centered btn btn-sm btn-love">
-                                        {{ formatAttribute(attr) }}
-                                    </button>
+                            <div v-if="product.attribute" class="f-center-start f-col gap-05 w-100">
+                                <span v-for="(value, key) in product.attribute" :key="key" class="f-center-start f-col">
+                                    <div><b>Attribute:</b> <strong class="Maroon">{{ key }}</strong></div>
+                                    <div><b>Variant:</b> <strong class="Maroon">{{ value[2] }}</strong></div>
+                                    <div><b>Quantity:</b> <strong class="Maroon"><button class="btn btn-sm btn-love">{{
+                                        value[0] }} pieces</button></strong></div>
+                                    <div><b>Price:</b> <strong class="Maroon">Tk {{ value[1] }}</strong></div>
                                 </span>
                             </div>
                         </div>
@@ -105,38 +102,44 @@
                                 <option value="SA Paribahan">SA Paribahan</option>
                                 <option value="RedX">RedX</option>
                                 <option value="Janata">Janata</option>
+                                <option value="" selected>Select Courier</option>
                             </select>
                         </div>
                     </td>
                     <td>
                         <div class="f-centered gap-05 relative">
-                            <button class="f-start-centered btn btn-pastel-green btn-sm"
-                                @click="toggleActions(item.key)">
+                            <button class="btn btn-pastel-green btn-sm" @click="toggleActions(item.key)">
                                 <i class="m-dots-three-vertical"></i>
                             </button>
                             <div v-if="activeOrderKey === item.key" class="dropdown-menu">
-                                <button class="f-start-centered f-start-centered btn btn-sm btn-sleep w-100"
+                                <button class="f-start-centered btn btn-sm btn-sleep w-100"
                                     @click="showInvoiceModal(item.key)">
                                     <i class="m-file-text"></i>
                                     <p>Invoice</p>
                                 </button>
                                 <button class="f-start-centered btn btn-sm btn-success w-100"
-                                    @click="updateStatus(item.key, 'Delivered')">
+                                    @click="updateStatus(item.key, 'Delivered')" v-if="item.status === 'Shipping'">
                                     <i class="m-m-round-tick-mark"></i>
                                     <p>Delivered</p>
                                 </button>
                                 <button class="f-start-centered btn btn-sm btn-coral w-100"
-                                    @click="updateStatus(item.key, 'Shipping')">
+                                    @click="updateStatus(item.key, 'Shipping')" v-if="item.status === 'Approved'">
                                     <i class="m-travel-car"></i>
                                     <p>Shipping</p>
                                 </button>
+                                <button class="f-start-centered btn btn-sm btn-forest-green w-100"
+                                    @click="updateStatus(item.key, 'Approved')" v-if="item.status === 'Pending'">
+                                    <i class="m-check"></i>
+                                    <p>Approved</p>
+                                </button>
                                 <button class="f-start-centered btn btn-sm btn-warning w-100"
-                                    @click="updateStatus(item.key, 'Pending')">
+                                    @click="updateStatus(item.key, 'Pending')" v-if="item.status === 'Cancel'">
                                     <i class="m-clock"></i>
                                     <p>Pending</p>
                                 </button>
                                 <button class="f-start-centered btn btn-sm btn-error w-100"
-                                    @click="updateStatus(item.key, 'Cancel')">
+                                    @click="updateStatus(item.key, 'Cancel')"
+                                    v-if="item.status === 'Pending' || item.status === 'Approved'">
                                     <i class="m-close"></i>
                                     <p>Cancel</p>
                                 </button>
@@ -144,11 +147,9 @@
                         </div>
                     </td>
                 </tr>
-
-
                 <tr ref="loadMoreTrigger">
                     <td colspan="6" class="text-center" v-if="isLoading">
-                        <div class="mastor-las"><span class="loader"></span></div>
+                        <div class="mastor-las"><span class="loader-orderList"></span></div>
                     </td>
                 </tr>
             </tbody>
@@ -160,7 +161,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3>Invoice - Order #{{ selectedOrder?.id }}</h3>
-                        <button class="f-start-centered btn btn-sm btn-error" @click="closeModal">
+                        <button class="btn btn-sm btn-error" @click="closeModal">
                             <i class="m-close"></i>
                         </button>
                     </div>
@@ -179,40 +180,42 @@
                                 <p><strong>{{ selectedOrder.name }}</strong></p>
                                 <p>{{ selectedOrder.phone_no }}</p>
                                 <p>{{ selectedOrder.address }}</p>
-                                <p>{{ selectedOrder.area }}, {{ selectedOrder.district }}</p>
-                                <p>{{ selectedOrder.division }}</p>
+                                <p>{{ selectedOrder.area }}, {{ selectedOrder.district }}, {{ selectedOrder.division }}
+                                </p>
                             </div>
                         </div>
-
                         <div class="f-between-center gap-10 mt-20">
                             <p><strong>Invoice Date:</strong> {{ formatDate(selectedOrder.date) }}</p>
                             <p><strong>Status:</strong> {{ selectedOrder.status }}</p>
-                            <p><strong>Courier:</strong> {{ selectedOrder.courier }}</p>
+                            <p><strong>Courier:</strong> {{ selectedOrder.courier || 'Not Assigned' }}</p>
                         </div>
-
                         <hr class="my-10">
-
                         <h4>Order Details</h4>
                         <table class="table table-1 w-100">
                             <thead>
                                 <tr>
                                     <th>Product</th>
                                     <th>Attributes</th>
-                                    <th>Price</th>
+                                    <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="product in selectedOrder.order_products" :key="product.id">
+                                    <!-- Changed from product.product.title to product ID -->
                                     <td>{{ product.product.title }}</td>
                                     <td>
-                                        <div v-if="product.attribute">
-                                            <div v-for="(value, key) in product.attribute" :key="key">
-                                                <strong>{{ key }}</strong>
-                                                <div v-for="attr in normalizeAttribute(value)" :key="attr"
-                                                    class="ml-10">
-                                                    {{ formatAttribute(attr) }}
+                                        <div v-if="product.attribute" class="f-center-start f-col gap-05 w-100">
+                                            <span v-for="(value, key) in product.attribute" :key="key"
+                                                class="f-center-start f-col">
+                                                <div><b>Attribute:</b> <strong class="Maroon">{{ key }}</strong></div>
+                                                <div><b>Variant:</b> <strong class="Maroon">{{ value[2] }}</strong>
                                                 </div>
-                                            </div>
+                                                <div><b>Quantity:</b> <strong class="Maroon"><button
+                                                            class="btn btn-sm btn-love">{{ value[0] }}
+                                                            pieces</button></strong></div>
+                                                <div><b>Price:</b> <strong class="Maroon">Tk {{ value[1] }}</strong>
+                                                </div>
+                                            </span>
                                         </div>
                                         <span v-else>-</span>
                                     </td>
@@ -228,14 +231,11 @@
                                 </tr>
                                 <tr>
                                     <td colspan="2" class="text-right"><strong>Grand Total:</strong></td>
-                                    <td>{{ formatPrice(calculateSubtotal(selectedOrder.order_products) +
-                                        selectedOrder.delivery_charge) }}</td>
+                                    <td>{{ formatPrice(selectedOrder.total) }}</td>
                                 </tr>
                             </tbody>
                         </table>
-
                         <hr class="my-10">
-
                         <div class="f-col gap-10">
                             <div>
                                 <h4>Terms and Conditions:</h4>
@@ -248,8 +248,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="f-start-centered btn btn-primary" @click="showPrintOptions">Print</button>
-                        <button class="f-start-centered btn btn-error" @click="closeModal">Close</button>
+                        <button class="btn btn-primary" @click="showPrintOptions">Print</button>
+                        <button class="btn btn-error" @click="closeModal">Close</button>
                     </div>
                 </div>
             </div>
@@ -260,14 +260,10 @@
                     <div class="print-options-modal">
                         <h3>Select Print Format</h3>
                         <div class="f-col gap-10">
-                            <button class="f-start-centered btn btn-primary" @click="printInvoice('pos')">POS Print
-                                (80mm)</button>
-                            <button class="f-start-centered btn btn-primary" @click="printInvoice('a5')">A5
-                                Print</button>
-                            <button class="f-start-centered btn btn-primary" @click="printInvoice('default')">Default
-                                Print</button>
-                            <button class="f-start-centered btn btn-silver"
-                                @click="showPrintModal = false">Cancel</button>
+                            <button class="btn btn-primary" @click="printInvoice('pos')">POS Print (80mm)</button>
+                            <button class="btn btn-primary" @click="printInvoice('a5')">A5 Print</button>
+                            <button class="btn btn-primary" @click="printInvoice('default')">Default Print</button>
+                            <button class="btn btn-silver" @click="showPrintModal = false">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -283,122 +279,26 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { useToast } from 'vue-toastification'
 import { useCookie } from '#app'
-const { startRefreshing, stopRefreshing, logout } = useAuth();
 
-onMounted(() => {
-    startRefreshing();
-});
-
-onUnmounted(() => {
-    stopRefreshing();
-});
-const showModal = ref(false)
-const selectedOrder = ref<Order | null>(null)
-const showPrintModal = ref(false)
-const activeOrderKey = ref<string | null>(null)
-const loadMoreTrigger = ref<HTMLElement | null>(null)
-const isLoading = ref(false)
-const page = ref(1)
-const totalCount = ref(0)
-const nextUrl = ref<string | null>(null)
-const orders = ref<Order[]>([])
-
-// Constants
-const API_URL = 'http://192.168.0.111:3000/api'
-
-// Refs
-const MAX_SERIAL = 999 // Set your desired maximum value (e.g., 9, 99, 999)
-
-// Refs
-const searchQuery = ref('')
-const sortColumn = ref<number | string>('')
-const sortDirection = ref(true)
-const currentPage = ref(1)
-const nextPageUrl = ref<string | null>(null)
-const tableRef = ref<HTMLElement | null>(null)
-
-// Composables
-const toast = useToast()
-const accessToken = useCookie<string | null>('access')
-
-// Utility Functions
-const toggleActions = (orderKey: string) => {
-    activeOrderKey.value = activeOrderKey.value === orderKey ? null : orderKey
-}
-
-const normalizeAttribute = (value: any) => {
-    if (!value) return []
-    if (Array.isArray(value) && Array.isArray(value[0])) return value
-    return [value]
-}
-
-const formatAttribute = (attr: any) => {
-    if (Array.isArray(attr)) {
-        return `${attr[0]} - ${attr[1]} Qty`
-    }
-    return attr
-}
-
-const companyInfo = {
-    name: "Your Company Name",
-    address: "123 Business Street",
-    city: "Dhaka",
-    country: "Bangladesh",
-    phone: "+880 1234-567890",
-    email: "info@yourcompany.com"
-}
-
-const calculateSubtotal = (products: OrderProduct[]) => {
-    return products.reduce((sum, product) => {
-        const basePrice = product.product.discountPrice || product.product.sellPrice
-        let totalQty = 0
-        if (product.attribute) {
-            Object.values(product.attribute).forEach(value => {
-                const attrs = normalizeAttribute(value)
-                attrs.forEach(attr => {
-                    if (Array.isArray(attr) && attr[1]) {
-                        totalQty += Number(attr[1])
-                    }
-                })
-            })
-        }
-        return sum + basePrice * (totalQty || 1)
-    }, 0)
-}
-
-const calculateProductPrice = (product: OrderProduct) => {
-    const basePrice = product.product.discountPrice || product.product.sellPrice
-    let totalQty = 0
-    if (product.attribute) {
-        Object.values(product.attribute).forEach(value => {
-            const attrs = normalizeAttribute(value)
-            attrs.forEach(attr => {
-                if (Array.isArray(attr) && attr[1]) {
-                    totalQty += Number(attr[1])
-                }
-            })
-        })
-    }
-    return formatPrice(basePrice * (totalQty || 1))
-}
+// Interfaces
 
 interface Product {
     title: string
     images: string
     key: string
-    sellPrice: number
-    discountPrice: number
+    sellPrice: string
+    discountPrice: string
 }
-
 interface OrderProduct {
     id: number
-    product: Product
-    attribute: Record<string, any>
+    attribute: Record<string, [number, number, string]> // [quantity, price, variant]
     order: number
+    product: Product // Product ID instead of full Product object
 }
 
 interface Order {
     id: number
+    title: string
     order_products: OrderProduct[]
     key: string
     date: string
@@ -411,9 +311,9 @@ interface Order {
     label: string
     total: number
     delivery_charge: number
-    pay_method: string
+    pay_method: string | null
     status: string
-    courier: string
+    courier: string | null
 }
 
 interface ApiResponse {
@@ -423,28 +323,114 @@ interface ApiResponse {
     results: Order[]
 }
 
-// Initial fetch
+// Constants
+const API_URL = 'http://192.168.0.111:3000/api'
+const MAX_SERIAL = 999
+
+// Refs
+const showModal = ref(false)
+const showPrintModal = ref(false)
+const selectedOrder = ref<Order | null>(null)
+const activeOrderKey = ref<string | null>(null)
+const loadMoreTrigger = ref<HTMLElement | null>(null)
+const isLoading = ref(false)
+const totalCount = ref(0)
+const page = ref(1)
+const nextUrl = ref<string | null>(null)
+const orders = ref<Order[]>([])
+const searchQuery = ref('')
+const sortColumn = ref<keyof Order | ''>('')
+const sortDirection = ref(true)
+const tableRef = ref<HTMLElement | null>(null)
+
+// Composables
+const toast = useToast()
+const accessToken = useCookie<string | null>('access')
+const { startRefreshing, stopRefreshing, logout } = useAuth()
+
+// Company Info
+const companyInfo = {
+    name: "Abraham Organic",
+    address: "Nehar Market, Zindabazar",
+    city: "Sylhet",
+    country: "Bangladesh",
+    phone: "+880 1234-567890",
+    email: "abrahamorganic@gmail.com"
+}
+
+onMounted(() => {
+    startRefreshing()
+    fetchOrders(`${API_URL}/order_filter/Approved?page=${page.value}&page_size=5`)
+    if (loadMoreTrigger.value) {
+        observer.value = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && nextUrl.value && !isLoading.value) {
+                    fetchOrders(nextUrl.value)
+                }
+            },
+            { threshold: 0.1 }
+        )
+        observer.value.observe(loadMoreTrigger.value)
+    }
+})
+
+onUnmounted(() => {
+    stopRefreshing()
+    if (observer.value) observer.value.disconnect()
+})
+
+// Computed Properties
+const filteredItems = computed(() => {
+    let result = [...orders.value]
+    if (searchQuery.value) {
+        const query = searchQuery.value.toLowerCase()
+        result = result.filter(item =>
+            item.name.toLowerCase().includes(query) ||
+            String(item.id).includes(query)
+        )
+    }
+    if (sortColumn.value) {
+        result.sort((a, b) => {
+            const valueA = a[sortColumn.value as keyof Order]
+            const valueB = b[sortColumn.value as keyof Order]
+            if (sortColumn.value === 'order_products') {
+                const idA = a.order_products[0]?.id || 0
+                const idB = b.order_products[0]?.id || 0
+                return sortDirection.value ? idA - idB : idB - idA
+            }
+            if (sortColumn.value === 'date') {
+                return sortDirection.value
+                    ? new Date(valueA as string).getTime() - new Date(valueB as string).getTime()
+                    : new Date(valueB as string).getTime() - new Date(valueA as string).getTime()
+            }
+            if (typeof valueA === 'number' && typeof valueB === 'number') {
+                return sortDirection.value ? valueA - valueB : valueB - valueA
+            }
+            return sortDirection.value
+                ? String(valueA || '').localeCompare(String(valueB || ''))
+                : String(valueB || '').localeCompare(String(valueA || ''))
+        })
+    }
+    return result
+})
+
+// Data Fetching
+const observer = ref<IntersectionObserver | null>(null)
+
 const fetchOrders = async (url: string) => {
     isLoading.value = true
     try {
         const { data, error } = await useFetch<ApiResponse>(url, {
             headers: { Authorization: `Bearer ${accessToken.value ?? ''}` },
-            transform: (response: ApiResponse) => {
-                response.results.forEach(order => {
-                    order.order_products.forEach(product => {
-                        product.product.sellPrice = Number(product.product.sellPrice)
-                        product.product.discountPrice = Number(product.product.discountPrice)
-                    })
-                })
-                return response
-            }
         })
-
         if (error.value) {
-            toast.error('Failed to fetch orders. Try again later...')
-            return
+            if (error.value.status === 401) {
+                toast.error('Session expired. Please log in again.')
+                logout()
+                return
+            }
+            throw new Error('Failed to fetch orders')
         }
-
         if (data.value) {
             orders.value = [...orders.value, ...data.value.results]
             totalCount.value = data.value.count
@@ -457,97 +443,6 @@ const fetchOrders = async (url: string) => {
     }
 }
 
-// Initial load
-fetchOrders(`${API_URL}/order_filter/Approved?page=${page.value}&page_size=3`)
-
-// Intersection Observer for infinite scroll
-const observer = ref<IntersectionObserver | null>(null)
-onMounted(() => {
-    observer.value = new IntersectionObserver(
-        (entries) => {
-            if (entries[0].isIntersecting && nextUrl.value && !isLoading.value) {
-                fetchOrders(nextUrl.value)
-            }
-        },
-        { threshold: 0.1 }
-    )
-    if (loadMoreTrigger.value) {
-        observer.value.observe(loadMoreTrigger.value)
-    }
-})
-
-onUnmounted(() => {
-    if (observer.value) {
-        observer.value.disconnect()
-    }
-})
-
-// Computed
-const filteredItems = computed(() => {
-    let result = [...orders.value]
-
-    // Apply search filter
-    if (searchQuery.value) {
-        const query = searchQuery.value.toLowerCase()
-        result = result.filter(item =>
-            item.name.toLowerCase().includes(query) ||
-            item.order_products.some(p => p.product.title.toLowerCase().includes(query)) ||
-            String(item.id).includes(query)
-        )
-    }
-
-    // Apply sorting (no default sort by 'id')
-    if (sortColumn.value) {
-        result.sort((a, b) => {
-            const key = sortColumn.value as keyof Order
-            let valueA: any = a[key]
-            let valueB: any = b[key]
-
-            if (key === 'order_products') {
-                valueA = a.order_products[0]?.product.title || ''
-                valueB = b.order_products[0]?.product.title || ''
-                return sortDirection.value
-                    ? valueA.localeCompare(valueB)
-                    : valueB.localeCompare(valueA)
-            } else if (key === 'date') {
-                valueA = new Date(valueA).getTime()
-                valueB = new Date(valueB).getTime()
-                return sortDirection.value ? valueA - valueB : valueB - valueA
-            } else if (key === 'courier') {
-                valueA = String(valueA).toLowerCase()
-                valueB = String(valueB).toLowerCase()
-                return sortDirection.value
-                    ? valueA.localeCompare(valueB)
-                    : valueB.localeCompare(valueA)
-            } else if (key === 'id') {
-                return sortDirection.value ? valueA - valueB : valueB - valueA
-            }
-
-            if (typeof valueA === 'number') {
-                return sortDirection.value ? valueA - valueB : valueB - valueA
-            }
-
-            valueA = String(valueA).toLowerCase()
-            valueB = String(valueB).toLowerCase()
-            return sortDirection.value
-                ? valueA.localeCompare(valueB)
-                : valueB.localeCompare(valueA)
-        })
-    }
-
-    return result
-})
-
-// Sort function (unchanged)
-const sortBy = (column: string) => {
-    if (sortColumn.value === column) {
-        sortDirection.value = !sortDirection.value
-    } else {
-        sortColumn.value = column
-        sortDirection.value = true // Start with ascending when changing columns
-    }
-}
-
 // Utility Functions
 const formatPrice = (price: number) =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'BDT' }).format(price)
@@ -555,131 +450,45 @@ const formatPrice = (price: number) =>
 const formatDate = (date: string) =>
     new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 
-// Export Functions
-const exportToExcel = () => {
-    const exportData = filteredItems.value.map(item => ({
-        ID: item.id,
-        'Customer Name': item.name,
-        Phone: item.phone_no,
-        'Order Summary': item.order_products.map(p => p.product.title).join(', '),
-        Total: formatPrice(item.total),
-        Date: formatDate(item.date)
-    }))
-
-    const worksheet = XLSX.utils.json_to_sheet(exportData)
-    const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders')
-    XLSX.writeFile(workbook, 'Orders_export.xlsx')
-    toast.success('Exported to Excel successfully')
-}
-
-const exportToPicture = async () => {
-    if (!tableRef.value) return
-    const canvas = await html2canvas(tableRef.value, { scale: 2 })
-    const link = document.createElement('a')
-    link.download = 'Orders_table.png'
-    link.href = canvas.toDataURL('image/png')
-    link.click()
-    toast.success('Exported to Picture successfully')
-}
-
-const exportToPDF = () => {
-    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
-    const pageWidth = doc.internal.pageSize.getWidth()
-    const margin = 10
-    let yPosition = margin
-
-    doc.setFontSize(16)
-    doc.text('Order List', pageWidth / 2, yPosition, { align: 'center' })
-    yPosition += 10
-
-    const headers = ['#SL', 'Customer Name', 'Order Summary', 'Created Date']
-    const colWidths = [15, 70, 120, 40]
-
-    doc.setFontSize(12)
-    doc.setFont('helvetica', 'bold')
-    doc.setFillColor(45, 141, 224)
-    doc.rect(margin, yPosition - 4, pageWidth - 2 * margin, 8, 'F')
-
-    let xPosition = margin
-    headers.forEach((header, i) => {
-        doc.text(header, xPosition + 2, yPosition + 2)
-        xPosition += colWidths[i]
-    })
-    yPosition += 8
-
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'normal')
-    filteredItems.value.forEach((item, index) => {
-        const customerLines = `${item.name}\n${item.phone_no}\nShipping: ${item.area}, ${item.district}`.split('\n').length
-        const orderHeight = item.order_products.reduce((h, p) =>
-            h + 2 + (p.attribute ? Object.keys(p.attribute).length + 1 : 0) + 0.5, 0)
-        const rowHeight = Math.max(customerLines * 5, orderHeight * 4) + 2
-
-        if (yPosition + rowHeight > doc.internal.pageSize.getHeight() - margin) {
-            doc.addPage()
-            yPosition = margin
+const calculateSubtotal = (products: OrderProduct[]) => {
+    return products.reduce((sum, product) => {
+        let qty = 1
+        if (product.attribute) {
+            Object.values(product.attribute).forEach(value => {
+                qty = value[0] // Quantity is the first element
+            })
         }
-
-        doc.setFillColor(index % 2 ? 255 : 233, index % 2 ? 255 : 233, index % 2 ? 255 : 233)
-        doc.rect(margin, yPosition - 4, pageWidth - 2 * margin, rowHeight, 'F')
-
-        xPosition = margin
-        doc.setTextColor(0, 0, 0)
-        doc.text(String(item.id), xPosition + 2, yPosition + 2)
-        xPosition += colWidths[0]
-
-        doc.text(`${item.name}\n${item.phone_no}\nShipping: ${item.area}, ${item.district}`, xPosition + 2, yPosition + 2)
-        xPosition += colWidths[1]
-
-        let currentY = yPosition + 2
-        item.order_products.forEach((p, i) => {
-            const price = p.product.discountPrice || p.product.sellPrice
-            doc.setFont('helvetica', 'bold')
-            doc.setTextColor(200, 0, 0)
-            doc.text(`${i + 1}. ${p.product.title}`, xPosition + 2, currentY)
-            currentY += 4
-
-            doc.setFont('helvetica', 'normal')
-            doc.setTextColor(0, 0, 0)
-            doc.text(`Price: ${formatPrice(price)}`, xPosition + 4, currentY)
-            currentY += 4
-
-            if (p.attribute) {
-                doc.setTextColor(0, 100, 0)
-                doc.text('Attributes:', xPosition + 4, currentY)
-                currentY += 4
-
-                Object.entries(p.attribute).forEach(([key, value]) => {
-                    const val = normalizeAttribute(value)
-                    const text = val.length ?
-                        `${key}: ${formatAttribute(val[0])}` :
-                        `${key}: ${value}`
-                    doc.text(text, xPosition + 6, currentY)
-                    currentY += 4
-                })
-            }
-            currentY += 2
-        })
-        xPosition += colWidths[2]
-
-        doc.text(formatDate(item.date), xPosition + 2, yPosition + 2)
-        yPosition += rowHeight + 2
-    })
-
-    doc.save('Orders_table.pdf')
-    toast.success('Exported to PDF successfully')
+        return sum + qty * (product.attribute ? Object.values(product.attribute)[0][1] : 1000)
+    }, 0)
 }
 
-// Action Functions
+const calculateProductPrice = (product: OrderProduct) => {
+    let qty = 1
+    let price = 1000 // Default price since we don't have product details
+    if (product.attribute) {
+        const attrs = Object.values(product.attribute)[0]
+        qty = attrs[0]
+        price = attrs[1]
+    }
+    return formatPrice(qty * price)
+}
+
+// Event Handlers
+const toggleActions = (orderKey: string) => {
+    activeOrderKey.value = activeOrderKey.value === orderKey ? null : orderKey
+}
+
+const sortBy = (column: keyof Order) => {
+    if (sortColumn.value === column) sortDirection.value = !sortDirection.value
+    else {
+        sortColumn.value = column
+        sortDirection.value = true
+    }
+}
+
 const queryFromTable = (event: Event) => {
     searchQuery.value = (event.target as HTMLInputElement).value
 }
-
-// const sortBy = (column: string) => {
-//     sortDirection.value = sortColumn.value === column ? !sortDirection.value : true
-//     sortColumn.value = column
-// }
 
 const updateCourier = async (orderKey: string, event: Event) => {
     const newCourier = (event.target as HTMLSelectElement).value
@@ -690,15 +499,13 @@ const updateCourier = async (orderKey: string, event: Event) => {
                 'Authorization': `Bearer ${accessToken.value ?? ''}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ courier: newCourier })
+            body: JSON.stringify({ courier: newCourier || null })
         })
-
         if (!response.ok) throw new Error('Failed to update courier')
-
         const index = orders.value.findIndex(item => item.key === orderKey)
         if (index !== -1) {
-            orders.value[index].courier = newCourier
-            toast.success(`Courier updated to ${newCourier} for order ${orderKey}`)
+            orders.value[index].courier = newCourier || null
+            toast.success(`Courier updated for order ${orderKey}`)
         }
     } catch (error) {
         toast.error(`Error updating courier. Try again later...`)
@@ -715,9 +522,7 @@ const updateStatus = async (orderKey: string, status: string) => {
             },
             body: JSON.stringify({ status })
         })
-
         if (!response.ok) throw new Error('Failed to update status')
-
         const index = orders.value.findIndex(item => item.key === orderKey)
         if (index !== -1) {
             orders.value[index].status = status
@@ -730,7 +535,6 @@ const updateStatus = async (orderKey: string, status: string) => {
     }
 }
 
-// Modal functions
 const showInvoiceModal = (orderKey: string) => {
     selectedOrder.value = filteredItems.value.find(item => item.key === orderKey) || null
     showModal.value = true
@@ -744,6 +548,7 @@ const closeModal = () => {
 }
 
 const showPrintOptions = () => {
+    if (!selectedOrder.value) return
     showPrintModal.value = true
 }
 
@@ -751,148 +556,109 @@ const printInvoice = (format: 'pos' | 'a5' | 'default') => {
     const printWindow = window.open('', '_blank')
     if (!printWindow || !selectedOrder.value) return
 
-    const styles = `
-        <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-            .invoice { padding: ${format === 'pos' ? '5px' : '6px'}; }
-            ${format === 'pos' ? 'body { width: 80mm; font-size: 8px; }' : ''}
-            ${format === 'a5' ? 'body { width: 148mm; height: 210mm; font-size: 10px; }' : ''}
-            .flex-between { display: flex; justify-content: space-between; }
-            .flex-col { display: flex; flex-direction: column; }
-            .gap-5 { gap: 5px; }
-            .gap-10 { gap: 10px; }
-            .text-right { text-align: right; }
-            table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-            th, td { border: 1px solid #ddd; padding: 5px; font-size: 10px }
-            th { background: #f5f5f5; }
-            hr { border: none; border-top: 1px solid #ddd; margin: 10px 0; }
-        </style>
-    `
+    let width = 'auto'
+    if (format === 'pos') width = '80mm'
+    if (format === 'a5') width = '148mm'
 
     const content = `
+        <style>
+            @media print {
+                .invoice { width: ${width}; margin: 0 auto; }
+                body { margin: 0; padding: 10mm; }
+            }
+        </style>
         <div class="invoice">
             <h2>Invoice - Order #${selectedOrder.value.id}</h2>
-            <div class="flex-between gap-10">
-                <div class="flex-col gap-5">
-                    <h4>From:</h4>
-                    <p><strong>${companyInfo.name}</strong></p>
-                    <p>${companyInfo.address}</p>
-                    <p>${companyInfo.city}, ${companyInfo.country}</p>
-                    <p>Phone: ${companyInfo.phone}</p>
-                    <p>Email: ${companyInfo.email}</p>
-                </div>
-                <div class="flex-col gap-5 text-right">
-                    <h4>To:</h4>
-                    <p><strong>${selectedOrder.value.name}</strong></p>
-                    <p>${selectedOrder.value.phone_no}</p>
-                    <p>${selectedOrder.value.address}</p>
-                    <p>${selectedOrder.value.area}, ${selectedOrder.value.district}</p>
-                    <p>${selectedOrder.value.division}</p>
-                </div>
-            </div>
-            <div class="flex-between gap-10">
-                <p><strong>Invoice Date:</strong> ${formatDate(selectedOrder.value.date)}</p>
-                <p><strong>Status:</strong> ${selectedOrder.value.status}</p>
-                <p><strong>Courier:</strong> ${selectedOrder.value.courier}</p>
-            </div>
-            <hr>
-            <h4>Order Details</h4>
-            <table>
+            <p><strong>From:</strong> ${companyInfo.name}</p>
+            <p><strong>To:</strong> ${selectedOrder.value.name}</p>
+            <p><strong>Date:</strong> ${formatDate(selectedOrder.value.date)}</p>
+            <p><strong>Status:</strong> ${selectedOrder.value.status}</p>
+            <table style="width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr>
-                        <th>Product</th>
-                        <th>Attributes</th>
-                        <th>Price</th>
+                        <th style="border: 1px solid #000;">Product</th>
+                        <th style="border: 1px solid #000;">Quantity</th>
+                        <th style="border: 1px solid #000;">Price</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${selectedOrder.value.order_products.map(product => `
                         <tr>
-                            <td>${product.product.title}</td>
-                            <td>${product.attribute ?
-            Object.entries(product.attribute).map(([key, value]) => {
-                const attrs = normalizeAttribute(value)
-                return `${key}<br>` + attrs.map(attr => `  ${formatAttribute(attr)}`).join('<br>')
-            }).join('<br>') :
-            '-'
-        }</td>
-                            <td>${calculateProductPrice(product)}</td>
+                            <td style="border: 1px solid #000;">${product.product.title}</td>
+                            <td style="border: 1px solid #000;">${product.attribute ? Object.values(product.attribute)[0][0] : 1}</td>
+                            <td style="border: 1px solid #000;">Tk ${product.attribute ? Object.values(product.attribute)[0][1] : 1000}</td>
                         </tr>
                     `).join('')}
                     <tr>
-                        <td colspan="2" class="text-right"><strong>Subtotal:</strong></td>
-                        <td>${formatPrice(calculateSubtotal(selectedOrder.value.order_products))}</td>
+                        <td colspan="2" style="text-align: right; border: 1px solid #000;"><strong>Subtotal:</strong></td>
+                        <td style="border: 1px solid #000;">${formatPrice(calculateSubtotal(selectedOrder.value.order_products))}</td>
                     </tr>
                     <tr>
-                        <td colspan="2" class="text-right"><strong>Delivery:</strong></td>
-                        <td>${formatPrice(selectedOrder.value.delivery_charge)}</td>
+                        <td colspan="2" style="text-align: right; border: 1px solid #000;"><strong>Delivery:</strong></td>
+                        <td style="border: 1px solid #000;">${formatPrice(selectedOrder.value.delivery_charge)}</td>
                     </tr>
                     <tr>
-                        <td colspan="2" class="text-right"><strong>Grand Total:</strong></td>
-                        <td>${formatPrice(calculateSubtotal(selectedOrder.value.order_products) + selectedOrder.value.delivery_charge)}</td>
+                        <td colspan="2" style="text-align: right; border: 1px solid #000;"><strong>Total:</strong></td>
+                        <td style="border: 1px solid #000;">${formatPrice(selectedOrder.value.total)}</td>
                     </tr>
                 </tbody>
             </table>
-            <hr>
-            <div class="flex-col gap-10">
-                <div>
-                    <h4>Terms and Conditions:</h4>
-                    <p>Sold items are non-refundable</p>
-                </div>
-                <div>
-                    <h4>Prepared By:</h4>
-                    <p>KEHEM IT</p>
-                </div>
-            </div>
         </div>
     `
-    printWindow.document.write(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Invoice #${selectedOrder.value.id}</title>
-        ${styles}
-    </head>
-    <body>
-        ${content}
-        <script>
-            window.print();
-            window.close();
+    printWindow.document.write(`<!DOCTYPE html><html><body>${content}<script>window.print();window.close();<script>
 </body>
 
-</html>
-`)
-
+</html>`)
     printWindow.document.close()
-    showPrintModal.value = false
-    toast.success(`Printing invoice in ${format} format...`)
 }
 
-const editOrder = (orderKey: string) => {
-    console.log('Edit order:', orderKey)
+const exportToExcel = () => {
+    const exportData = filteredItems.value.map((item, index) => ({
+        'SL': sortDirection.value || !sortColumn.value ? index + 1 : filteredItems.value.length - index,
+        'Customer Name': item.name,
+        'Phone': item.phone_no,
+        'Address': `${item.address}, ${item.area}, ${item.district}, ${item.division}`,
+        'Order Summary': item.order_products.map(p =>
+            `${p.product.title}${p.attribute ?
+                ' (' + Object.entries(p.attribute)
+                    .map(([key, [qty, price, variant]]) =>
+                        `${key}: ${variant}, ${qty} pcs, Tk ${price}`
+                    ).join('; ') + ')'
+                : ''}`
+        ).join('; '),
+        'Date': formatDate(item.date),
+        'Courier': item.courier || 'Not Assigned',
+        'Status': item.status,
+        'Total': formatPrice(item.total),
+        'Delivery Charge': formatPrice(item.delivery_charge)
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
+    XLSX.writeFile(workbook, 'Orders_export.xlsx');
+    toast.success('Exported to Excel successfully');
+};
+const exportToPicture = async () => {
+    if (!tableRef.value) return
+    const canvas = await html2canvas(tableRef.value, { scale: 2 })
+    const link = document.createElement('a')
+    link.download = 'Orders_table.png'
+    link.href = canvas.toDataURL('image/png')
+    link.click()
+    toast.success('Exported to Picture successfully')
 }
 
-const deleteOrder = async (orderKey: string) => {
-    if (!confirm('Are you sure you want to delete this order?')) return
-
-    try {
-        const response = await fetch(`${API_URL}/order_detail/${orderKey}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${accessToken.value ?? ''}`,
-                'Content-Type': 'application/json'
-            }
-        })
-
-        if (!response.ok) throw new Error('Failed to delete order')
-
-        orders.value = orders.value.filter(item => item.key !== orderKey)
-        totalCount.value -= 1
-        toast.success('Order deleted successfully')
-    } catch (error) {
-        toast.error(`Error deleting order. Try again later...`)
-    }
+const exportToPDF = () => {
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
+    filteredItems.value.forEach((item, index) => {
+        if (index > 0) doc.addPage()
+        doc.text(`Order #${item.id}`, 10, 10)
+        doc.text(`Customer: ${item.name}`, 10, 20)
+        doc.text(`Products: ${item.order_products.map(p => `#${p.product}`).join(', ')}`, 10, 30)
+        doc.text(`Total: ${formatPrice(item.total)}`, 10, 40)
+    })
+    doc.save('Orders_table.pdf')
+    toast.success('Exported to PDF successfully')
 }
 </script>
