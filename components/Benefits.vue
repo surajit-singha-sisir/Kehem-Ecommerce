@@ -8,16 +8,14 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 
-// Define props and assign them to a variable
-const props = defineProps < {
-    modelValue?: string // For v-model support
-} > ()
+const props = defineProps<{
+    modelValue?: string
+}>()
 
-const emit = defineEmits < {
-  (e: 'update:modelValue', value: string): void // Emit for v-model
-}> ()
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void
+}>()
 
-// Declare global jQuery types
 declare global {
     interface Window {
         $: any
@@ -25,7 +23,6 @@ declare global {
     }
 }
 
-// Use Nuxt's useHead to load external scripts and styles (assuming these are global, you might not need to repeat this if already defined elsewhere)
 useHead({
     link: [
         {
@@ -47,10 +44,8 @@ useHead({
     ],
 })
 
-// Define Summernote toolbar tuple type
 type ToolbarGroup = [string, string[]]
 
-// Define Summernote options interface
 interface SummernoteOptions {
     placeholder: string
     tabsize: number
@@ -58,12 +53,8 @@ interface SummernoteOptions {
     toolbar: ToolbarGroup[]
 }
 
-// Reactive value for the Summernote content with a default text
-const content = ref < string > (
-    'These are the default benefits of your product.'
-)
+const content = ref<string>('These are the default benefits of your product.')
 
-// Initialize Summernote
 onMounted(() => {
     const initializeSummernote = () => {
         if (window.$ && window.$.summernote) {
@@ -78,13 +69,8 @@ onMounted(() => {
                 ] as ToolbarGroup[],
             }
 
-            // Initialize Summernote
             window.$('#benefits').summernote(options)
-
-            // Set the initial content (use props.modelValue if provided, else fallback to default)
             window.$('#benefits').summernote('code', props.modelValue || content.value)
-
-            // Listen for changes and emit updates
             window.$('#benefits').on('summernote.change', (we: any, contents: string) => {
                 content.value = contents
                 emit('update:modelValue', contents)
@@ -97,7 +83,6 @@ onMounted(() => {
     initializeSummernote()
 })
 
-// Sync external modelValue changes with Summernote
 watch(
     () => props.modelValue,
     (newValue) => {

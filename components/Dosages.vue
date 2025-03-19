@@ -8,16 +8,14 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 
-// Define props and assign them to a variable
 const props = defineProps<{
-  modelValue?: string // For v-model support
+  modelValue?: string
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void // Emit for v-model
+  (e: 'update:modelValue', value: string): void
 }>()
 
-// Declare global jQuery types
 declare global {
   interface Window {
     $: any
@@ -25,7 +23,6 @@ declare global {
   }
 }
 
-// Use Nuxt's useHead to load external scripts and styles (remove if already defined globally)
 useHead({
   link: [
     {
@@ -47,10 +44,8 @@ useHead({
   ],
 })
 
-// Define Summernote toolbar tuple type
 type ToolbarGroup = [string, string[]]
 
-// Define Summernote options interface
 interface SummernoteOptions {
   placeholder: string
   tabsize: number
@@ -58,12 +53,8 @@ interface SummernoteOptions {
   toolbar: ToolbarGroup[]
 }
 
-// Reactive value for the Summernote content with a default text
-const content = ref<string>(
-  'This is the default dosage information for your product.'
-)
+const content = ref<string>('Add medicine dosages')
 
-// Initialize Summernote
 onMounted(() => {
   const initializeSummernote = () => {
     if (window.$ && window.$.summernote) {
@@ -78,13 +69,9 @@ onMounted(() => {
         ] as ToolbarGroup[],
       }
 
-      // Initialize Summernote
       window.$('#dosages').summernote(options)
-
-      // Set the initial content (use props.modelValue if provided, else fallback to default)
       window.$('#dosages').summernote('code', props.modelValue || content.value)
 
-      // Listen for changes and emit updates
       window.$('#dosages').on('summernote.change', (we: any, contents: string) => {
         content.value = contents
         emit('update:modelValue', contents)
@@ -106,4 +93,10 @@ watch(
     }
   }
 )
+
+onUnmounted(() => {
+  if (window.$ && window.$.summernote) {
+    window.$('#dosages').summernote('destroy')
+  }
+})
 </script>
