@@ -112,6 +112,16 @@
                                 </span>
                             </NuxtLink>
                         </li>
+                        <li>
+                            <NuxtLink to="/k-admin/orders/approved-orders">
+                                <span class="ecat">
+                                    <div class="icon w--08">
+                                        <i class="m-chevron-right"></i>
+                                    </div>
+                                    <p>Approved Orders</p>
+                                </span>
+                            </NuxtLink>
+                        </li>
 
                         <li>
                             <NuxtLink to="/k-admin/orders/pending-orders">
@@ -124,16 +134,6 @@
                             </NuxtLink>
                         </li>
 
-                        <li>
-                            <NuxtLink to="/k-admin/orders/approved-orders">
-                                <span class="ecat">
-                                    <div class="icon w--08">
-                                        <i class="m-chevron-right"></i>
-                                    </div>
-                                    <p>Approved Orders</p>
-                                </span>
-                            </NuxtLink>
-                        </li>
                         <li>
                             <NuxtLink to="/k-admin/orders/cancel-orders">
                                 <span class="ecat">
@@ -198,17 +198,6 @@
                     </span>
                     <!-- SUB CATS -->
                     <ul class="ulsubcates">
-                        <!-- Manage Frontend -->
-                        <li>
-                            <NuxtLink to="/k-admin/frontend-editor/manage-frontend-editor">
-                                <span class="ecat">
-                                    <div class="icon w--08">
-                                        <i class="m-chevron-right"></i>
-                                    </div>
-                                    <p>Manage Frontend</p>
-                                </span>
-                            </NuxtLink>
-                        </li>
                         <!-- Frontend HERO -->
                         <li>
                             <NuxtLink to="/k-admin/frontend-editor/main-hero">
@@ -243,7 +232,7 @@
                             </NuxtLink>
                         </li>
                         <!-- Frontend Footer -->
-                        <li>
+                        <!-- <li>
                             <NuxtLink to="/k-admin/frontend-editor/footer">
                                 <span class="ecat">
                                     <div class="icon w--08">
@@ -252,7 +241,7 @@
                                     <p>Footer</p>
                                 </span>
                             </NuxtLink>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
 
@@ -271,7 +260,7 @@
                     <!-- SUB CATS -->
                     <ul class="ulsubcates">
                         <!-- Manage Landing Page -->
-                        <li>
+                        <!-- <li>
                             <NuxtLink to="/k-admin/landing-pages/manage-landing-pages">
                                 <span class="ecat">
                                     <div class="icon w--08">
@@ -280,7 +269,7 @@
                                     <p>Manage Landing Pages</p>
                                 </span>
                             </NuxtLink>
-                        </li>
+                        </li> -->
                         <!-- Manage Landing Page -->
                         <li>
                             <NuxtLink to="/k-admin/landing-pages/slider">
@@ -292,7 +281,7 @@
                                 </span>
                             </NuxtLink>
                         </li>
-                        
+
                     </ul>
                 </div>
                 <!-- Stock -->
@@ -384,7 +373,7 @@
                     <!-- SUB CATS -->
                     <ul class="ulsubcates">
                         <!-- Manage Accounts -->
-                        <li>
+                        <!-- <li>
                             <NuxtLink to="/">
                                 <span class="ecat">
                                     <div class="icon w--08">
@@ -393,9 +382,9 @@
                                     <p>Manage Accounts</p>
                                 </span>
                             </NuxtLink>
-                        </li>
+                        </li> -->
                         <!-- Add Account -->
-                        <li>
+                        <!-- <li>
                             <NuxtLink to="/k-admin/">
                                 <span class="ecat">
                                     <div class="icon w--08">
@@ -404,9 +393,9 @@
                                     <p>Add Account</p>
                                 </span>
                             </NuxtLink>
-                        </li>
+                        </li> -->
                         <!-- Account Reports -->
-                        <li>
+                        <!-- <li>
                             <NuxtLink to="/k-admin/">
                                 <span class="ecat">
                                     <div class="icon w--08">
@@ -415,7 +404,7 @@
                                     <p>Account Reports</p>
                                 </span>
                             </NuxtLink>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
 
