@@ -10,8 +10,8 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }
       ],
       link: [
-        { rel: 'stylesheet', href: 'https://surajit-singha-sisir.github.io/mastorsCDN/mastors.css' },
-        { rel: 'stylesheet', href: 'https://surajit-singha-sisir.github.io/mastorsCDN/mastorsIcons/mastorsIcons.css' },
+        { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/mastorscdn@1.1/mastors.css' },
+        { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/gh/surajit-singha-sisir/mastorsCDN@v1.1/mastorsIcons/mastorsIcons.css' },
       ],
       script: [
         { type: 'module', src: '/js/kehem-e-dashboard.js' },

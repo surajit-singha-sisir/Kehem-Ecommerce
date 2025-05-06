@@ -360,7 +360,7 @@
                 </div>
 
                 <!-- Accounts -->
-                <div class="esubcats">
+                <!-- <div class="esubcats">
                     <span class="ecatnoclick">
                         <div class="maincatname">
                             <i class="m-user3 text--m"></i>
@@ -370,43 +370,7 @@
                             <i class="m-chevron-down"></i>
                         </div>
                     </span>
-                    <!-- SUB CATS -->
-                    <ul class="ulsubcates">
-                        <!-- Manage Accounts -->
-                        <!-- <li>
-                            <NuxtLink to="/">
-                                <span class="ecat">
-                                    <div class="icon w--08">
-                                        <i class="m-chevron-right"></i>
-                                    </div>
-                                    <p>Manage Accounts</p>
-                                </span>
-                            </NuxtLink>
-                        </li> -->
-                        <!-- Add Account -->
-                        <!-- <li>
-                            <NuxtLink to="/k-admin/">
-                                <span class="ecat">
-                                    <div class="icon w--08">
-                                        <i class="m-chevron-right"></i>
-                                    </div>
-                                    <p>Add Account</p>
-                                </span>
-                            </NuxtLink>
-                        </li> -->
-                        <!-- Account Reports -->
-                        <!-- <li>
-                            <NuxtLink to="/k-admin/">
-                                <span class="ecat">
-                                    <div class="icon w--08">
-                                        <i class="m-chevron-right"></i>
-                                    </div>
-                                    <p>Account Reports</p>
-                                </span>
-                            </NuxtLink>
-                        </li> -->
-                    </ul>
-                </div>
+                </div> -->
 
 
             </section>
