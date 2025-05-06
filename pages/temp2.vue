@@ -10,7 +10,7 @@ interface District {
   lon: string;
   url: string;
 }
-
+edit file
 const districts = ref<District[]>([]);
 
 const fetchDistricts = async () => {
